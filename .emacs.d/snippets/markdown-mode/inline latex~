@@ -1,0 +1,6 @@
+# key: mk
+# name: inline latex
+# expand-env: ((org-mode))
+# condition: 'auto
+# --
+$ $1 $ $0

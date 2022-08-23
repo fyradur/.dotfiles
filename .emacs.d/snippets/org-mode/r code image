@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: r code image
+# key: rimg
+# --
+#+BEGIN_SRC R :exports code :results graphics :file img/$1.png :session
+$2
+#+END_SRC
+
+#+NAME: fig: $1
+#+CAPTION: $3
+[[file:img/$1.png]]

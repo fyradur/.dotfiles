@@ -1,0 +1,7 @@
+# key: pytest
+# name: python test
+# --
+def test_$1($2):
+    def test(${3:s}):
+    print($4, "för:", $3)
+    $0

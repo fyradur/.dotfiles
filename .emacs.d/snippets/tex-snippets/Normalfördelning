@@ -1,0 +1,4 @@
+# key: N
+# name: Normalfördelning
+# --
+\\text{N}(${1:\mu} , ${2:\sigma^2}) $0

@@ -1,0 +1,4 @@
+# key: =
+# name: Equal with justification
+# --
+\stackrel{\text{${1:def}}}{=} $0

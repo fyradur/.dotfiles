@@ -1,0 +1,12 @@
+# key: table
+# name: table
+# --
+\`\`\`{r, results='asis', echo=FALSE}
+${1:my_table} <- data.frame(
+$2
+)
+${3:rownames($1) <- c($4)}
+
+knitr::kable($1, caption = "Tabell $5: $6.")
+\`\`\`
+$0

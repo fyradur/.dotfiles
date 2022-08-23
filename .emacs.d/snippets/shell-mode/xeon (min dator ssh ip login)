@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# -*- mode: snippet -*-
+# name: xeon (min dator ssh ip login)
+# key: xeon
+# --
+ssh john@192.168.0.17

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# key: frame
+# name: Beamer frame
+# --
+`(string-utils-string-repeat "*" (+ 1 (apollo/org-current-export-level)))` $1
+#+LATEX: \begin{frame}{$1}
+$2
+#+LATEX: \end{frame}
+$0

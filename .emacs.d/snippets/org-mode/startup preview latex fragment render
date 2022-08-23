@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: startup preview latex fragment render
+# key: startup
+# --
+#+STARTUP: latexpreview

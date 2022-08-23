@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Binomial distribution
+# key: bin
+# --
+\\text{Bin}(${1:n},${2:p}) $0

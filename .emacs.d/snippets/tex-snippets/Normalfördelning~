@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Normalfördelning
+# key: N
+# --
+\\text{N}($1{\mu} , $2{\sigma^2}) $0

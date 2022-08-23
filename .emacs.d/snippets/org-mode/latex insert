@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: latex insert
+# key: la
+# --
+#+LATEX: $1
+$0

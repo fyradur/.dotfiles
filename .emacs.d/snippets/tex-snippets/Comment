@@ -1,0 +1,4 @@
+# key: com
+# name: Comment
+# --
+&& \text{$1} $0

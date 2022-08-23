@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Raised to the
+# expand-env: ((org-pretty-entities 'nil))
+# --
+ ^{$1} $0

@@ -1,0 +1,5 @@
+# key: oIInt
+# name: 2d Integral closed
+# condition: (and (texmathp) 'auto)
+# --
+\0iint_{ ${1: D} } $2 ${3:dxdy} $0

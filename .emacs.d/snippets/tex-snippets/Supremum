@@ -1,0 +1,4 @@
+# key: sup
+# name: Supremum
+# --
+\sup_{${1:a} \in ${2:A} } $0

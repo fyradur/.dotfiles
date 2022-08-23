@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Left right [
+# key: lrb
+# --
+\left[ ${1:`yas-selected-text`} \right] $0

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: print variable string
+# key: print
+# --
+printfn "${2:$1: %s}" $1
+$0

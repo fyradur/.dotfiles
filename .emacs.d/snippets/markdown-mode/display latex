@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: display latex
+# key: dm
+# condition: 'auto
+# --
+$$
+$1
+$$
+
+$0

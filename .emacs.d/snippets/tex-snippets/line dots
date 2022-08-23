@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: line dots
+# key: l..
+# condition: (and (texmathp) 'auto)
+# --
+\ldots $0

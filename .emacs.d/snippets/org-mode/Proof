@@ -1,0 +1,9 @@
+# key: prf
+# name: Proof
+# expand-env: ((yas-after-exit-snippet-hook #'apollo/org-tex-exit-env))
+# --
+`(string-utils-string-repeat "*" (+ 1 (apollo/org-current-export-level)))` prf: $1
+#+LATEX: \begin{proof} \label{prf:$1}
+$2
+#+LATEX: \end{proof}
+$0

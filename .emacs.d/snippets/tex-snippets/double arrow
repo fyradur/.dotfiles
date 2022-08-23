@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: double arrow
+# key: <->
+# condition: (and (texmathp) 'auto)
+# --
+\leftrightarrow

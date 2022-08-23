@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: tangens
+# key: tan
+# condition: (and (texmathp) 'auto)
+# --
+\tan 

@@ -1,0 +1,6 @@
+# key: nil
+# name: Fsharp.Data package
+# --
+#r "nuget: FSharp.Data, 4.0.1"
+
+open FSharp.Data

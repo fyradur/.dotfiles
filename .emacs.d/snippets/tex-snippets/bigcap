@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# key: MM
+# name: bigcap
+# condition: (and (texmathp) 'auto)
+# --
+\bigcap_{ ${1: i \in I} }^{ $2 } $0

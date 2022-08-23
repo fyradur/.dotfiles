@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Bulletlist
+# key: bull
+# --
+\begin{itemize}
+$1
+\end{itemize}
+$0

@@ -1,0 +1,5 @@
+# key: lra
+# name: left right <
+# condition: (and (texmathp) 'auto)
+# --
+\< $1 \> $0

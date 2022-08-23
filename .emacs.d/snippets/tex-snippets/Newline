@@ -1,0 +1,6 @@
+# key: nl
+# name: Newline
+# condition: (and (texmathp) 'auto)
+# --
+\\\
+$0

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# key: d..
+# name: diagonal dots
+# condition: (and (texmathp) 'auto)
+# --
+\ddots $0

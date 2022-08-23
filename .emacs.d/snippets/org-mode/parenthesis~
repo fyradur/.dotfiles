@@ -1,0 +1,4 @@
+# key: p
+# name: parenthesis
+# --
+`(if (string= " " (string (preceding-char))) (backward-delete-char))`($1)$0

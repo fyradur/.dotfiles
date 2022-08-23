@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Avsnitt
+# key: avs
+# --
+\avsnitt{$1}{$2}{$3} $0

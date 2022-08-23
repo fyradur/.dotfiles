@@ -1,0 +1,5 @@
+# key: sq
+# name: Squareroot
+# condition: (and (texmathp) 'auto)
+# --
+\sqrt{${1:`yas-selected-text`}}$0

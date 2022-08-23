@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: logic false
+# key: FF
+# condition: (and (texmathp) 'auto)
+# --
+\lfalse $0

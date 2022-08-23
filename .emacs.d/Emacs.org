@@ -1,0 +1,4401 @@
+#+title: Emacs config file
+#+PROPERTY: header-args:emacs-lisp :tangle ./init.el
+* Basic UI
+  #+begin_src emacs-lisp
+
+  (setq inhibit-startup-message t)
+  (scroll-bar-mode -1) ; Disable visible scrollbar
+  (tool-bar-mode -1) ; Disable the toolbar
+  (tooltip-mode -1) ; Disable tooltips
+  (set-fringe-mode 10) ; Give some breathing room
+  (menu-bar-mode -1) ; Disable the menu bar
+  (column-number-mode)
+  (global-display-line-numbers-mode t)
+
+  ;; Disable line numbers for some modes
+  (dolist (mode '(org-mode-hook
+                  term-mode-hook
+                  shell-mode-hook
+                  eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+
+  (setq visible-bell t) ; Visual hint when at beggining of line
+
+  (set-face-attribute 'default nil :font "Fira Code Retina" :height 120)
+
+#+end_src
+
+
+* Package config
+  
+  
+** Basic package stuff
+  
+   #+begin_src emacs-lisp
+
+   ;; Initialize package sources
+   (require 'package)
+
+   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                           ("org" . "https://orgmode.org/elpa/")
+                           ("elpa" . "https://elpa.gnu.org/packages/")))
+
+   (package-initialize)
+   (unless package-archive-contents
+   (package-refresh-contents))
+
+   #+end_src
+
+  
+** Quelpa basic
+
+  #+begin_src emacs-lisp
+ (unless (package-installed-p 'quelpa)
+ (with-temp-buffer
+   (url-insert-file-contents "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
+   (eval-buffer)
+   (quelpa-self-upgrade)))
+   #+end_src
+
+
+** Quelpa use-package
+
+   #+begin_src emacs-lisp
+(quelpa
+ '(quelpa-use-package
+   :fetcher git
+   :url "https://github.com/quelpa/quelpa-use-package.git"))
+(require 'quelpa-use-package)
+   #+end_src
+
+
+** Setup för use-package
+
+   #+begin_src emacs-lisp 
+   
+   ;; Initialize use-package on non-Linux platforms
+   (unless (package-installed-p 'use-package)
+   (package-install 'use-package))
+
+   (require 'use-package)
+   (setq use-package-always-ensure t)
+
+   #+end_src
+   
+
+* Syntax and other UI
+
+** Rainbow-delimiters
+
+   #+begin_src emacs-lisp
+   
+   (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
+
+   #+end_src
+
+   
+   
+* Emacs stuff misc
+
+** Scratch buffer
+#+begin_src emacs-lisp
+(setq initial-major-mode 'org-mode)
+(setq initial-scratch-message "")
+#+end_src
+
+
+** Wrap lines
+#+begin_src emacs-lisp
+
+
+;(add-hook 'text-mode-hook 'menu-bar--visual-line-mode-enable)
+;(add-hook 'text-mode-hook (lambda () (global-visual-fill-column-mode 1)))
+
+(add-hook 'text-mode-hook (lambda () (global-visual-line-mode 1)))
+(add-hook 'text-mode-hook (lambda () (toggle-word-wrap 1)))
+#+end_src
+
+#+RESULTS:
+| menu-bar--visual-line-mode-enable | text-mode-hook-identify |
+
+
+** Don't warn if file is too large before opening
+#+begin_src emacs-lisp
+(setq large-file-warning-threshold nil)
+#+end_src
+
+** Apollo toggle scratch
+
+#+begin_src emacs-lisp
+(defun apollo/toggle-scratch ()
+  (interactive)
+  (if (string-equal (buffer-name) "*scratch*")
+      (switch-to-buffer apollo/scratch-before-buffer)
+    (progn
+      (setq apollo/scratch-before-buffer (buffer-name))
+      (switch-to-buffer "*scratch*")
+      (goto-char (point-max))
+      (evil-append 1))))
+#+end_src
+
+#+RESULTS:
+: apollo/toggle-scratch
+
+** Apollo clear scratch
+
+#+begin_src emacs-lisp
+(defun apollo/clear-scratch () (interactive)
+  (if (string-equal (buffer-name) "*scratch*")
+      (let ((scratch-content (buffer-substring 1 (point-max))))
+	(evil-delete 1 (point-max))
+	(save-window-excursion
+	  (org-roam-dailies-goto-today)
+	  (evil-goto-line)
+	  (evil-open-below 1)
+	  (insert "** entry\n")
+	  (evil-open-below 1)
+	  (insert scratch-content)
+	  (evil-normal-state)))))
+#+end_src
+
+#+RESULTS:
+: apollo/clear-scratch
+
+* Emacs server
+Sätt igång emacs server så att man kan accesa den från terminalen med "emacsclient"
+#+begin_src emacs-lisp
+(server-start)
+#+end_src
+
+
+* String utils
+#+begin_src emacs-lisp
+(require 'string-utils "/home/john/.emacs.d/elisp/string-utils")
+#+end_src
+
+
+
+* Ivy, Swiper and Counsel
+  
+** Ivy
+
+   #+begin_src emacs-lisp
+     
+   (use-package ivy
+    :diminish
+    :bind (
+	    :map ivy-minibuffer-map
+	    ("TAB" . ivy-alt-done)	
+	    ("C-l" . ivy-alt-done)
+	    ("C-j" . ivy-next-line)
+	    ("C-k" . ivy-previous-line)
+	    :map ivy-switch-buffer-map
+	    ("C-k" . ivy-previous-line)
+	    ("C-l" . ivy-done)
+	    ("C-d" . ivy-switch-buffer-kill)
+	    :map ivy-reverse-i-search-map
+	    ("C-k" . ivy-previous-line)
+	    ("C-d" . ivy-reverse-i-search-kill))
+    :init
+    (ivy-mode 1))
+
+    (global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
+
+   #+end_src
+
+
+** Swiper
+   
+   #+begin_src emacs-lisp
+  
+    (use-package swiper
+     :bind (("C-s" . swiper))
+     :ensure t)
+
+   #+end_src
+   
+
+** Ivy rich
+
+   #+begin_src emacs-lisp
+   
+   (use-package ivy-rich
+    :init
+    (ivy-rich-mode 1))
+    
+   #+end_src
+   
+   
+** Counsel
+
+   #+begin_src emacs-lisp
+  
+   (use-package counsel
+    :ensure t)
+
+   (use-package counsel
+    :bind (("M-x" . counsel-M-x)
+	    ("C-x b" . counsel-ibuffer)
+	    ("C-x C-f" . counsel-find-file)
+	    :map minibuffer-local-map
+	    ("C-r" . 'counsel-minibuffer-history)))
+	    
+   #+end_src
+   
+
+** Ivy-avy
+#+begin_src emacs-lisp
+(use-package ivy-avy)
+#+end_src
+
+
+
+* Doom theme
+
+  #+begin_src emacs-lisp
+  
+    (use-package all-the-icons)
+
+    (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1)
+    :custom (doom-modeline-height 25))
+
+    (use-package doom-themes
+       :init (load-theme 'doom-city-lights t))
+       
+  #+end_src
+
+  #+RESULTS:
+
+  
+* Documentation
+
+** which-key
+
+   #+begin_src emacs-lisp
+   
+   (use-package which-key
+    :init (which-key-mode)
+    :diminish which-key-mode
+    :config
+    (setq which-key-idle-delay 1))
+
+   #+end_src
+   
+   
+** helpful
+   #+begin_src emacs-lisp
+   
+   (use-package helpful
+    :custom
+    (counsel-describe-function-function #'helpful-callable)
+    (counsel-describe-variable-function #'helpful-variable)
+    :bind
+    ([remap describe-function] . counsel-describe-function)
+    ([remap describe-command] . helpful-command)
+    ([remap describe-variable] . counsel-describe-variable)
+    ([remap describe-key] . helpful-key))
+
+   #+end_src
+   
+   
+* Evil stuff
+  
+** Evil-mode
+
+   #+begin_src emacs-lisp
+   
+   (use-package evil
+    :init
+    (setq evil-want-integration t)
+    (setq evil-want-keybinding nil)
+    (setq evil-want-C-u-scroll t)
+    (setq evil-want-C-i-jump nil)
+    :config
+    (evil-mode 1)
+    (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+    (define-key evil-insert-state-map (kbd "C-ö") 'evil-normal-state)
+    (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+    ;; Den här var för exit insert mode
+    ;;(define-key evil-insert-state-map (kbd "j") '(lambda () (interactive) (insert "j") (apollo/normalj/body)))
+
+    ;; Use visual line motions even outside of visual-line-mode buffers
+    (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+    (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+    (evil-set-initial-state 'messages-buffer-mode 'normal)
+    (evil-set-initial-state 'dashboard-mode 'normal))
+   
+   #+end_src
+   
+   
+** Evil-collection
+
+   #+begin_src emacs-lisp
+   
+   (use-package evil-collection
+    :after evil
+    :config
+    (evil-collection-init))
+
+   #+end_src
+   
+   
+* Keybindings
+  
+** general.el
+:LOGBOOK:
+CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
+:END:
+
+   #+begin_src emacs-lisp
+      (use-package general
+        :config
+        ;(general-define-key :states 'insert "C-ö" 'evil-force-normal-state)
+      (general-create-definer apollo/leader-keys
+          :states  '(insert normal visual)
+          :keymaps  '(override dired-mode-map visual emacs motion org-mode-map eaf-edit-mode-map eaf-mode-map*) 
+          :prefix "SPC"
+          :global-prefix "C-SPC"
+          )
+
+      (general-create-definer apollo/local-leader-keys
+          :states  '(normal visual)
+          :prefix ","
+          :global-prefix "C-,")
+
+      (general-define-key
+       :states '(normal)
+       ;:keymaps  '(motion org-mode-map) 
+       "<escape>" '(xenops-render :which-key "Render math stuff"))
+
+      (general-define-key
+       :states '(normal visual)
+       ;:keymaps  '(motion org-mode-map) 
+       "=" '(evil-end-of-line :which-key "End of line")
+       "+" '(evil-scroll-line-to-top  :which-key "Scroll line to top (som zt)")
+       "Ö" '(apollo/exit-server :which-key "Exit buffer server")
+       "ö" '(apollo/enter-or-exit-special-editor :which-key "Special editor enter/exit.")
+       "å" '(link-hint-open-link :which-key "Open org link regularly")
+       "ä" '(apollo/org-notes/avy-open-link  :which-key "Org notes avy open link")
+       "Ä" '(link-hint-open-link :which-key "Open org link regularly")
+
+       "gk" '(avy-goto-word-0-above :which-key "Avy goto word above")
+       "gj" '(avy-goto-word-0-below :which-key "Avy goto word below")
+
+       "gh" '(evilem-motion-backward-word-begin :which-key "Evil motion word backward")
+       "gl" '(evilem-motion-forward-word-begin :which-key "Evil motion word forward")
+
+       )
+
+
+      (general-define-key
+       :states '(normal visual insert)
+       "C-c ö" '(apollo/enter-or-exit-special-editor :which-key "Special editor enter/exit."))
+
+      (apollo/leader-keys
+          "" nil
+
+          "u" '(universal-argument :which-key "Universal argument")
+
+          "SPC" '((lambda () (interactive) (counsel-M-x ""))  :which-key "M-x counsel")
+          "C-SPC" '(counsel-M-x  :which-key "M-x counsel")
+          "RET" '(apollo/custom-counsel-bookmark  :which-key "Bookmark")
+          "S-<return>" '((lambda () (interactive) (counsel-bookmark) (delete-other-windows))  :which-key "Bookmark fullscreen")
+
+
+          "y"  '(:ignore t :which-key "yasnippet")
+          "yv" '(yas-visit-snippet-file :which-key "visit snippet")
+          "yn" '(yas-new-snippet :which-key "new snippet")
+
+
+          "c" '(org-capture :which-key "Org capture")
+
+
+       ;; Avy stuff
+          "s" '(avy-goto-word-1 :which-key "Avy goto word")
+
+          "a"  '(:ignore t :which-key "avy")
+          "al" '(avy-copy-line :which-key "Avy copy line")
+          "ar" '(avy-copy-region :which-key "Avy copy region")
+          "ak" '(avy-kill-ring-save-region :which-key "Avy killsave region")
+          "as" '(evil-avy-goto-char-timer :which-key "Got chars timer")
+
+
+
+
+          "o"  '(:ignore t :which-key "Open/start/org")
+          "oo" '(apollo/open-link-in-this-window :which-key "Avy search org link and open in this window")
+          "OO" '(link-hint-open-link :which-key "Open org link regularly")
+          "om" '(man :which-key "Search for man entry")
+          "op" '(org-pomodoro :which-key "Org pomodoro")
+          "oi" '(erc-tls :which-key "Open IRC (with ERC)")
+          "ox" '((lambda () (interactive)(switch-to-buffer "*scratch*")) :which-key "Open scratch")
+          "oa" '(org-agenda :which-key "Org agenda")
+          "ot" '(org-todo-list :which-key "Org agenda todo list")
+          "os" '(shell :which-key "Open shell")
+          "ol" '(org-store-link :which-key "Org store link")
+          "oL" '(org-insert-last-stored-link :which-key "Org insert link")
+          "ov" '(howdoyou-query :which-key "Stack overflow search (stackexchange)")
+          "od" '(devdocs-browser-open :which-key "Devdocs browser open")
+
+
+          "f"  '(:ignore t :which-key "file")
+          "fs" '(save-buffer :which-key "save file")
+          "ff" '(counsel-find-file :which-key "find file")
+          "fn" '(dired-create-empty-file :which-key "create new file in dired")
+
+
+          "k"  '(:ignore t :which-key "killring")
+          "ks" '(helm-show-kill-ring :which-key "show history")
+
+          "l"  '(:ignore t :which-key "layouts")
+          "l s" '(apollo/setup-layout :which-key "Setup layout")
+          "l x" '((lambda () (interactive) (switch-to-buffer "*scratch*") (delete-other-windows)) :which-key "Goto fullscreen scratch layout")
+          "l e" '((lambda () (interactive)  (find-file "~/.emacs.d/Emacs.org") (delete-other-windows)) :which-key "Goto fullscreen emacs config layout")
+          "l f" '((lambda () (interactive)  (org-roam-node-find) (delete-other-windows)) :which-key "Goto fullscreen find roam node")
+          "l c" '((lambda () (interactive)  (shell) (delete-other-windows)) :which-key "Goto fullscreen shell")
+          "l d" '((lambda () (interactive)  (org-roam-dailies-goto-today) (delete-other-windows)) :which-key "Goto fullscreen roam dailies today.")
+          "l t" '((lambda () (interactive)  (apollo/goto-todo-agenda) (delete-other-windows)) :which-key "Goto fullscreen todo agenda file")
+          "l k" '(burly-kill-windows-url :which-key "Copy (kill) framelayout")
+          "l o" '(burly-open-url :which-key "Open framelayout url")
+          "l RET" '(burly-bookmark-windows :which-key "Save framelayout")
+          "l r" '(window-configuration-to-register :which-key "Layout to register")
+          "l l" '((lambda () (interactive) (window-configuration-to-register 48) (message "Layout saved to 0")) :which-key "Set window layout 0")
+          "l L" '((lambda () (interactive) (jump-to-register 48)) :which-key "Goto layout 0")
+          "l 1" '((lambda () (interactive) (jump-to-register 49)) :which-key "Goto layout 1")
+          "l 2" '((lambda () (interactive) (jump-to-register 50)) :which-key "Goto layout 2")
+          "l 3" '((lambda () (interactive) (jump-to-register 51)) :which-key "Goto layout 3")
+          "l 4" '((lambda () (interactive) (jump-to-register 52)) :which-key "Goto layout 4")
+          "l 5" '((lambda () (interactive) (jump-to-register 53)) :which-key "Goto layout 5")
+          "l 6" '((lambda () (interactive) (jump-to-register 54)) :which-key "Goto layout 6")
+          "l 7" '((lambda () (interactive) (jump-to-register 55)) :which-key "Goto layout 7")
+          "l 8" '((lambda () (interactive) (jump-to-register 56)) :which-key "Goto layout 8")
+          "l 9" '((lambda () (interactive) (jump-to-register 57)) :which-key "Goto layout 9")
+          "l 0" '((lambda () (interactive) (jump-to-register 48)) :which-key "Goto layout 0")
+
+          "w"  '(:ignore t :which-key "evil window")
+          "ws" '(evil-window-split :which-key "window split horizontal")
+          "wS" '(apollo/study-window-layout :which-key "Apollo study window layout")
+          "wv" '(evil-window-vsplit :which-key "window split vertical")
+
+          "wP" '(ivy-push-view :which-key "Save layout in buffer list")
+
+          "wh" '(evil-window-left :which-key "go to left window")
+          "wj" '(evil-window-down :which-key "go to window below")
+          "wk" '(evil-window-up :which-key "go to window up")
+          "wl" '(evil-window-right :which-key "go to right window")
+          "wn" '(evil-window-next :which-key "go to next window")
+          "ww" '(evil-window-next :which-key "go to next window")
+          "wp" '(evil-window-prev :which-key "go to previous window")
+
+          "wH" '(evil-window-decrease-width :which-key "decrease window width")
+          "wJ" '(evil-window-decrease-height :which-key "decrease window height")
+          "wK" '(evil-window-increase-height :which-key "increase window height")
+          "wL" '(evil-window-increase-width :which-key "increase window width")
+
+          "wd" '(evil-window-delete :which-key "delete window")
+          "wf" '(delete-other-windows :which-key "maximize focused windows")
+          "wu" '(winner-undo :which-key "undo the window change")
+          "wr" '(winner-redo :which-key "redo the window change")
+
+          "p"  '(:ignore t :which-key "Pomodoro points/polybar")
+          "pu" '(apollo/pomo-points/update-points :which-key "Update points")
+          "pr" '(apollo/pomo-points/reset-points :which-key "Reset points")
+          "ps" '(apollo/pomo-points/reset-subcent-points :which-key "Reset subcent points")
+          "pa" '(apollo/pomo-points/add-points-manually :which-key "Add points manually")
+          "pf" '(apollo/pomo-points/kill :which-key "Kill pomodoro timer")
+          "pp" '(apollo/pomo-points/25-pomo :which-key "Activate 25 min pomo")
+          "pt" '(apollo/polybar-agenda/todo-push :which-key "Push todo")
+          "ph" '(apollo/polybar-agenda/org-heading-push :which-key "Push org heading")
+          "py" '(apollo/polybar-agenda/todo-pop :which-key "Yeet todo")
+          "pc" '(apollo/polybar-agenda/todo-replace :which-key "Replace todo")
+          "pv" '((lambda () (interactive) (org-pomodoro) (org-pomodoro)) :which-key "Fix pomodoro variables")
+
+
+
+          "1" '(winum-select-window-1 :which-key "Select window 1")
+          "2" '(winum-select-window-2 :which-key "Select window 2")
+          "3" '(winum-select-window-3 :which-key "Select window 3")
+          "4" '(winum-select-window-4 :which-key "Select window 4")
+          "5" '(winum-select-window-5 :which-key "Select window 5")
+          "6" '(winum-select-window-6 :which-key "Select window 6")
+          "7" '(winum-select-window-7 :which-key "Select window 7")
+          "8" '(winum-select-window-8 :which-key "Select window 8")
+          "9" '(winum-select-window-9 :which-key "Select window 9")
+          "0" '(winum-select-window-0 :which-key "Select window 0")
+
+
+          "h"  '(:ignore t :which-key "help")
+          "hk" '(helpful-key :which-key "describe key")
+          "hv" '(counsel-describe-variable :which-key "describe variable")
+          "hf" '(counsel-describe-function :which-key "describe function")
+
+          "g"  '(:ignore t :which-key "git")
+          "gs" '(magit-status :which-key "magit status")
+          "gt" '(git-timemachine :which-key "git timemachine")
+
+          "d" '((lambda () (interactive) (dired (replace-regexp-in-string "/[-_a-zA-Z 0-9\.]*$" "" (ibuffer-buffer-file-name) t))) :which-key "dired directly")
+          "D" '(dired :which-key "dired select directory")
+
+
+
+          "B" '(:ignore t :which-key "Bookmark")
+          "Bd" '(bookmark-delete :which-key "Bookmark delete")
+
+
+          "b" '(:ignore t :which-key "buffer")
+          "bb" '(counsel-switch-buffer :which-key "switch buffer")
+          "br" '(revert-buffer :which-key "revert (reload) buffer")
+
+          "bi" '(apollo/insert-bookmark-link :which-key "Insert bookmark org link")
+          "bx" '(bookmark-delete :which-key "next buffer")
+
+          "bk" '(kill-buffer :which-key "kill buffer")
+          "bd" '(apollo/buffer-kill-delete :which-key "Kill buffer and delete window.")
+          "bp" '(previous-buffer :which-key "previous buffer")
+          "bn" '(next-buffer :which-key "next buffer")
+          "b RET" '(apollo/buffer-in-new-frame :which-key "detach buffer to new frame")
+
+          "x" '(eval-last-sexp :which-key "eval sexp")
+
+          "q" '(:ignore t :which-key "quit emacs")
+          "qq" '(save-buffers-kill-emacs :which-key "Save buffers and kill emacs")
+
+          "r" '(apollo/org-notes/previous-point :which-key "Return to previous org notes point")
+          "R" '(apollo/org-notes/set-base-point :which-key "Set org notes base point")
+
+          "i" '(:ignore t :which-key "insert")
+          "is" '(yas-insert-snippet :which-key "yas-snippet")
+          "ih" '(org-insert-heading :which-key "insert org heading at point")
+
+          "m" '(:ignore t :which-key "music")
+          "ms" '(soundklaus-tracks :which-key "search soundcloud tracks")
+          "ml" '(soundklaus-like-current-track :which-key "like current track")
+          "mp" '(soundklaus-my-playlists :which-key "soundcloud playlists")
+          "mf" '(soundklaus-my-favorites :which-key "soundcloud favorites")
+
+          "H" '(emms-seek-backward :which-key "seek backwards")
+          "L" '(emms-seek-forward :which-key "seek backwards")
+          "J" '(emms-volume-lower :which-key "lower volume")
+          "K" '(emms-volume-raise :which-key "raise volume")
+
+          "e" '(:ignore t :which-key "eww browser")
+          "es" '(eww-search-words :which-key "Eww, search selected text")
+          "eo" '(eww :which-key "Eww, enter URL or search words")
+          "ey" '(eww-copy-page-url :which-key "Yank page url")
+
+
+          "t" '(:ignore t :which-key "Toggle/todos")
+          "tt" '((lambda () (interactive) (find-file "/home/john/.emacs.d/org-agenda/agenda.org")) :which-key "goto org agenda")
+          "tc" '(global-company-mode :which-key "Toggle global company")
+
+
+          "n" '(:ignore t :which-key "org roam (n för node idk)")
+          "nl" '(org-roam-buffer-toggle :which-key "toggle nodes with mention")
+          "nf" '(org-roam-node-find :which-key "find node")
+          "ni" '(org-roam-node-insert :which-key "insert node")
+          "nc" '(org-roam-dailies-capture-today  :which-key "roam capture")
+          "nt" '(org-roam-dailies-goto-today :which-key "goto org roam dailies today")
+          "np" '(org-roam-dailies-goto-previous-note :which-key "goto previous day")
+          "nn" '(org-roam-dailies-goto-previous-note :which-key "goto previous day")
+
+          "nd" '(:ignore t :which-key "org roam dailies")
+          "ndp" '(org-roam-dailies-goto-previous-note :which-key "goto previous day")
+          "ndn" '(org-roam-dailies-goto-next-note :which-key "goto next day")
+          "ndt" '(org-roam-dailies-goto-today :which-key "goto today")
+          "ndr" '(org-roam-dailies-goto-tomorrow :which-key "goto tomorrow")
+          "ndy" '(org-roam-dailies-goto-yesterday :which-key "goto yesterday")
+          "ndd" '(org-roam-dailies-goto-date :which-key "goto date")
+          "ndT" '(org-roam-dailies-capture-today :which-key "capture today")
+          "ndR" '(org-roam-dailies-capture-tomorrow :which-key "capture tomorrow")
+          "ndY" '(org-roam-dailies-capture-yesterday :which-key "capture yesterday")
+
+
+          "eo" '(eww :which-key "Eww, enter URL or search words"))
+   ;       (general-define-key :keymaps 'insert "M-7" '(lambda () (interactive) (insert "{")))
+   ;       (general-define-key :keymaps 'insert "M-8" '(lambda () (interactive) (insert "[")))
+   ;       (general-define-key :keymaps 'insert "M-9" '(lambda () (interactive) (insert "]")))
+   ;       (general-define-key :keymaps 'insert "M-0" '(lambda () (interactive) (insert "}")))
+      )
+
+   #+end_src
+
+   #+RESULTS:
+   : t
+   
+   
+** Emacs style keybindings
+   
+   #+begin_src emacs-lisp
+   
+   ;; Make ESC quit prompts
+   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+   
+  #+end_src
+   
+  
+
+
+* Emacs application framework (eaf)
+Måste installera enligt github för emacs-eaf.
+Måste också sudo pacman -S python-xlib python-pyqt5 python-pymediainfo
+
+** Use-package
+#+begin_src emacs-lisp :tangle no
+  (use-package eaf
+    :load-path "~/.emacs.d/site-lisp/emacs-application-framework" ; Set to "/usr/share/emacs/site-lisp/eaf" if installed from AUR
+    :custom
+     See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
+    (eaf-browser-continue-where-left-off t)
+    (eaf-browser-enable-adblocker t)
+    (browse-url-browser-function 'eaf-open-browser)
+    :config
+    (defalias 'browse-web #'eaf-open-browser)
+    ;(eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+    ;(eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+    ;(eaf-bind-key take_photo "p" eaf-camera-keybinding)
+    (eaf-bind-key nil "SPC" eaf-pdf-viewer-keybinding)
+    (eaf-bind-key nil "SPC" eaf-browser-keybinding)
+    ) ;; unbind, see more in the Wiki
+#+end_src
+
+#+RESULTS:
+: t
+
+
+** Load path (utan use-package)
+#+begin_src emacs-lisp :tangle no
+(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework/")
+(require 'eaf)
+#+end_src
+
+
+** Apps
+#+begin_src emacs-lisp :tangle no
+  (require 'eaf-demo)
+  (require 'eaf-browser)
+  (require 'eaf-pdf-viewer)
+  ;(require 'eaf-terminal)
+  ;(require 'eaf-music-player)
+  ;(require 'eaf-netease-cloud-music)
+  ;(require 'eaf-file-manager)
+  ;(require 'eaf-file-browser)
+  ;(require 'eaf-markdown-previewer)
+  ;(require 'eaf-jupyter)
+  ;(require 'eaf-video-player)
+  ;(require 'eaf-mindmap)
+  ;(require 'eaf-image-viewer)
+  ;(require 'eaf-org-previewer)
+
+#+end_src
+
+#+RESULTS:
+: eaf-pdf-viewer
+
+
+** Evil fix
+#+begin_src emacs-lisp :tangle no
+(require 'eaf-evil)
+#+end_src
+
+#+RESULTS:
+: eaf-evil
+
+
+
+* Hydra
+
+  #+begin_src emacs-lisp
+  
+    (use-package hydra
+:config
+
+    (defhydra hydra-text-scale (:timeout 4)
+    "scale text"
+    ("j" text-scale-increase "in")
+    ("k" text-scale-decrease "out")
+    ("f" nil "finished" :exit t))
+
+    (defhydra apollo/normalj (:timeout 0.3)
+    "enter normal mode with quick jj"
+    ("j" (lambda () (interactive) (evil-delete-backward-char-and-join 1) (evil-force-normal-state))))
+
+    (apollo/leader-keys
+    "z" '(hydra-text-scale/body :which-key "zoom text"))
+    )
+
+  #+end_src
+
+  
+* Projectile
+
+** Projectile
+
+   #+begin_src emacs-lisp
+   
+   (use-package projectile
+    :diminish projectile-mode
+    :config (projectile-mode)
+    :custom ((projectile-completion-system 'ivy))
+    :bind-keymap
+    ("C-c p" . projectile-command-map)
+    :init
+    ;; NOTE: Set this to the folder where you keep your Git repos!
+    (when (file-directory-p "~/Projects/Code")
+	(setq projectile-project-search-path '("~/Projects/Code")))
+    (setq projectile-switch-project-action #'projectile-dired))
+
+   #+end_src
+   
+   
+** Counsel-projectile
+
+   #+begin_src emacs-lisp
+   
+   (use-package counsel-projectile
+    :config (counsel-projectile-mode))
+    
+   #+end_src
+
+  
+* Magit
+
+  #+begin_src emacs-lisp
+  
+    (use-package magit
+      :custom
+      (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+
+      )
+
+      (defun apollo/org-mode-setup ()
+      (org-indent-mode 1)
+      ;(variable-pitch-mode 1)
+      (auto-fill-mode 0)
+      (visual-line-mode 1)
+      (setq evil-auto-indent nil))
+
+  #+end_src
+
+  #+RESULTS:
+  : apollo/org-mode-setup
+
+  
+* Git time machine
+#+begin_src emacs-lisp
+(use-package git-timemachine)
+#+end_src
+
+
+* Darkroom
+#+begin_src emacs-lisp
+(use-package darkroom)
+(setq darkroom-text-scale-increase 0)
+(setq darkroom-margins 0.20)
+(setq darkroom-margin-increment 0.15)
+(add-hook 'text-mode-hook (lambda () (interactive) (darkroom-tentative-mode t)))
+
+(defhydra hydra-margin-scale (:timeout 4)
+"scale margins"
+("j" darkroom-increase-margins "increase")
+("k" darkroom-decrease-margins "decrease")
+("f" nil "finished" :exit t))
+
+(apollo/leader-keys
+"wm" '(hydra-margin-scale/body :which-key "change margins"))
+#+end_src
+
+#+RESULTS:
+| (lambda nil (interactive) (darkroom-tentative-mode t)) | darkroom-tentative-mode |
+
+
+
+* Cdlatex och auctex
+
+  #+begin_src emacs-lisp :tangle no
+  (defun apollo/org-tex-setup ()
+    (org-cdlatex-mode 1))
+  #+end_src
+
+#+begin_src emacs-lisp :tangle no
+(add-hook 'org-mode-hook 'turn-on-org-cdlatex)  (setq cdlatex-env-alist       '(("pmatrix" "\\begin{pmatrix}\n?\n\\end{pmatrix}" nil)))  (setq cdlatex-command-alist       '(("pma" "insert pmatrix env" "" cdlatex-environment ("pmatrix") nil t)))
+#+end_src
+
+
+
+  
+* Latex
+
+** Prettify symbols
+
+*** Symboler
+**** Normala
+#+begin_src emacs-lisp
+(setq apollo/my-letters '(
+"\\alpha" "Α" "a" "A" "\\beta" "Β" "b" "B" "\\gamma" "\\Gamma" "c" "C" "\\delta" "\\Delta" "d" "D" "\\epsilon" "Ε" "e" "E" "\\zeta" "Ζ" "f" "F" "\\eta" "Η" "g" "G" "\\theta" "\\Theta" "h" "H" "\\iota" "Ι" "i" "I" "\\kappa" "Κ" "j" "J" "\\lambda" "\\Lambda" "k" "K" "\\mu" "Μ" "l" "L" "\\nu" "Ν" "m" "M" "\\xi" "\\Xi" "n" "N" "ο" "Ο" "o" "O" "\\pi" "\\Pi" "p" "P" "\\rho" "Ρ" "q" "Q" "\\sigma" "\\Sigma" "r" "R" "\\tau" "Τ" "s" "S" "\\upsilon" "Υ" "t" "T" "\\phi" "\\Phi" "u" "U" "\\chi" "Χ" "v" "V" "\\psi" "\\Psi" "w" "W" "\\omega" "\\Omega" "x" "X" "y" "Y" "z" "Z"
+			  ))
+#+end_src
+**** Bold
+
+#+begin_src emacs-lisp
+(setq apollo/my-letters-bold '(
+"α" "Α" "𝗮" "𝗔" "β" "Β" "𝗯" "𝗕" "γ" "Γ" "𝗰" "𝗖" "δ" "Δ" "𝗱" "𝗗" "ε" "Ε" "𝗲" "𝗘" "ζ" "Ζ" "𝗳" "𝗙" "η" "Η" "𝗴" "𝗚" "θ" "Θ" "𝗵" "𝗛" "ι" "Ι" "𝗶" "𝗜" "κ" "Κ" "𝗷" "𝗝" "λ" "Λ" "𝗸" "𝗞" "μ" "Μ" "𝗹" "𝗟" "ν" "Ν" "𝗺" "𝗠" "ξ" "Ξ" "𝗻" "𝗡" "ο" "Ο" "𝗼" "𝗢" "π" "Π" "𝗽" "𝗣" "ρ" "Ρ" "𝗾" "𝗤" "σ" "Σ" "𝗿" "𝗥" "τ" "Τ" "𝘀" "𝗦" "υ" "Υ" "𝘁" "𝗧" "φ" "Φ" "𝘂" "𝗨" "χ" "Χ" "𝘃" "𝗩" "ψ" "Ψ" "𝘄" "𝗪" "ω" "Ω" "𝘅" "𝗫" "𝘆" "𝗬" "𝘇" "𝗭"
+			  ))
+#+end_src
+**** Underline 
+
+#+begin_src emacs-lisp
+(setq apollo/my-letters-underline '(
+"_α̲" "̲Α̲" "̲a̲" "̲A̲" "̲β̲" "̲Β̲" "̲b̲" "̲B̲" "̲γ̲" "̲Γ̲" "̲c̲" "̲C̲" "̲δ̲" "̲Δ̲" "̲d̲" "̲D̲" "̲ε̲" "̲Ε̲" "̲e̲" "̲E̲" "̲ζ̲" "̲Ζ̲" "̲f̲" "̲F̲" "̲η̲" "̲Η̲" "̲g̲" "̲G̲" "̲θ̲" "̲Θ̲" "̲h̲" "̲H̲" "̲ι̲" "̲Ι̲" "̲i̲" "̲I̲" "̲κ̲" "̲Κ̲" "̲j̲" "̲J̲" "̲λ̲" "̲Λ̲" "̲k̲" "̲K̲" "̲μ̲" "̲Μ̲" "̲l̲" "̲L̲" "̲ν̲" "̲Ν̲" "̲m̲" "̲M̲" "̲ξ̲" "̲Ξ̲" "̲n̲" "̲N̲" "̲ο̲" "̲Ο̲" "̲o̲" "̲O̲" "̲π̲" "̲Π̲" "̲p̲" "̲P̲" "̲ρ̲" "̲Ρ̲" "̲q̲" "̲Q̲" "̲σ̲" "̲Σ̲" "̲r̲" "̲R̲" "̲τ̲" "̲Τ̲" "̲s̲" "̲S̲" "̲υ̲" "̲Υ̲" "̲t̲" "̲T̲" "̲φ̲" "̲Φ̲" "̲u̲" "̲U̲" "̲χ̲" "̲Χ̲" "̲v̲" "̲V̲" "̲ψ̲" "̲Ψ̲" "̲w̲" "̲W̲" "̲ω̲" "̲Ω̲" "̲x̲" "̲X̲" "̲y̲" "̲Y̲" "̲z̲" "̲Z̲"
+			  ))
+#+end_src
+
+**** Overline
+
+#+begin_src emacs-lisp
+(setq apollo/my-letters-overline '(
+"α̅" "Α̅" "a̅" "A̅" "β̅" "Β̅" "b̅" "B̅" "γ̅" "Γ̅" "c̅" "C̅" "δ̅" "Δ̅" "d̅" "D̅" "ε̅" "Ε̅" "e̅" "E̅" "ζ̅" "Ζ̅" "f̅" "F̅" "η̅" "Η̅" "g̅" "G̅" "θ̅" "Θ̅" "h̅" "H̅" "ι̅" "Ι̅" "i̅ " "I̅" "κ̅" "Κ̅" "j̅" "J̅" "λ̅" "Λ̅ " "k̅" "K̅" "μ̅" "Μ̅" "l̅" "L̅" "ν̅" "Ν̅" "m̅" "M̅" "ξ̅" "Ξ̅" "n̅" "N̅" "ο̅" "Ο̅" "o̅" "O̅" "π̅" "Π̅" "p̅" "P̅" "ρ̅" "Ρ̅" "q̅" "Q̅" "σ̅" "Σ̅" "r̅" "R̅" "τ̅" "Τ̅" "s̅" "S̅" "υ̅" "Υ̅" "t̅" "T̅" "φ̅" "Φ̅" "u̅" "U̅" "χ̅" "Χ̅" "v̅" "V̅" "ψ̅" "Ψ̅" "w̅" "W̅" "ω̅" "Ω̅" "x̅" "X̅" "y̅" "Y̅" "z̅" "Z̅" 
+			  ))
+#+end_src
+**** Caligraphic
+
+#+begin_src emacs-lisp
+(setq apollo/my-letters-caligraphic '(
+"α" "Α" "𝓪" "𝓐" "β" "Β" "𝓫" "𝓑" "γ" "Γ" "𝓬" "𝓒" "δ" "Δ" "𝓭" "𝓓" "ε" "Ε" "𝓮" "𝓔" "ζ" "Ζ" "𝓯" "𝓕" "η" "Η" "𝓰" "𝓖" "θ" "Θ" "𝓱" "𝓗" "ι" "Ι" "𝓲" "𝓘" "κ" "Κ" "𝓳" "𝓙" "λ" "Λ" "𝓴" "𝓚" "μ" "Μ" "𝓵" "𝓛" "ν" "Ν" "𝓶" "𝓜" "ξ" "Ξ" "𝓷" "𝓝" "ο" "Ο" "𝓸" "𝓞" "π" "Π" "𝓹" "𝓟" "ρ" "Ρ" "𝓺" "𝓠" "σ" "Σ" "𝓻" "𝓡" "τ" "Τ" "𝓼" "𝓢" "υ" "Υ" "𝓽" "𝓣" "φ" "Φ" "𝓾" "𝓤" "χ" "Χ" "𝓿" "𝓥" "ψ" "Ψ" "𝔀" "𝓦" "ω" "Ω" "𝔁" "𝓧" "𝔂" "𝓨" "𝔃" "𝓩"
+			  ))
+#+end_src
+
+*** Latex symboler
+
+**** Underline
+#+begin_src emacs-lisp
+(setq apollo/my-keys-underline
+
+      (mapcar #'(lambda (char) (format "\\underline{%s}" char)) apollo/my-letters)
+
+      )
+#+end_src
+
+**** Overline
+#+begin_src emacs-lisp
+(setq apollo/my-keys-overline
+
+      (mapcar #'(lambda (char) (format "\\overline{%s}" char)) apollo/my-letters)
+
+      )
+#+end_src
+
+**** Bold
+#+begin_src emacs-lisp
+(setq apollo/my-keys-boldsymbol
+
+      (mapcar #'(lambda (char) (format "\\boldsymbol{%s}" char)) apollo/my-letters)
+
+      )
+#+end_src
+
+**** Caligraphic
+#+begin_src emacs-lisp
+(setq apollo/my-keys-mathcal
+
+      (mapcar #'(lambda (char) (format "\\mathcal{%s}" char)) apollo/my-letters)
+
+      )
+#+end_src
+
+*** Push pair to prettify funktion
+#+begin_src emacs-lisp
+(defun apollo/push-pairs-to-prettify (keys values)
+  (let ((key-value-pairs (cl-mapcar #'cons keys values)))
+    (mapcar #'(lambda (pair) (push pair prettify-symbols-alist)) key-value-pairs)))
+#+end_src
+
+
+
+*** Config
+
+#+begin_src emacs-lisp
+(setq global-prettify-symbols-mode t)
+#+end_src
+
+#+begin_src emacs-lisp
+(defun apollo/tex-mode/load-prettify-symbols ()
+  (interactive)
+  (setq prettify-symbols-unprettify-at-point 'right-edge)
+  (laas-mode 1)
+  (push '("\\left(" . "(") prettify-symbols-alist)
+  (push '("\\right)" . ")") prettify-symbols-alist)
+  (push '("\\left[" . "[") prettify-symbols-alist)
+  (push '("\\right]" . "]") prettify-symbols-alist)
+  (push '("\\left\\{" . "{") prettify-symbols-alist)
+  (push '("\\right\\}" . "}") prettify-symbols-alist)
+  (push '("\\RR" . "ℝ") prettify-symbols-alist)
+  (push '("\\NN" . "ℕ") prettify-symbols-alist)
+  (push '("\\ZZ" . "ℤ") prettify-symbols-alist)
+  (push '("\\text" . "þ") prettify-symbols-alist)
+  (push '("\\sqrt" . "√") prettify-symbols-alist)
+  (push '("\\frac" . "÷") prettify-symbols-alist)
+  (push '("\\implies" . "⇒") prettify-symbols-alist)
+  ;(push '("\\mathcal\{a\}" . "acal") prettify-symbols-alist)
+  (apollo/push-pairs-to-prettify apollo/my-keys-underline apollo/my-letters-underline)
+  (apollo/push-pairs-to-prettify apollo/my-keys-overline apollo/my-letters-overline)
+  (apollo/push-pairs-to-prettify apollo/my-keys-boldsymbol apollo/my-letters-bold)
+  (apollo/push-pairs-to-prettify apollo/my-keys-mathcal apollo/my-letters-caligraphic)
+  )
+
+(add-hook 'TeX-mode-hook (lambda () (global-prettify-symbols-mode 1)))
+(add-hook 'TeX-mode-hook 'apollo/tex-mode/load-prettify-symbols)
+#+end_src
+
+#+RESULTS:
+| (lambda nil (prettify-symbols-mode 1)) | apollo/tex-mode/load-prettify-symbols |
+
+** Latex math preview
+
+#+begin_src emacs-lisp
+(use-package latex-math-preview)
+
+(general-define-key
+ :states '(insert normal visual)
+ :keymaps '(TeX-mode-map)
+ "M-n" '(apollo/math-preview :which-key "Preview math")
+ "M-u" '(winner-undo :which-key "Previous window layout"))
+
+(add-hook 'evil-insert-state-exit-hook #'apollo/math-preview)
+#+end_src
+
+#+RESULTS:
+
+
+* Org Mode 
+
+** Org
+
+#+begin_src emacs-lisp
+(use-package org
+  :init
+  (setq org-format-latex-options '(:foreground default :background default :scale 2.0
+  :html-foreground "Black" :html-background "Transparent"
+  :html-scale 2.0 :matchers ("$1" "$" "$$" "\\(" "\\[")))
+
+  :hook
+  (org-mode . laas-mode)
+  (org-mode . (lambda () (apollo/org-set-pretty-entities 1)))
+  (org-mode . apollo/org-mode-setup)
+  (org-mode . literate-calc-minor-mode)
+
+  :config
+  (setq org-ellipsis " ▾")
+  (apollo/local-leader-keys org-mode-map
+            "o" '(:ignore t :which-key "Org open")
+            "ol" '(apollo/org-open-latex-pdf :which-key "Open compiled latex pdf.")
+            "ob" '(apollo/org-open-local-book :which-key "Open local book pdf.")
+
+            "b" '(:ignore t :which-key "Org Babel")
+            "be" '(org-babel-execute-buffer :which-key "Execute buffer")
+            "bt" '(org-babel-tangle :which-key "Tangle")
+
+            "n" '(:ignore t :which-key "Noter/narrow")
+            "nS" '(org-noter :which-key "Noter start session")
+            "ns" '(org-narrow-to-subtree :which-key "Narrow to subtree")
+            "nw" '(widen :which-key "Widen")
+            "nb" '(org-tree-to-indirect-buffer :which-key "Tree to indirect buffer")
+
+            "l" '(org-latex-export-to-pdf :which-key "Export to latex pdf")
+
+            "p" '(apollo/layout-fix-pdf :which-key "Layout fix pdf scale")
+
+            "P" '(apollo/org-notes/set-pdf-scale :which-key "Set pdf scale")
+
+            "r" '(org-redisplay-inline-images :which-key "Redisplay inline images")
+
+            "f" '(apollo/org-tex-exit-env :which-key "Fix exit")
+
+            "F" '(org-agenda-file-to-front :which-key "File to front agenda")
+
+            "g" '(apollo/org-notes/goto-pdf-page :which-key "Org notes goto page")
+
+            "a" '(org-archive-subtree-default :which-key "Archive subtree")
+
+            "T" '(:ignore t :which-key "Toggle")
+            "Ti" '(org-toggle-inline-images :which-key "Toggle display of images")
+            "Tl" '(org-toggle-link-display :which-key "Toggle display of links")
+
+            "t" '(org-todo :which-key "Org todo toggle cycle")
+
+            "d" '(org-schedule :which-key "Schedule date/time")
+            "D" '(org-deadline :which-key "Schedule date/time")
+
+            "s" '(org-narrow-to-subtree :which-key "Narrow to subtree")
+
+            "w" '(widen :which-key "Widen")
+
+            "S" '(apollo/org-notes/set-pdf-page :which-key "Org notes set pdf page")
+
+            "e" '(apollo/org-toggle-headline :which-key "Toggle export headline.")
+
+            "m" '(apollo/org-notes/ivy-open-link :which-key "Org notes ivy open link")
+
+            "q" '(:ignore t :which-key "Org notes questions")
+            "qq" '(apollo/org-notes/create-question :which-key "New question")
+            "q," '(apollo/org-notes/open-questions :which-key "View open questions")
+            "qv" '(apollo/org-notes/all-questions :which-key "View all questions")
+            "qt" '(apollo/org-notes/view-open-todos :which-key "View all todo tags")
+            "qd" '(apollo/org-notes/view-closed-todos :which-key "View all done tags")
+
+            "." '(counsel-org-goto :which-key "Org goto (local file).")
+
+            ":" '(counsel-org-goto-all :which-key "Org goto (all filel).")
+
+            "," '(xenops-render :which-key "Toggle preview latex fragments")
+
+            "TAB" '(apollo/switch-from-org-to-rmd :which-key "Switch to rmd buffer")
+
+            "<backtab>" '(apollo/split-to-or-from-org-and-rmd :which-key "Toggle org rmd split"))
+
+
+(general-define-key
+   :states '(normal visual)
+   :keymaps 'org-mode-map
+   "C-k"
+   '(org-previous-visible-heading
+     :which-key "Goto previous visible heading.")
+   "C-j"
+   '(org-next-visible-heading
+     :which-key "Goto next visible heading.")
+   "RET"
+   '(org-ctrl-c-ctrl-c
+     :which-key "Org ctrl c ctrl c")
+
+   "K"
+   '(apollo/org-notes/scroll-backward
+     :which-key "Org notes scroll backward")
+
+   "J"
+   '(apollo/org-notes/scroll-forward
+     :which-key "Org notes scroll forward")
+
+   "U"
+   '(apollo/org-notes/page-backward
+     :which-key "Org notes page backward")
+
+   "D"
+   '(apollo/org-notes/page-forward
+           :which-key "Org notes page forward"))
+
+
+(general-define-key
+ :states '(normal insert visual)
+ :keymaps 'org-mode-map
+
+ "C-c l"
+ '(apollo/org-notes/copy-paste-pdf-link
+   :which-key "Org notes copy paste pdf link")
+
+ "C-c m"
+ '(apollo/org-notes/copy-paste-link
+   :which-key "Org notes copy paste link")
+
+ "C-c h"
+ '(apollo/org-notes/create-heading
+   :which-key "Create org notes heading")
+
+"C-c p"
+ '(apollo/org-notes/create-heading-with-page
+   :which-key "Create org notes heading with page")
+
+"C-c f"
+ '(apollo/org-notes/selection-to-new-heading
+   :which-key "Move selection to new heading (flytta)")
+
+"C-c i"
+ '(apollo/toggle-scratch
+   :which-key "Toggle scratch")
+
+ "C-c x"
+ '(apollo/clear-scratch
+   :which-key "Clear scratch")
+ ))
+
+;(use-package org-plus-contrib)
+
+
+;(require 'org )
+;(require 'ob-tangle)
+(require 'ox-latex "/home/john/.emacs.d/elisp/ox-latex")
+(require 'ox-extra "/home/john/.emacs.d/elisp/ox-extra")
+(ox-extras-activate '(ignore-headlines))
+
+
+#+end_src
+
+   #+RESULTS:
+   
+   
+** Org shell
+#+begin_src emacs-lisp
+(org-babel-do-load-languages 'org-babel-load-languages
+    '(
+        (shell . t)
+    )
+)
+#+end_src
+
+#+begin_src emacs-lisp
+(add-to-list 'org-src-lang-modes '("shell" . "shell-mode"))
+#+end_src
+
+
+** Org latex
+
+*** classes
+
+**** Legacy
+
+#+begin_src emacs-lisp
+(add-to-list 'org-latex-classes '("article" "\\documentclass[12pt]{article}\n        [DEFAULT-PACKAGES]\n        \\geometry{margin=15mm,heightrounded}\n        \\newtheorem{thm}{Theorem}[section]\n        \\newtheorem{cor}{Corollary}[thm]\n        \\newtheorem{lem}{Lemma}[thm]\n        \\newtheorem{ex}{Example}[ex]\n\\newcommand\\NN{\\ensuremath{\\mathbb{N}}}\n\\newcommand\\RR{\\ensuremath{\\mathbb{R}}}\n\\newcommand\\ZZ{\\ensuremath{\\mathbb{Z}}}\n\\renewcommand\\O{\\ensuremath{\\emptyset}}\n\\newcommand\\QQ{\\ensuremath{\\mathbb{Q}}}\n\\newcommand\\CC{\\ensuremath{\\mathbb{C}}}\n        [PACKAGES]\n        [EXTRA]" ("\\section{%s}" . "\\section*{%s}") ("\\subsection{%s}" . "\\subsection*{%s}") ("\\subsubsection{%s}" . "\\subsubsection*{%s}") ("\\paragraph{%s}" . "\\paragraph*{%s}") ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+(add-to-list 'org-latex-classes '("homework" "\\documentclass[10pt]{/home/john/texstuff/homework/homework}\n        [NO-DEFAULT-PACKAGES]\n        [PACKAGES]\n        [EXTRA]" ("\\section{%s}" . "\\section*{%s}") ("\\subsection{%s}" . "\\subsection*{%s}") ("\\subsubsection{%s}" . "\\subsubsection*{%s}") ("\\paragraph{%s}" . "\\paragraph*{%s}") ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+
+(add-to-list 'org-latex-classes '("notesse" "\\documentclass[10pt]{article}\n        [NO-DEFAULT-PACKAGES]\n        \\usepackage{/home/john/texstuff/NoTeX/NotesTeXSW}\n        \\input{/home/john/skola/test/test3/bold.tex}\n        [PACKAGES]\n        [NO-EXTRA]" ("\\section{%s}" . "\\section*{%s}") ("\\subsection{%s}" . "\\subsection*{%s}") ("\\subsubsection{%s}" . "\\subsubsection*{%s}") ("\\paragraph{%s}" . "\\paragraph*{%s}") ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+(add-to-list 'org-latex-classes '("notesen" "\\documentclass[10pt]{article}\n        [NO-DEFAULT-PACKAGES]\n        \\usepackage{/home/john/texstuff/NoTeX/NotesTeX}\n        [PACKAGES]\n        [EXTRA]\n        [NO-EXTRA]" ("\\section{%s}" . "\\section*{%s}") ("\\subsection{%s}" . "\\subsection*{%s}") ("\\subsubsection{%s}" . "\\subsubsection*{%s}") ("\\paragraph{%s}" . "\\paragraph*{%s}") ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+end_src
+
+   
+**** Aktuella
+
+***** String vars
+
+****** Default stuff
+#+begin_src emacs-lisp
+    (setq apollo/latex-code/default-stuff
+
+    "
+    [NO-DEFAULT-PACKAGES]
+    [NO-PACKAGES]
+    [EXTRA]
+    \\usepackage[T1]{fontenc}     
+    \\usepackage[utf8]{inputenc} 
+    \\usepackage[swedish]{babel}
+    \\usepackage{amsfonts}
+    \\usepackage{amsmath}
+    \\usepackage{amssymb}
+    \\usepackage{hyperref}
+    \\newcommand\\NN{\\ensuremath{\\mathbb{N}}}
+    \\newcommand\\RR{\\ensuremath{\\mathbb{R}}}
+    \\newcommand\\ZZ{\\ensuremath{\\mathbb{Z}}}
+    \\renewcommand\\O{\\ensuremath{\\\\emptyset}}
+    \\newcommand\\QQ{\\ensuremath{\\mathbb{Q}}}
+    \\newcommand\\CC{\\ensuremath{\\mathbb{C}}}
+    \\usepackage{import}
+    \\usepackage{xifthen}
+    \\usepackage{pdfpages}
+    \\usepackage{transparent}
+
+    \\newcommand{\\incfig}[1]{%
+        \\def\\svgwidth{\\columnwidth}
+        \\import{./img/}{#1.pdf_tex}
+    }
+  ") 
+#+end_src
+
+****** Logic stuff
+#+begin_src emacs-lisp
+(setq apollo/latex-code/logic-stuff
+"
+\\usepackage[utf8]{inputenc} \n
+\\usepackage[T1]{fontenc} \n
+\\usepackage{amsmath} \n
+\\usepackage{amssymb} \n
+\\usepackage{enumerate} \n
+\\usepackage{prftree} \n
+\\usepackage{mathpartir} \n
+\\usepackage{mathtools} \n
+\\usepackage{stmaryrd} \n
+\\usepackage{color} \n
+\\definecolor{darkgreen}{rgb}{0,0.45,0} \n
+\\usepackage[colorlinks,urlcolor=darkgreen,linkcolor=darkgreen]{hyperref} \n
+\\makeatletter \n
+\\newlength{\\tempwidth@narrowinferruleconcl} \n
+\\newcommand{\\narrowinferrule}[4][0pt]{% \n
+  % Optional argument #1: optional extra padding \n
+  % Compulsory arguments #2–#4: arguments of \\inferrule* (but optional arg of that is compulsory here) \n
+  \\settowidth{\\tempwidth@narrowinferruleconcl}{$#4$}% width of conclusion \n
+  \\mathmakebox[\\tempwidth@narrowinferruleconcl+#1][c]% \n
+    {\\inferrule*[right=\\protect{\\rlap{#2}}]{#3}{#4} \\hspace*{-1.4ex}}%  \n
+  } \n
+ \n
+\\newcommand{\\negphantom}[1]{\\settowidth{\\dimen0}{#1}\\hspace*{-\\dimen0}} \n
+\\makeatother \n
+ \n
+\\newcommand{\\todo}[1]{\\textcolor{red}{#1}} \n
+ \n
+% styled letters \n
+\\newcommand{\\A}{\\mathcal{A}} \n
+\\newcommand{\\D}{\\mathcal{D}} \n
+\\newcommand{\\N}{\\mathbb{N}} \n
+\\newcommand{\\cN}{\\mathcal{N}} \n
+\\newcommand{\\R}{\\mathbb{R}} \n
+\\newcommand{\\cR}{\\mathcal{R}} \n
+\\newcommand{\\Z}{\\mathbb{Z}} \n
+\\newcommand{\\V}{\\mathcal{V}} \n
+\\newcommand{\\Q}{\\mathbb{Q}} \n
+\\newcommand{\\cQ}{\\mathcal{Q}} \n
+% binary relations \n
+\\newcommand{\\proves}[1][]{\\mathrel{\\vdash_{#1}}} \n
+\\newcommand{\\notproves}[1][]{\\mathrel{\\nvdash_{#1}}} \n
+\\newcommand{\\entails}[1][]{\\mathrel{\\vDash_{#1}}} \n
+\\newcommand{\\notentails}[1][]{\\mathrel{\\nvDash_{#1}}} \n
+\\newcommand{\\believes}[1][]{\\mathrel{\\vDash_{#1}}} \n
+\\newcommand{\\notbelieves}[1][]{\\mathrel{\\nvDash_{#1}}} \n
+\\newcommand{\\logequiv}{\\approx} \n
+ \n
+% syntax of logic \n
+\\newcommand{\\limp}{\\rightarrow} \n
+\\newcommand{\\liff}{\\leftrightarrow} \n
+\\newcommand{\\ltrue}{\\top} \n
+\\newcommand{\\lfalse}{\\bot} \n
+\\renewcommand{\\land}{\\wedge} \n
+ \n
+% miscellaneous \n
+ \n
+\\renewcommand{\\Form}{\\mathrm{Form}} \n
+\\newcommand{\\Term}{\\mathrm{Term}} \n
+ \n
+\\newcommand{\\signature}[1]{\\langle\\, #1\\, \\rangle} \n
+\\newcommand{\\strux}[1]{\\langle\\, #1\\, \\rangle} \n
+\\newcommand{\\nextpart}{\\,\\mathpunct{;}\\,} \n
+\\newcommand{\\interp}[2][]{\\llbracket\\; #2\\; \\rrbracket^{#1}}\n") 
+#+end_src
+
+
+***** Add to list
+#+begin_src emacs-lisp
+    (setq apollo/latex-code/cleanse (concat apollo/latex-code/default-stuff apollo/latex-code/logic-stuff))
+       (add-to-list
+        'org-latex-classes
+        '("cleanse"
+    "
+    [NO-DEFAULT-PACKAGES]
+    [NO-PACKAGES]
+    [EXTRA]
+    \\usepackage[T1]{fontenc}     
+    \\usepackage[utf8]{inputenc} 
+    \\usepackage[swedish]{babel}
+    \\usepackage{amsfonts}
+    \\usepackage{amsmath}
+    \\usepackage{amssymb}
+    \\usepackage{hyperref}
+    \\newcommand\\NN{\\ensuremath{\\mathbb{N}}}
+    \\newcommand\\RR{\\ensuremath{\\mathbb{R}}}
+    \\newcommand\\ZZ{\\ensuremath{\\mathbb{Z}}}
+    \\renewcommand\\O{\\ensuremath{\\\\emptyset}}
+    \\newcommand\\QQ{\\ensuremath{\\mathbb{Q}}}
+    \\newcommand\\CC{\\ensuremath{\\mathbb{C}}}
+    \\usepackage{import}
+    \\usepackage{xifthen}
+    \\usepackage{pdfpages}
+    \\usepackage{transparent}
+
+    \\newcommand{\\incfig}[1]{%
+        \\def\\svgwidth{\\columnwidth}
+        \\import{./img/}{#1.pdf_tex}
+    }
+\\usepackage[utf8]{inputenc} \n
+\\usepackage[T1]{fontenc} \n
+\\usepackage{amsmath} \n
+\\usepackage{amssymb} \n
+\\usepackage{enumerate} \n
+\\usepackage{prftree} \n
+\\usepackage{mathpartir} \n
+\\usepackage{mathtools} \n
+\\usepackage{stmaryrd} \n
+\\usepackage{color} \n
+\\definecolor{darkgreen}{rgb}{0,0.45,0} \n
+%\\usepackage[colorlinks,urlcolor=darkgreen,linkcolor=darkgreen]{hyperref} \n
+\\makeatletter \n
+\\newlength{\\tempwidth@narrowinferruleconcl} \n
+\\newcommand{\\narrowinferrule}[4][0pt]{% \n
+  % Optional argument #1: optional extra padding \n
+  % Compulsory arguments #2–#4: arguments of \\inferrule* (but optional arg of that is compulsory here) \n
+  \\settowidth{\\tempwidth@narrowinferruleconcl}{$#4$}% width of conclusion \n
+  \\mathmakebox[\\tempwidth@narrowinferruleconcl+#1][c]% \n
+    {\\inferrule*[right=\\protect{\\rlap{#2}}]{#3}{#4} \\hspace*{-1.4ex}}%  \n
+  } \n
+ \n
+\\newcommand{\\negphantom}[1]{\\settowidth{\\dimen0}{#1}\\hspace*{-\\dimen0}} \n
+\\makeatother \n
+ \n
+\\newcommand{\\todo}[1]{\\textcolor{red}{#1}} \n
+ \n
+% styled letters \n
+\\newcommand{\\A}{\\mathcal{A}} \n
+\\newcommand{\\D}{\\mathcal{D}} \n
+\\newcommand{\\N}{\\mathbb{N}} \n
+\\newcommand{\\cN}{\\mathcal{N}} \n
+\\newcommand{\\R}{\\mathbb{R}} \n
+\\newcommand{\\cR}{\\mathcal{R}} \n
+\\newcommand{\\Z}{\\mathbb{Z}} \n
+\\newcommand{\\V}{\\mathcal{V}} \n
+\\newcommand{\\Q}{\\mathbb{Q}} \n
+\\newcommand{\\cQ}{\\mathcal{Q}} \n
+% binary relations \n
+\\newcommand{\\proves}[1][]{\\mathrel{\\vdash_{#1}}} \n
+\\newcommand{\\notproves}[1][]{\\mathrel{\\nvdash_{#1}}} \n
+\\newcommand{\\entails}[1][]{\\mathrel{\\vDash_{#1}}} \n
+\\newcommand{\\notentails}[1][]{\\mathrel{\\nvDash_{#1}}} \n
+\\newcommand{\\believes}[1][]{\\mathrel{\\vDash_{#1}}} \n
+\\newcommand{\\notbelieves}[1][]{\\mathrel{\\nvDash_{#1}}} \n
+\\newcommand{\\logequiv}{\\approx} \n
+ \n
+% syntax of logic \n
+\\newcommand{\\limp}{\\rightarrow} \n
+\\newcommand{\\liff}{\\leftrightarrow} \n
+\\newcommand{\\ltrue}{\\top} \n
+\\newcommand{\\lfalse}{\\bot} \n
+\\renewcommand{\\land}{\\wedge} \n
+ \n
+% miscellaneous \n
+ \n
+\\renewcommand{\\Form}{\\mathrm{Form}} \n
+\\newcommand{\\Term}{\\mathrm{Term}} \n
+ \n
+\\newcommand{\\signature}[1]{\\langle\\, #1\\, \\rangle} \n
+\\newcommand{\\strux}[1]{\\langle\\, #1\\, \\rangle} \n
+\\newcommand{\\nextpart}{\\,\\mathpunct{;}\\,} \n
+\\newcommand{\\interp}[2][]{\\llbracket\\; #2\\; \\rrbracket^{#1}}\n
+  "
+          ("\\section{%s}" . "\\section*{%s}")
+          ("\\subsection{%s}" . "\\subsection*{%s}")
+          ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+          ("\\paragraph{%s}" . "\\paragraph*{%s}")
+          ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+#+end_src
+
+#+RESULTS:
+| cleanse | apollo/latex-code/cleanse     | (\section{%s} . \section*{%s}) | (\subsection{%s} . \subsection*{%s}) | (\subsubsection{%s} . \subsubsection*{%s}) | (\paragraph{%s} . \paragraph*{%s}) | (\subparagraph{%s} . \subparagraph*{%s}) |
+| notesen | \documentclass[10pt]{article} |                                |                                      |                                            |                                    |                                          |
+
+*** default packages
+   
+   #+begin_src emacs-lisp
+
+   (setq org-latex-default-packages-alist
+	 '(("AUTO" "inputenc" t
+	    ("pdflatex"))
+	   ("T1" "fontenc" t
+	    ("pdflatex"))
+	   ("" "graphicx" t)
+	   ("" "geometry" t)
+	   ("" "grffile" t)
+	   ("" "longtable" nil)
+	   ("" "wrapfig" nil)
+	   ("" "rotating" nil)
+	   ("normalem" "ulem" t)
+	   ("" "amsmath" t)
+	   ("" "textcomp" t)
+	   ("" "amssymb" t)
+	   ("" "capt-of" nil)
+	   ("dvipsnames" "xcolor" nil)
+	   ("colorlinks=true, linkcolor=Blue, citecolor=BrickRed, urlcolor=PineGreen" "hyperref" nil)
+	   ("" "indentfirst" nil)))
+
+   #+end_src
+   
+*** Org latex listings (vet ej vad det är)
+
+   #+begin_src emacs-lisp
+
+   (setq org-latex-listings 'minted
+	 org-latex-packages-alist '(("" "minted"))
+	 org-latex-minted-options '(("breaklines" "true")
+				    ("breakanywhere" "true")
+				    ("mathescape")
+				    ("frame" "lines")
+				    ("bgcolor" "yellow!5")))
+
+   #+end_src
+   
+*** Org latex pdf process
+
+#+begin_src emacs-lisp
+(setq org-latex-pdf-process
+ '("latexmk -pdflatex='%latex -shell-escape -interaction nonstopmode' -pdf -output-directory=%o -f %f"))
+#+end_src
+
+*** Fragment header stuff
+#+begin_src emacs-lisp
+(setq apollo/latex-code/fragment-header
+"\\documentclass{article}\n
+\\usepackage[usenames]{color}\n
+[PACKAGES]\n
+[DEFAULT-PACKAGES]\n
+\\pagestyle{empty}             % do not remove\n
+% The settings below are copied from fullpage.sty\n
+\\setlength{\\textwidth}{\\paperwidth}\n
+\\addtolength{\\textwidth}{-3cm}\n
+\\setlength{\\oddsidemargin}{1.5cm}\n
+\\addtolength{\\oddsidemargin}{-2.54cm}\n
+\\setlength{\\evensidemargin}{\\oddsidemargin}\n
+\\setlength{\\textheight}{\\paperheight}\n
+\\addtolength{\\textheight}{-\\headheight}\n
+\\addtolength{\\textheight}{-\\headsep}\n
+\\addtolength{\\textheight}{-\\footskip}\n
+\\addtolength{\\textheight}{-3cm}\n
+\\setlength{\\topmargin}{1.5cm}\n
+\\addtolength{\\topmargin}{-2.54cm}\n
+\\newcommand\\NN{\\ensuremath{\\mathbb{N}}}\n
+\\newcommand\\RR{\\ensuremath{\\mathbb{R}}}\n
+\\newcommand\\ZZ{\\ensuremath{\\mathbb{Z}}}\n
+\\renewcommand\\O{\\ensuremath{\\emptyset}}\n
+\\newcommand\\QQ{\\ensuremath{\\mathbb{Q}}}\n
+\\newcommand\\CC{\\ensuremath{\\mathbb{C}}}")
+#+end_src
+
+*** Fragment header
+
+#+begin_src emacs-lisp
+(setq org-format-latex-header
+(concat apollo/latex-code/fragment-header apollo/latex-code/logic-stuff))
+#+end_src
+
+
+
+** Org-bullets
+   
+   #+begin_src emacs-lisp
+   
+   (use-package org-bullets
+    :after org
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+   #+end_src
+   
+
+** Agenda
+
+#+begin_src emacs-lisp
+(setq org-agenda-files (list "/home/john/.emacs.d/org-agenda"))
+(setq org-agenda-start-with-log-mode t)
+(setq org-log-done 'time)
+(setq org-log-into-drawer t)
+#+end_src
+
+
+** Code block completion
+   
+   #+begin_src emacs-lisp
+
+      (require 'org-tempo)
+
+      (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+
+      (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+      (add-to-list 'org-structure-template-alist '("elnt" . "src emacs-lisp :tangle no"))
+
+      (add-to-list 'org-structure-template-alist '("els" . "src emacs-lisp :session"))
+      (add-to-list 'org-structure-template-alist '("elsnt" . "src emacs-lisp :session 
+   :tangle no"))
+
+      (add-to-list 'org-structure-template-alist '("pys" . "src python :results output :session"))
+      (add-to-list 'org-structure-template-alist '("pysnt" . "src python :results output :session :tangle no"))
+
+      (add-to-list 'org-structure-template-alist '("py" . "src python :results output"))
+      (add-to-list 'org-structure-template-alist '("pynt" . "src python :results output :tangle no"))
+
+      (add-to-list 'org-structure-template-alist '("rs" . "src R :results output :session"))
+      (add-to-list 'org-structure-template-alist '("rsnt" . "src R :results output :session :tangle no"))
+
+      (add-to-list 'org-structure-template-alist '("r" . "src R :results output"))
+      (add-to-list 'org-structure-template-alist '("rnt" . "src R :results output :tangle no"))
+
+      (add-to-list 'org-structure-template-alist '("fs" . "src fsharp"))
+      (add-to-list 'org-structure-template-alist '("fsnt" . "src fsharp :tangle no"))
+
+      (add-to-list 'org-structure-template-alist '("fss" . "src fsharp :session"))
+      (add-to-list 'org-structure-template-alist '("fssnt" . "src fsharp :session :tangle no"))
+
+
+      (add-to-list 'org-structure-template-alist '("hs" . "src haskell :results output"))
+      (add-to-list 'org-structure-template-alist '("hsnt" . "src haskell :results output  :tangle no"))
+
+      (add-to-list 'org-structure-template-alist '("hss" . "src haskell :results output :session"))
+      (add-to-list 'org-structure-template-alist '("hssnt" . "src haskell :results output :session :tangle no"))
+
+      (add-to-list 'org-structure-template-alist '("jss" . "src js :results output"))
+      (add-to-list 'org-structure-template-alist '("jssnt" . "src js :results output  :tangle no"))
+
+      (add-to-list 'org-structure-template-alist '("jsss" . "src js :results output :session"))
+      (add-to-list 'org-structure-template-alist '("jsssnt" . "src js :results output :session :tangle no"))
+
+
+      (add-to-list 'org-structure-template-alist '("gm" . "src sage :session"))
+
+
+       (setq org-src-preserve-indentation nil 
+           org-edit-src-content-indentation 0)
+       (setq org-confirm-babel-evaluate nil)
+
+   #+end_src
+
+   #+RESULTS:
+
+   
+** Visual-fill-column
+   
+   #+begin_src emacs-lisp
+   
+   (defun apollo/org-mode-visual-fill ()
+    (setq visual-fill-column-width 100
+	    visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
+
+
+    (use-package visual-fill-column)
+
+   #+end_src
+
+   
+** Auto-tangle
+   
+   #+begin_src emacs-lisp
+   ;; Automatically tangle our Emacs.org config file when we save it
+    (defun apollo/org-babel-tangle-config ()
+    (when (string-equal (buffer-file-name)
+			(expand-file-name "~/.emacs.d/Emacs.org"))
+	;; dynamic scoping to the rescue
+	(let ((org-confirm-babel-evaluate nil))
+	(org-babel-tangle))))
+
+    (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'apollo/org-babel-tangle-config)))
+   #+end_src
+
+   
+** Babel
+
+   #+begin_src emacs-lisp
+   (org-babel-do-load-languages
+    'org-babel-load-languages
+    '((emacs-lisp . t)
+      (python . t)
+      (C . t)
+      (R . t)
+      (lilypond t)
+
+        ))
+
+    (push '("conf-unix" . conf-unix) org-src-lang-modes)
+
+    (setq org-src-window-setup 'current-window)
+   #+end_src
+
+   #+RESULTS:
+   : current-window
+   
+
+   
+** babel js
+#+begin_src emacs-lisp
+(require 'ob-js)
+
+(add-to-list 'org-babel-load-languages '(js . t))
+(org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
+(add-to-list 'org-babel-tangle-lang-exts '("js" . "js"))
+#+end_src
+
+
+** Org tangle with padline argument fix (funkar inte längre)
+
+#+begin_src emacs-lisp :tangle no
+(defun org-babel-tangle (&optional arg target-file lang)
+  "Write code blocks to source-specific files.
+Extract the bodies of all source code blocks from the current
+file into their own source-specific files.
+With one universal prefix argument, only tangle the block at point.
+When two universal prefix arguments, only tangle blocks for the
+tangle file of the block at point.
+Optional argument TARGET-FILE can be used to specify a default
+export file for all source blocks.  Optional argument LANG can be
+used to limit the exported source code blocks by language."
+  (interactive "P")
+  (run-hooks 'org-babel-pre-tangle-hook)
+  ;; Possibly Restrict the buffer to the current code block
+  (save-restriction
+    (save-excursion
+      (when (equal arg '(4))
+    (let ((head (org-babel-where-is-src-block-head)))
+      (if head
+          (goto-char head)
+        (user-error "Point is not in a source code block"))))
+      (let ((block-counter 0)
+        (org-babel-default-header-args
+         (if target-file
+         (org-babel-merge-params org-babel-default-header-args
+                     (list (cons :tangle target-file)))
+           org-babel-default-header-args))
+        (tangle-file
+         (when (equal arg '(16))
+           (or (cdr (assq :tangle (nth 2 (org-babel-get-src-block-info 'light))))
+           (user-error "Point is not in a source code block"))))
+        path-collector)
+    (mapc ;; map over all languages
+     (lambda (by-lang)
+       (let* ((lang (car by-lang))
+          (specs (cdr by-lang))
+          (ext (or (cdr (assoc lang org-babel-tangle-lang-exts)) lang))
+          (lang-f (intern
+               (concat
+                (or (and (cdr (assoc lang org-src-lang-modes))
+                     (symbol-name
+                      (cdr (assoc lang org-src-lang-modes))))
+                lang)
+                "-mode")))
+          she-banged)
+         (mapc
+          (lambda (spec)
+        (let ((get-spec (lambda (name) (cdr (assoc name (nth 4 spec))))))
+          (let* ((tangle (funcall get-spec :tangle))
+             (she-bang (let ((sheb (funcall get-spec :shebang)))
+                                     (when (> (length sheb) 0) sheb)))
+             (tangle-mode (funcall get-spec :tangle-mode))
+             (base-name (cond
+                     ((string= "yes" tangle)
+                      (file-name-sans-extension
+                       (nth 1 spec)))
+                     ((string= "no" tangle) nil)
+                     ((> (length tangle) 0) tangle)))
+             (file-name (when base-name
+                      ;; decide if we want to add ext to base-name
+                      (if (and ext (string= "yes" tangle))
+                      (concat base-name "." ext) base-name))))
+            (when file-name
+              ;; Possibly create the parent directories for file.
+              (let ((m (funcall get-spec :mkdirp))
+                (fnd (file-name-directory file-name)))
+            (and m fnd (not (string= m "no"))
+                 (make-directory fnd 'parents)))
+              ;; delete any old versions of file
+              (and (file-exists-p file-name)
+               (not (member file-name (mapcar #'car path-collector)))
+               (delete-file file-name))
+              ;; drop source-block to file
+              (with-temp-buffer
+            (when (fboundp lang-f) (ignore-errors (funcall lang-f)))
+            (when (and she-bang (not (member file-name she-banged)))
+              (insert (concat she-bang "\n"))
+              (setq she-banged (cons file-name she-banged)))
+            (org-babel-spec-to-string spec)
+            ;; We avoid append-to-file as it does not work with tramp.
+            (let ((content (buffer-string)))
+              (with-temp-buffer
+                (when (file-exists-p file-name)
+                  (insert-file-contents file-name))
+                (goto-char (point-max))
+        ;; Handle :padlines unless first line in file
+        (let ((padlines (format "%s" (cdr (assq :padline (nth 4 spec))))))
+        (cond
+         ((and (string= "nil" padlines) (not (= (point) (point-min))))
+          (insert "\n"))
+         ((string= "no" padlines)
+          nil)
+         ((numberp (string-to-number padlines))
+          (dotimes (i (string-to-number padlines)) (insert "\n")))
+         (t
+          (insert "\n"))))
+                (insert content)
+                (write-region nil nil file-name))))
+              ;; if files contain she-bangs, then make the executable
+              (when she-bang
+            (unless tangle-mode (setq tangle-mode #o755)))
+              ;; update counter
+              (setq block-counter (+ 1 block-counter))
+              (unless (assoc file-name path-collector)
+            (push (cons file-name tangle-mode) path-collector))))))
+          specs)))
+     (if (equal arg '(4))
+         (org-babel-tangle-single-block 1 t)
+       (org-babel-tangle-collect-blocks lang tangle-file)))
+    (message "Tangled %d code block%s from %s" block-counter
+         (if (= block-counter 1) "" "s")
+         (file-name-nondirectory
+          (buffer-file-name
+           (or (buffer-base-buffer) (current-buffer)))))
+    ;; run `org-babel-post-tangle-hook' in all tangled files
+    (when org-babel-post-tangle-hook
+      (mapc
+       (lambda (file)
+         (org-babel-with-temp-filebuffer file
+           (run-hooks 'org-babel-post-tangle-hook)))
+       (mapcar #'car path-collector)))
+    ;; set permissions on tangled files
+    (mapc (lambda (pair)
+        (when (cdr pair) (set-file-modes (car pair) (cdr pair))))
+          path-collector)
+    (mapcar #'car path-collector)))))
+#+end_src
+
+
+
+** Timer
+#+begin_src emacs-lisp
+(setq org-clock-sound "~/Music/bell.wav")
+#+end_src
+
+
+** Todo headings
+#+begin_src emacs-lisp
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "|" "DONE(d)")
+     	  (sequence "QUESTION(q)" "|" "ANSWERED(a)")
+   	  (sequence "IMPORTANT(i)" "|" "DONE(d)")
+        (sequence "|" "CANCELED(c)")
+        (sequence "|" "HOLD(h)")))
+
+(setq org-todo-keyword-faces 'nil)
+(setq org-todo-keyword-faces
+    (quote (("TODO" :foreground "orange" :weight bold)
+            ("IMPORTANT" :foreground "red" :weight bold)
+            ("QUESTION" :foreground "blue" :weight bold)
+	    )))
+#+end_src
+
+
+
+** Org pomodoro
+*** Install and config of package
+#+begin_src emacs-lisp
+(use-package org-pomodoro  
+  :ensure t  
+  :commands (org-pomodoro)  
+  :config  
+  (setq  
+   org-pomodoro-length 25
+   org-pomodoro-short-break-length 5
+   ))  
+#+end_src
+*** Point system
+#+begin_src emacs-lisp
+(defun apollo/org-pomodoro-points (seconds)
+(let ((minutes (/ (- (* 60 org-pomodoro-length) seconds) 60)))
+(cond
+
+ ((>= minutes 20) (format "%d minutes - Earned: 75p | 25min = 100p" minutes))
+ ((>= minutes 15) (format "%d minutes - Earned: 60p | 20min = 75p" minutes))
+ ((>= minutes 10) (format "%d minutes - Earned: 40p | 15min = 60p" minutes))
+ ((>= minutes 5) (format "%d minutes - Earned: 20p | 10min = 40p" minutes))
+ ((>= minutes 2) (format "%d minutes - Earned: 10p | 5min = 20p" minutes))
+ ((>= minutes 1) (format "%d minutes - Earned: 2p | 2min = 10p" minutes))
+ ((>= minutes 0) (format "%d minutes - Earned: 0p | 1min = 2p" minutes)))))
+#+end_src
+
+#+RESULTS:
+: apollo/org-pomodoro-points
+
+*** Polybar display function
+Jag definerar org-pomodoro-active-p till nil så att apollo funktionen funkar. Den riktiga org-pomodoro-active-p defineras då org pomodor körs.
+#+begin_src emacs-lisp
+(defun org-pomodoro-active-p ())
+(defun apollo/org-pomodoro-time ()
+  "Return the remaining pomodoro time"
+  (if (org-pomodoro-active-p)
+      (cl-case org-pomodoro-state
+        (:pomodoro
+           (apollo/org-pomodoro-points (org-pomodoro-remaining-seconds)))
+        (:short-break
+         (format "Short break time: %d minutes" (/ (org-pomodoro-remaining-seconds) 60)))
+        (:long-break
+         (format "Long break time: %d minutes" (/ (org-pomodoro-remaining-seconds) 60)))
+        (:overtime
+         (format "Overtime! %d minutes" (/ (org-pomodoro-remaining-seconds) 60))))
+    "No active pomo"))
+#+end_src
+
+*** Org links keyword
+
+#+begin_src emacs-lisp
+(require 'org)
+(require 'org-element)
+
+(defcustom pomo-protocol "pomo"
+  "Protocol identifier for pomodoro links."
+  :group 'pomo
+  :type 'string)
+
+
+; setups the variables
+(defun pomo-follow (time)
+  "Start pomodoro timer with time. Or simply setup pomodoro vars if time is negative"
+  (setq apollo/pomo-points/killed-p '())
+  (let ((time (string-to-number time)))
+(if (< time 0)
+    ((lambda () (org-pomodoro) (org-pomodoro)))
+  ((lambda ()
+    ;; In order to not ask to reset timer
+     (org-pomodoro-short-break-finished)
+     (org-pomodoro-long-break-finished)
+
+     (setq org-pomodoro-length time)
+     (org-pomodoro))))))
+
+(org-link-set-parameters pomo-protocol :follow #'pomo-follow)
+#+end_src
+
+*** Update pomo points
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/update-points ()
+  (interactive)
+  (save-window-excursion
+    (find-file "/home/john/.emacs.d/org-agenda/agenda.org")
+    (setq apollo/pomo-points/points
+	  (string-to-number
+	   (car (org-property-values "pomodoro-points"))))))
+
+(apollo/pomo-points/update-points)
+#+end_src
+
+*** Get pomo points
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/get-points ()
+  (interactive)
+  apollo/pomo-points/points)
+#+end_src
+
+
+*** write-points
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/write-points (points)
+  (interactive)
+  (save-window-excursion
+    (find-file "/home/john/.emacs.d/org-agenda/agenda.org")
+    (widen)
+    (goto-char (org-find-exact-headline-in-buffer "Pomodoro points"))
+    (org-set-property "pomodoro-points" (number-to-string points))
+    (save-buffer)))
+#+end_src
+
+#+RESULTS:
+
+*** Reset pomo points
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/reset-points () (interactive)
+       (apollo/pomo-points/write-points 0)
+       (apollo/pomo-points/update-points))
+#+end_src
+
+*** reset-subcent-points
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/reset-subcent-points () (interactive)
+       (apollo/pomo-points/write-points
+	(-
+	 (apollo/pomo-points/get-points)
+	 (% (apollo/pomo-points/get-points) 100)))
+       (apollo/pomo-points/update-points))
+#+end_src
+
+#+RESULTS:
+: apollo/test/reset-subcent-points
+
+*** Add points
+
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/add-points (new-points)
+  (interactive)
+  (let ((previous-total (apollo/pomo-points/get-points)))
+    (apollo/pomo-points/write-points (+ previous-total new-points))))
+#+end_src
+
+*** Add points manually
+
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/add-points-manually ()
+  (interactive)
+  (apollo/pomo-points/add-points (string-to-number (ivy-read "Add points: " '())))
+  (apollo/pomo-points/update-points))
+#+end_src
+
+
+*** add finished pomodoro points
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/time-to-points (seconds-left pomo-length)
+  (let ((minutes (/ (- (* 60 pomo-length) seconds-left) 60)))
+    (cond ((>= minutes 25) 100)
+	  ((>= minutes 20) 75)
+	  ((>= minutes 15) 60)
+	  ((>= minutes 10) 40)
+	  ((>= minutes 5) 20)
+	  ((>= minutes 2) 10)
+	  ((>= minutes 1) 2)
+	  ((>= minutes 0) 0))))
+#+end_src
+
+
+*** Killed variable
+#+begin_src emacs-lisp
+(setq apollo/pomo-points/killed-p '())
+#+end_src
+
+
+*** Pomodoro killed add points
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/kill ()
+  (interactive)
+  (setq apollo/pomo-points/killed-p t)
+  (apollo/pomo-points/add-points
+   (apollo/pomo-points/time-to-points (org-pomodoro-remaining-seconds) org-pomodoro-length))
+  (apollo/pomo-points/update-points)
+  (org-pomodoro-finished))
+#+end_src
+
+
+*** Pomodoro completed add points
+
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/completed ()
+  (interactive)
+  (if (not apollo/pomo-points/killed-p)
+      (progn
+	(apollo/pomo-points/add-points (apollo/pomo-points/time-to-points 0 org-pomodoro-length))
+	(apollo/pomo-points/update-points))))
+(add-hook 'org-pomodoro-finished-hook 'apollo/pomo-points/completed)
+#+end_src
+
+*** Activate 25 min pomodoro
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/25-pomo ()
+  (interactive)
+  (save-window-excursion
+    (org-roam-dailies-goto-today)
+    (widen)
+    (goto-char
+     (org-find-exact-headline-in-buffer "Pomos"))
+    (pomo-follow "25")))
+#+end_src
+
+#+RESULTS:
+: apollo/pomo-points/25-pomo
+
+** Org capture templates
+#+begin_src emacs-lisp
+(setq org-capture-templates
+      '(("i" "Important" entry (file+headline "/home/john/.emacs.d/org-agenda/agenda.org" "Important stuff")
+         "* IMPORTANT %?\n  %i\n")
+	("u" "Useful devel sak" entry (file+headline "/home/john/.emacs.d/org-agenda/agenda.org" "Useful Devel stuff")
+         "* TODO %?\n  %i\n")
+	("ö" "Övrig devel stuff" entry (file+headline "/home/john/.emacs.d/org-agenda/agenda.org" "Övrig devel stuff")
+         "* TODO %?\n  %i\n")
+	("t" "Okategoriserade todos" entry (file+headline "/home/john/.emacs.d/org-agenda/agenda.org" "Övrigt (okategoriserat)")
+         "* TODO %?\n  %i\n")
+	("o" "Ofiltrerade idéer" entry (file+headline "/home/john/.emacs.d/org-agenda/agenda.org" "Ofiltrerade idéer")
+         "* %?\n  %i\n")
+	("h" "Händelser" entry (file+headline "/home/john/.emacs.d/org-agenda/agenda.org" "Händelser")
+         "* %?\n  %i\n")
+	("n" "Note" entry (file+headline "/home/john/.emacs.d/org-agenda/agenda.org" "Notes")
+         "* %?\n  %i\n")))
+#+end_src
+
+
+** Org links
+*** Vars
+
+#+begin_src emacs-lisp
+(setq org-link-frame-setup '((vm . vm-visit-folder-other-frame)
+ (vm-imap . vm-visit-imap-folder-other-frame)
+ (gnus . org-gnus-no-new-news)
+ (file . find-file)
+ (wl . wl-other-frame)))
+#+end_src
+
+#+RESULTS:
+: ((vm . vm-visit-folder-other-frame) (vm-imap . vm-visit-imap-folder-other-frame) (gnus . org-gnus-no-new-news) (file . find-file) (wl . wl-other-frame))
+
+*** Apollo open link in this window
+
+#+begin_src emacs-lisp
+(defun apollo/open-link-in-this-window (&optional win-num)
+  (interactive "P")
+  (let ((win-num (if win-num win-num (winum-get-number))))
+    (link-hint-open-link)
+    (let ((link-buffer-name (buffer-name))
+	  (page-if-pdf (ignore-errors (pdf-view-current-page))))
+      (previous-buffer)
+      (winum-select-window-by-number win-num)
+      (switch-to-buffer link-buffer-name)
+      (if page-if-pdf (pdf-view-goto-page page-if-pdf))
+      )))
+#+end_src
+
+#+RESULTS:
+: apollo/open-link-in-this-window
+
+
+** Safe elisp org links
+
+#+begin_src emacs-lisp
+(defcustom elisp-safe-url-protocol "elisp-safe"
+  "Protocol identifier for elisp-safe links."
+  :group 'elisp-safe
+  :type 'string)
+
+(defun elisp-safe-follow (fun)
+  "Open elisp-safe url."
+(funcall (intern fun)))
+
+(org-link-set-parameters elisp-safe-url-protocol :follow #'elisp-safe-follow)
+#+end_src
+
+** Literate calc mode
+#+begin_src emacs-lisp
+(use-package literate-calc-mode
+  :ensure t)
+#+end_src
+
+#+RESULTS:
+
+* Org-ref
+#+begin_src emacs-lisp
+(use-package org-ref
+    :quelpa (org-ref :fetcher github :repo "jkitchin/org-ref")
+    :after org)
+#+end_src
+
+
+* centered-cursor-mode
+
+#+begin_src emacs-lisp
+
+(use-package centered-cursor-mode
+ :config
+  (apollo/leader-keys "C" '(centered-cursor-mode :whick-key "centered cursor mode")))
+
+#+end_src
+
+  
+  
+* Smooth-scrolling
+  
+  #+begin_src emacs-lisp
+  
+  (use-package smooth-scrolling
+   :config 
+   (smooth-scrolling-mode)
+   (setq smooth-scroll-margin 4)
+   (setq scroll-margin 2))
+   
+  #+end_src
+
+  
+ 
+* lsp
+  
+** lsp-mode
+
+   #+begin_src emacs-lisp
+  
+   (use-package lsp-mode
+     :commands (lsp lsp-deferred)
+     ;;:hook (lsp-mode . efs/lsp-mode-setup)
+     :init
+     (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+     :config
+     (lsp-enable-which-key-integration t))
+     
+   #+end_src
+
+  
+** lsp-ui
+
+   #+begin_src emacs-lisp
+   
+   (use-package lsp-ui
+     :hook (lsp-mode . lsp-ui-mode)
+     :custom
+     (lsp-ui-doc-position 'bottom))
+     
+   #+end_src
+   
+   
+* Dap-mode
+
+  #+begin_src emacs-lisp
+  (use-package dap-mode
+  ;; Uncomment the config below if you want all UI panes to be hidden by default!
+  ;; :custom
+  ;; (lsp-enable-dap-auto-configure nil)
+  ;; :config
+  ;; (dap-ui-mode 1)
+
+  :config
+  ;; Set up Node debugging
+  (require 'dap-node)
+  (dap-node-setup) ;; Automatically installs Node debug adapter if needed
+
+  ;; Bind `C-c l d` to `dap-hydra` for easy access
+  (general-define-key
+    :keymaps 'lsp-mode-map
+    :prefix lsp-keymap-prefix
+    "d" '(dap-hydra t :wk "debugger")))
+  #+end_src
+
+
+* Python
+  
+** Python mode
+
+   #+begin_src emacs-lisp
+   (use-package python-mode
+    :ensure t
+    :hook 
+;   (apollo/local-leader-keys 
+
+;        "," '(py-shell-send-file :which-key "send file"))
+
+;   (
+;   ;(python-mode . lsp-deferred)
+;   (python-mode . 
+;        (lambda () (interactive)
+;        (apollo/local-leader-keys 
+;
+;        "," '(py-shell-send-file :which-key "send file"))
+;	)))
+
+   ;; :custom
+   ;; ;; NOTE: Set th
+   ;;ese if Python 3 is called "python3" on your system!
+   ;; (python-shell-interpreter "python3")
+   ;; (dap-python-executable "python3")
+   (dap-python-debugger 'debugpy)
+   :config
+   (require 'dap-python))
+   #+end_src
+
+   
+** Python lsp
+   #+begin_src emacs-lisp
+
+   ;; (use-package lsp-python-ms
+   ;;  :ensure t
+   ;;  :init (setq lsp-python-ms-auto-install-server t)
+   ;;  :hook (python-mode . (lambda ()
+   ;;    		      (require 'lsp-python-ms)
+   ;;    		      (lsp))))
+   ;;  (require 'lsp-python-ms)
+   ;;  (setq lsp-python-ms-auto-install-server t)
+   ;;  (add-hook 'python-mode-hook #'lsp-deferred) ; or lsp-deferred	    
+
+   #+end_src
+
+   
+   
+* Company
+#+begin_src emacs-lisp
+(use-package company)
+(global-company-mode 't)
+#+end_src
+
+  
+* Elpy 
+
+  #+begin_src emacs-lisp
+  
+  (use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
+ 
+  #+end_src
+  
+  
+
+* Dired
+  #+begin_src emacs-lisp
+  
+  (setq dired-dwim-target t)
+  
+  #+end_src
+
+  
+* Transparancy
+
+  #+begin_src emacs-lisp
+   ;;(set-frame-parameter (selected-frame) 'alpha '(85 . 100)) 
+  #+end_src
+  
+  
+* Pdf
+
+  #+begin_src emacs-lisp
+
+  ;; (use-package pdf-tools
+  ;;  :pin manual
+  ;;  :config
+  ;;  (pdf-tools-install)
+  ;;  (setq-default pdf-view-display-size 'fit-width)
+  ;;  (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
+  ;;  :custom
+  ;;  (pdf-annot-activate-created-annotations t "automatically annotate highlights"))
+
+  ;;  (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+  ;;     TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
+  ;;     TeX-source-correlate-start-server t)
+
+  ;;  (add-hook 'TeX-after-compilation-finished-functions
+  ;;         #'TeX-revert-document-buffer)
+
+  ;;  (add-hook 'pdf-view-mode-hook (lambda() (linum-mode -1)))
+
+  #+end_src
+
+  
+  
+* Lispy
+
+  #+begin_src emacs-lisp
+
+  (use-package lispy
+    :config
+    (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1))))
+    ;(emacs-lisp-mode-hook . (lambda () (lispy-mode 1))))
+
+  (use-package lispyville
+      :init
+      (general-add-hook '(emacs-lisp-mode-hook lisp-mode-hook) 'lispyville-mode)
+      :config
+      (lispyville-set-key-theme '(operators c-w additional)))
+
+  #+end_src
+
+  
+* Yasnippet
+
+  #+begin_src emacs-lisp
+  (use-package yasnippet                  ; Snippets
+    :ensure t
+    :config
+    (setq yas/triggers-in-field t); Enable nested triggering of snippets
+    (add-to-list 'warning-suppress-types '(yasnippet backquote-change))
+    (yas-reload-all)
+    (yas-global-mode))
+
+(setq-default yas-snippet-dirs '("~/.emacs.d/snippets"))
+;  (use-package yasnippet-snippets         ; Collection of snippets
+;    :ensure t)
+  #+end_src
+
+  
+* Avy
+
+  #+begin_src emacs-lisp
+  (use-package avy)
+  #+end_src
+
+
+* Evil surround
+
+  #+begin_src emacs-lisp
+
+  (use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
+
+  #+end_src
+  
+
+* EMMS
+#+begin_src emacs-lisp
+;(require 'emms-setup)
+;(emms-standard)
+;(emms-default-players)
+#+end_src
+
+
+* Soundcloud
+#+begin_src emacs-lisp
+(use-package soundklaus
+  :ensure t
+  :commands
+  (soundklaus-activities
+   soundklaus-connect
+   soundklaus-my-favorites
+   soundklaus-my-playlists
+   soundklaus-my-tracks
+   soundklaus-playlists
+   soundklaus-tracks))
+#+end_src
+
+
+* Tex mode
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.tex\\'" . org-mode))
+#+end_src
+
+
+* Latex auto activating snippet (laas mode)
+
+#+begin_src emacs-lisp
+;(add-to-list 'load-path "/home/emacs_repos/")
+
+(use-package laas
+  :quelpa (laas :fetcher github :repo "tecosaur/LaTeX-auto-activating-snippets")
+  :config ; do whatever here
+  (defun laas-mathp () (texmathp))
+  (aas-set-snippets 'laas-mode
+                    ;; set condition!
+                    :cond #'texmathp ; expand only while in math
+                    "supp" "\\supp"
+                    "On" "O(n)"
+                    "O1" "O(1)"
+                    "Olog" "O(\\log n)"
+                    "Olon" "O(n \\log n)"
+                    "AA" "\\forall "
+                    "EE" "\\exists "
+                    "inn" "\\in "
+                    "<->" "\\leftrightarrow "
+                    "%%" "\\% "
+                    ;; bind to functions!
+                    ;;"frac" (lambda () (interactive)
+                    ;;        (yas-expand-snippet "\\frac{$1}{$2}$0"))
+                    "td" (lambda () (interactive)
+                            (yas-expand-snippet " ^{$1} $0" ))
+                    "__" (lambda () (interactive)
+                            (yas-expand-snippet " _{$1} $0"))
+                    "Span" (lambda () (interactive)
+                             (yas-expand-snippet "\\Span($1)$0"))
+                    "oo" "\\\circ"
+		      "sr" "^2 "
+		      "+" (lambda () (interactive) (if (string-equal
+							" "
+							(buffer-substring (- (point) 1) (point)))
+						       (insert "+ ")
+						     (insert " + ")))
+		      "-" (lambda () (interactive) (if (string-equal
+							" "
+							(buffer-substring (- (point) 1) (point)))
+						       (insert "- ")
+						     (insert " - ")))
+		      "=" (lambda () (interactive) (if (string-equal
+							" "
+							(buffer-substring (- (point) 1) (point)))
+						       (insert "= ")
+						     (insert " = ")))
+		      ";=" (lambda () (interactive) (if (string-equal
+							" "
+							(buffer-substring (- (point) 1) (point)))
+						       (insert "\\approx ")
+						     (insert " \\approx ")))
+		      ";;=" (lambda () (interactive) (if (string-equal
+							" "
+							(buffer-substring (- (point) 1) (point)))
+						       (insert "\\simeq  ")
+						     (insert " \\simeq  ")))
+		      "|" (lambda () (interactive) (if (string-equal
+							" "
+							(buffer-substring (- (point) 1) (point)))
+						       (insert "| ")
+						     (insert " | ")))
+		    ))
+#+end_src
+
+
+* Latex live fragment preview
+It requires mathjax-node-cli executable file named "tex2svg".
+#+begin_src emacs-lisp :tangle no
+(use-package org-latex-impatient
+  :defer t
+  :hook (org-mode . org-latex-impatient-mode)
+  :config
+  (setq org-latex-impatient-scale 2)
+  (setq org-latex-impatient-delay 0.01)
+  :init
+  (setq org-latex-impatient-tex2svg-bin
+        ;; location of tex2svg executable
+        "/home/john/code/node/node_modules/mathjax-node-cli/bin/tex2svg"))
+#+end_src
+
+
+** webkit katex
+
+#+begin_src emacs-lisp
+;(add-to-list 'load-path "/home/john/.emacs.d/local-packages/")
+;(setq webkit-katex-render--background-color (doom-color 'bg))
+;(load "webkit-katex-render")
+;(add-hook 'org-mode '(lambda () (webkit-katex-render-mode 1)))
+#+end_src
+
+
+* Katex renderer
+Nån bug med eaf xwidget stuff för linux (so it seems, då folk beskriver "flickering,
+dock så ser jag bara en liten ruta med ingeting som inte "flickarar")
+#+begin_src emacs-lisp :tangle no
+(use-package webkit-katex-render
+  :quelpa (webkit-katex-render :fetcher github :repo "fuxialexander/emacs-webkit-katex-render")
+  ;:init
+  ;; if you use doom-emacs
+  ;(setq webkit-katex-render--background-color (doom-color 'bg))
+  ;; if you want to set a different path to the html client
+  ;(setq webkit-katex-render--client-path "/home/john/code/node/node_modules/katex/katex.js")
+  )
+#+end_src
+
+
+
+* Fsharp
+
+** Package
+
+#+begin_src emacs-lisp
+
+(use-package fsharp-mode
+  :defer t
+  :ensure t
+
+  :config
+  (setq inferior-fsharp-program "dotnet fsi --readline-")
+
+  :hook
+  (fsharp-mode . eglot))
+
+
+(use-package eglot-fsharp)
+(require 'eglot-fsharp)
+#+end_src
+
+
+** Ob-fsharp
+
+#+begin_src emacs-lisp
+(use-package ob-fsharp)
+#+end_src
+
+#+RESULTS:
+
+
+* Haskell
+
+** Package
+#+begin_src emacs-lisp
+(use-package haskell-mode)
+#+end_src
+
+
+** Org babel
+
+#+begin_src emacs-lisp
+(require 'ob-haskell)
+#+end_src
+
+
+* Lean
+#+begin_src emacs-lisp
+;(setq load-path (cons "/usr/john/.elan/lean" load-path))
+(setq lean-rootdir "/home/john/.elan" )
+
+(setq lean4-mode-required-packages '(dash f flycheck lsp-mode magit-section s))
+(use-package lean-mode
+  :config
+  (apollo/local-leader-keys lean-mode-map
+    "," '(lean-std-exe :which-key "Compile")))
+(use-package company-lean)
+(use-package helm-lean)
+#+end_src
+
+#+RESULTS:
+
+
+
+* R
+#+begin_src emacs-lisp
+(use-package ess
+  :ensure t
+
+  :init (require 'ess-site)
+)
+#+end_src
+
+#+RESULTS:
+
+
+* Poly-R
+Polymode är för att har flera major modes i en buffer. Så jag gissar poly-r
+gör typ det med ess och markdown.
+#+begin_src emacs-lisp
+(use-package poly-R
+  :hook (markdown-mode . laas-mode)
+  :ensure t)
+#+end_src
+
+
+
+* Markdown mode
+#+begin_src emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode)
+  :init (setq markdown-command "multimarkdown")
+  :config
+  (apollo/local-leader-keys markdown-mode-map
+    "l" '(polymode-export :which-key "Export to pdf"))
+
+  (general-define-key
+   :states '(insert normal)
+   :keymaps '(markdown-mode-map ess-r-mode-map)
+   "M-k"
+   '(markdown-move-up
+     :which-key "Move thing up a heading ")
+   "M-j"
+   '(markdown-move-down
+     :which-key "Move things down a heading")
+   "M-l"
+   '(markdown-demote
+     :which-key "Demote item")
+   "M-h"
+   '(markdown-promote
+     :which-key "Promote item")
+   "C-k"
+   '(markdown-outline-previous
+     :which-key "Goto previous visible heading.")
+   "C-j"
+   '(markdown-outline-next
+     :which-key "Goto next visible heading.")
+   "<C-return>"
+   '(markdown-insert-header
+     :which-key "Create header")
+   ", TAB"
+   '(apollo/switch-from-rmd-to-org
+     :which-key "Switch to org buffer")
+   ", <backtab>"
+   '(apollo/split-to-or-from-org-and-rmd
+     :which-key "Toggle org rmd split")
+   "K"
+   '(apollo/org-notes/scroll-backward
+     :which-key "Org notes scroll backward")
+   "J"
+   '(apollo/org-notes/scroll-forward
+     :which-key "Org notes scroll forward")
+   "U"
+   '(apollo/org-notes/page-backward
+     :which-key "Org notes page backward")
+   "D"
+   '(apollo/org-notes/page-forward
+           :which-key "Org notes page forward")))
+#+end_src
+
+
+
+* PDF tools
+Jag behöver typ installa emacs-pdf-tools-git från aur.
+#+begin_src emacs-lisp
+(use-package pdf-tools
+   :defer t
+   :config
+       (pdf-tools-install)
+       (setq-default pdf-view-display-size 'fit-page)
+       (apollo/local-leader-keys pdf-view-mode-map
+                  "s" '(apollo/set-page-offset :which-key "Set page offset")
+                  "g" '(apollo/pdf-goto-page :which-key "Goto page (accounting offset)")
+                  )
+   :bind (:map pdf-view-mode-map
+         ("\\" . hydra-pdftools/body)
+         ("<s-spc>" .  pdf-view-scroll-down-or-next-page)
+         ("g"  . pdf-view-first-page)
+         ("G"  . pdf-view-last-page)
+         ("l"  . image-forward-hscroll)
+         ("h"  . image-backward-hscroll)
+         ("j"  . pdf-view-next-page)
+         ("k"  . pdf-view-previous-page)
+         ("e"  . pdf-view-goto-page)
+         ("u"  . pdf-view-revert-buffer)
+         ("al" . pdf-annot-list-annotations)
+         ("ad" . pdf-annot-delete)
+         ("aa" . pdf-annot-attachment-dired)
+         ("am" . pdf-annot-add-markup-annotation)
+         ("at" . pdf-annot-add-text-annotation)
+         ("y"  . pdf-view-kill-ring-save)
+         ("i"  . pdf-misc-display-metadata)
+         ("s"  . pdf-occur)
+         ("b"  . pdf-view-set-slice-from-bounding-box)
+         ("r"  . pdf-view-reset-slice)))
+(pdf-tools-install)
+#+end_src
+
+
+
+* Pdf view mode
+
+** Alltid midnight colour scheme per default
+#+begin_src emacs-lisp
+(add-hook 'pdf-view-mode-hook (lambda () (pdf-view-midnight-minor-mode 1)))
+#+end_src
+
+
+* Org pdf tools
+#+begin_src emacs-lisp
+(use-package org-pdftools
+  :hook (org-mode . org-pdftools-setup-link))
+#+end_src
+
+
+
+* Elm
+#+begin_src emacs-lisp
+(use-package elm-mode)
+#+end_src
+
+#+RESULTS:
+
+
+** Elm org babel
+#+begin_src emacs-lisp
+(use-package ob-elm)
+(org-babel-do-load-languages
+   'org-babel-load-languages
+   '((elm . t)))
+#+end_src
+
+#+RESULTS:
+
+* Org-ref
+#+begin_src emacs-lisp
+(setq reftex-default-bibliography '("/home/john/texstuff/ref.bib"))
+(setq org-ref-default-bibliography '("/home/john/texstuff/ref.bib"))
+#+end_src
+
+#+RESULTS:
+| /home/john/texstuff/ref.bib |
+
+
+
+* ox-hugo
+#+begin_src emacs-lisp
+(use-package ox-hugo
+  :ensure t            ;Auto-install the package from Melpa (optional)
+  :after ox)
+#+end_src
+
+#+RESULTS:
+
+
+* Org roam
+
+#+begin_src emacs-lisp
+(use-package org-roam
+  :ensure t
+  :init
+  (setq org-roam-v2-ack t)
+  :custom
+  (org-roam-directory (file-truename "/home/john/.emacs.d/org-roam/"))
+  (org-roam-complete-everywhere t)
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today)
+	 :map org-mode-map
+         ("C-M-i" . completion-at-point)
+	 )
+  :bind-keymap
+  ("C-c n d" . org-roam-dailies-map)
+  :config
+  (org-roam-db-autosync-mode)
+  ;; If using org-roam-protocol
+  (require 'org-roam-protocol))
+#+end_src
+
+#+RESULTS:
+: org-roam-dailies-capture-today
+
+
+* Org noter
+#+begin_src emacs-lisp
+(use-package org-noter)
+#+end_src
+
+#+RESULTS:
+
+
+* Link hint
+#+begin_src emacs-lisp
+(use-package link-hint
+  :ensure t
+ )
+#+end_src
+
+
+* Winner mode
+#+begin_src emacs-lisp
+(winner-mode t)
+#+end_src
+
+#+RESULTS:
+: t
+
+
+
+* Eww
+#+begin_src emacs-lisp
+(add-hook 'eww-after-render-hook (lambda () (run-hooks 'text-mode-hook)))
+#+end_src
+
+#+RESULTS:
+| lambda | nil | (run-hooks 'text-mode-hook) |
+
+
+
+* Winum
+#+begin_src emacs-lisp
+(use-package winum)
+(winum-mode)
+#+end_src
+
+#+RESULTS:
+: t
+
+
+
+* Window stuff
+
+** Apollo study window layout
+#+begin_src emacs-lisp
+(defun apollo/study-window-layout ()
+  (interactive)
+  (evil-window-vsplit)
+  (evil-window-right 1)
+  (evil-window-split)
+  (evil-window-increase-height 5)
+  (evil-window-decrease-width 10))
+#+end_src
+
+#+RESULTS:
+: apollo/study-window-layout
+
+** Apollo opened layouts
+#+begin_src emacs-lisp
+(setq apollo/opened-layouts '())
+#+end_src
+
+#+RESULTS:
+
+** Apollo custom counsel bookmark
+#+begin_src emacs-lisp
+(defun apollo/custom-counsel-bookmark ()
+  "Forward to `bookmark-jump' or `bookmark-set' if bookmark doesn't exist."
+  (interactive)
+  (require 'bookmark)
+  (ivy-read "Create or jump to bookmark: "
+            (bookmark-all-names)
+            :history 'bookmark-history
+            :action (lambda (x)
+                      (cond
+		            ((member x (mapcar (lambda (y) (car y)) apollo/opened-layouts))
+                             (set-window-configuration (cdr (assoc x apollo/opened-layouts))))
+                            ((and counsel-bookmark-avoid-dired
+                                  (member x (bookmark-all-names))
+                                  (file-directory-p (bookmark-location x)))
+                            (with-ivy-window
+                               (let ((default-directory (bookmark-location x)))
+                                 (counsel-find-file))))
+                            ((member x (bookmark-all-names))
+                             (with-ivy-window
+                               (bookmark-jump x)))
+			    (t
+                             (bookmark-set x))))
+            :caller 'counsel-bookmark))
+#+end_src
+
+#+RESULTS:
+: apollo/custom-counsel-bookmark
+
+** Apollo setup layout
+#+begin_src emacs-lisp
+(defun apollo/setup-layout () (interactive)
+       (apollo/layout-fix-pdf)
+       (goto-char (string-to-number (car (org-property-values "base-point"))))
+       (apollo/org-notes/narrow-to-id)
+       (remove-if (lambda (x) (equal burly-opened-bookmark-name (car x))) apollo/opened-layouts)
+       (push (cons burly-opened-bookmark-name  (current-window-configuration)) apollo/opened-layouts)
+       )
+#+end_src
+
+#+RESULTS:
+: apollo/setup-layout
+
+Spc l s
+
+* SSH
+#+begin_src emacs-lisp
+(use-package ssh)
+(require 'ssh)
+(add-hook 'ssh-mode-hook
+          (lambda ()
+            (setq ssh-directory-tracking-mode t)
+            (shell-dirtrack-mode t)
+            (setq dirtrackp nil)))
+#+end_src
+
+
+* Tramp mode
+#+begin_src emacs-lisp
+ (setq tramp-default-method "ssh")
+#+end_src
+
+
+* ERC (IRC)
+#+begin_src emacs-lisp
+(setq erc-server "irc.libera.chat"
+      erc-nick "Fyradur"
+      erc-track-shorten-start 8
+      erc-autojoin-channels-alist '(("irc.libera.chat" "#systemcrafters" "#emacs"))
+      erc-kill-buffer-on-part t
+      erc-auto-query 'bury)
+#+end_src
+
+
+* Devdocs
+#+begin_src emacs-lisp
+(use-package devdocs-browser)
+#+end_src
+
+#+RESULTS:
+
+
+* Howdoyou (stack exchange search)
+#+begin_src emacs-lisp
+(use-package howdoyou)
+#+end_src
+
+#+RESULTS:
+
+
+* Burly (window config bookmarks)
+
+** Use-package
+#+begin_src emacs-lisp
+(use-package burly
+  :quelpa (burly :fetcher github :repo "alphapapa/burly.el"))
+#+end_src
+
+#+RESULTS:
+
+** Burly org links
+
+#+begin_src emacs-lisp
+(require 'org)
+(require 'org-element)
+
+(defcustom burly-url-protocol "burly"
+  "Protocol identifier for burly links."
+  :group 'burly
+  :type 'string)
+
+(defun burly-follow (url)
+  "Open burly url."
+   (burly-open-url url))
+
+(org-link-set-parameters burly-url-protocol :follow #'burly-follow)
+#+end_src
+
+
+* Inkscape watcher
+#+begin_src emacs-lisp
+(use-package ink
+    :quelpa (ink :fetcher github :repo "foxfriday/ink"))
+#+end_src
+
+#+RESULTS:
+
+
+* Evil easy motion
+#+begin_src emacs-lisp
+(use-package evil-easymotion)
+#+end_src
+
+#+RESULTS:
+
+
+* Evil textobj anyblock
+
+#+begin_src emacs-lisp
+(use-package evil-textobj-anyblock)
+(define-key evil-inner-text-objects-map "b" 'evil-textobj-anyblock-inner-block)
+(define-key evil-outer-text-objects-map "b" 'evil-textobj-anyblock-a-block)
+#+end_src
+
+#+RESULTS:
+: evil-textobj-anyblock-a-block
+
+
+* Evil tex
+#+begin_src emacs-lisp
+(use-package evil-tex)
+(add-hook 'LaTeX-mode-hook #'evil-tex-mode)
+(add-hook 'org-mode-hook #'evil-tex-mode)
+#+end_src
+
+
+* Sage shell mode
+#+begin_src emacs-lisp
+(use-package sage-shell-mode)
+(use-package ob-sagemath)
+ (add-hook 'org-babel-after-execute-hook (lambda ()
+                                            (interactive)
+                                            (ignore-errors (xenops-render))))
+#+end_src
+
+#+RESULTS:
+
+* Helm sage
+#+begin_src emacs-lisp
+(use-package helm-sage)
+(eval-after-load "sage-shell-mode"
+  '(sage-shell:define-keys sage-shell-mode-map
+     "C-c C-i"  'helm-sage-complete
+     "C-c C-h"  'helm-sage-describe-object-at-point
+     "M-r"      'helm-sage-command-history
+     "C-c o"    'helm-sage-output-history))
+#+end_src
+
+* Xenops
+#+begin_src emacs-lisp
+(use-package xenops)
+(setq xenops-math-image-scale-factor 1.8)
+(add-hook 'org-mode-hook #'xenops-mode)
+#+end_src
+
+* Apollo functions
+
+** Org math
+#+begin_src emacs-lisp
+(defvar orgmath t)
+
+
+(defun orgmathp () (interactive) orgmath)
+
+
+(defun orgmath-toggle () (interactive)
+
+       (if (orgmathp) (setq orgmath nil) (setq orgmath t)))
+#+end_src
+
+
+
+** buffer in new frame
+
+  #+begin_src emacs-lisp
+
+  (defun apollo/buffer-in-new-frame ()
+   (interactive)
+   (let ((buf (current-buffer)))
+    (evil-window-delete)
+    (view-buffer-other-frame buf)))
+
+  #+end_src
+
+
+** Custom org latex preview that doesn't mess with pdf location
+Window excursion funkar inte enbar på org latex preview, men den funkar när vi först gör ett annat fönster själv (som är fullscreen här) och sedan callar org latex preview på den configurationen.
+#+begin_src emacs-lisp
+(defun apollo/org-latex-preview ()
+  (interactive)
+  (save-window-excursion
+    (progn
+      (delete-other-windows)
+      (org-latex-preview))))
+#+end_src
+
+#+RESULTS:
+: apollo/org-latex-preview
+
+  
+** Killdelete
+
+#+begin_src emacs-lisp
+
+(defun apollo/buffer-kill-delete ()
+ (interactive)
+ (let ((buf (current-buffer)))
+  (kill-buffer buf)
+  (evil-window-delete)))
+
+  #+end_src
+
+#+end_src
+
+
+** Open compiled latex pdf
+
+#+begin_src emacs-lisp
+
+(defun apollo/org-open-latex-pdf ()
+  (interactive)
+  (let ((file (ibuffer-buffer-file-name)))
+	(browse-url-of-file
+	 (replace-regexp-in-string "\\.org" ".pdf" file t))))
+	
+#+end_src
+
+
+** Open local book pdf
+
+
+#+begin_src emacs-lisp
+
+(defun apollo/org-open-local-book ()
+  (interactive)
+  (let ((file (ibuffer-buffer-file-name)))
+
+    (browse-url-of-file
+	 (replace-regexp-in-string "[-A-ZA-z0-9åäöÅÄÖ]*\\.org" "local-book.pdf" file t))))
+	
+#+end_src
+
+
+** Org-ref
+
+#+begin_src emacs-lisp
+(defun apollo/org-ref-insert-eqref ()
+  (interactive)
+  (insert "eq")
+  (org-ref-insert-ref-link))
+#+end_src
+
+
+** Copy file name to kill ring
+
+#+begin_src emacs-lisp
+
+(defun apollo/file-location-to-clipboard () (interactive)
+
+       (kill-new (ibuffer-buffer-file-name) ""))
+
+#+end_src
+
+
+** Try expanding snippets yas
+
+#+begin_src emacs-lisp
+
+(defun apollo/yas-try-expanding-auto-snippets ()
+   (when (and (boundp 'yas-minor-mode) yas-minor-mode)
+      (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
+        (yas-expand))))
+
+  (add-hook 'post-self-insert-hook #'apollo/yas-try-expanding-auto-snippets)
+
+#+end_src
+
+Sen om du vill att en snippet ska autoexpanda med texenv så lägger du till:
+# condition: (and (texmathp) 'auto)
+
+'auto är för expanding snippet och texmathp är för tex environment.
+
+
+** Pretty entities org
+
+#+begin_src emacs-lisp
+(defun apollo/org-set-pretty-entities (value)
+  (interactive)
+  (setq org-pretty-entities value)
+  (org-restart-font-lock))
+#+end_src
+
+
+** Legacy: Org ensure pretty symbols mode
+
+#+begin_src emacs-lisp
+
+(defun apollo/ensure-pretty-symbols-state ()
+  (if org-pretty-entities
+      (apollo/org-set-pretty-entities 1)
+      (apollo/org-set-pretty-entities nil)))
+
+(define-minor-mode apollo/ensure-pretty-symbols-state-mode
+  "When on, org pretty symbols is turned off, when mode is turned off
+   org pretty symbols is turned on."
+  :lighter "A/EPSS"
+
+  (if apollo/ensure-pretty-symbols-state-mode
+      (add-hook 'post-self-insert-hook 'apollo/ensure-pretty-symbols-state nil t)
+      (remove-hook 'post-self-insert-hook 'apollo/ensure-pretty-symbols-state t)))
+
+#+end_src
+
+
+
+** Org export before stuff
+
+#+begin_src emacs-lisp :tangle no
+(defun apollo/org-export-replace-tag ()
+  (if (re-search-forward ":e" (line-end-position) 't)
+      (replace-match "")
+    (save-excursion
+      (goto-char (line-end-position))
+      (insert " :ignore:"))))
+
+(defun apollo/org-export-ignore-headings (backend)
+  (org-map-entries #'apollo/org-export-replace-tag))
+
+(add-hook 'org-export-before-processing-hook #'apollo/org-export-ignore-headings)
+#+end_src
+
+#+begin_src emacs-lisp
+(defun apollo/org-toggle-headline ()
+  (interactive)
+  (save-excursion
+    (if (re-search-forward " :ignore:" (line-end-position) 't)
+	(replace-match "")
+      (goto-char (line-end-position))
+      (insert " :ignore:"))))
+#+end_src
+
+
+** Current org heading (excluding :ignore: headings)
+
+#+begin_src emacs-lisp
+(defun apollo/org-current-export-level ()
+  (interactive)
+  (save-excursion
+    (re-search-backward
+     "^\\*+[ ]+"
+     0
+     't)
+    (goto-char (+ (point) 1))
+    (goto-char
+     (line-beginning-position))
+    (if (not (save-excursion
+	       (re-search-forward
+		":ignore:"
+		(line-end-position)
+		't)))
+	(org-current-level)
+      (apollo/org-current-export-level))))
+#+end_src
+
+
+** Fixa spaces org latex label
+
+*** Subfunctions
+#+begin_src emacs-lisp
+(defun apollo/fix-label-spaces (str) (replace-regexp-in-string "[ ]" "_" str t))
+(defun apollo/fix-label-dots (str) (replace-regexp-in-string "[.]" "_" str t))
+(defun apollo/fix-label-aol (str) (replace-regexp-in-string "å" "a" str t))
+(defun apollo/fix-label-aou (str) (replace-regexp-in-string "Å" "a" str t))
+(defun apollo/fix-label-ael (str) (replace-regexp-in-string "ä" "a" str t))
+(defun apollo/fix-label-aeu (str) (replace-regexp-in-string "Ä" "a" str t))
+(defun apollo/fix-label-oel (str) (replace-regexp-in-string "ö" "o" str t))
+(defun apollo/fix-label-oeu (str) (replace-regexp-in-string "Ö" "o" str t))
+
+
+(defun apollo/fix-label-string (str)
+   (apollo/fix-label-dots
+    (apollo/fix-label-spaces
+     (apollo/fix-label-aol
+      (apollo/fix-label-aou
+       (apollo/fix-label-ael
+        (apollo/fix-label-aeu
+         (apollo/fix-label-oel
+          (apollo/fix-label-oeu str)))))))))
+#+end_src
+
+*** Interactive funktionen
+
+#+begin_src emacs-lisp :tangle no
+
+(defun apollo/fix-label () (interactive)
+    (save-excursion
+	 (re-search-backward "\\\\label{.*}" 0 t)
+	 (replace-match (replace-regexp-in-string "[ ]" "_" (match-string 0)) nil t)))
+
+#+end_src
+
+
+#+begin_src emacs-lisp
+
+(defun apollo/fix-label () (interactive)
+    (save-excursion
+	 (re-search-backward "\\\\label{.*}" 0 t)
+	 (replace-match (apollo/fix-label-string (match-string 0)) nil t)))
+
+#+end_src
+
+
+** Custom exit hook för thm env snippet
+#+begin_src emacs-lisp
+
+(defun apollo/tag-heading ()
+  (interactive)
+  (save-excursion
+    (if (re-search-backward "^\\*+" 0 't) (apollo/org-toggle-headline))))
+
+(defun apollo/org-tex-exit-env ()
+  (interactive)
+  (apollo/tag-heading)
+  (apollo/fix-label)
+  (apollo/org-latex-preview))
+
+#+end_src
+
+
+** Org babel special editor
+
+*** Spicy
+
+#+begin_src emacs-lisp :tangle no
+(defun apollo/enter-or-exit-special-editor ()
+
+  (interactive)
+
+  (if (eq major-mode 'org-mode)
+
+      ((lambda () (org-edit-special) (evil-window-split) (latex-math-preview-expression) (previous-window-any-frame)))
+
+    ((lambda () (evil-window-down 1) (evil-window-delete) (org-edit-src-exit))) ))
+#+end_src
+
+#+RESULTS:
+: apollo/enter-or-exit-special-editor
+
+*** Normal
+
+#+begin_src emacs-lisp :tangle no
+(defun apollo/enter-or-exit-special-editor ()
+
+  (interactive)
+
+  (if (eq major-mode 'org-mode)
+
+     (org-edit-special)
+
+    (org-edit-src-exit)))
+#+end_src
+
+*** Compromise
+
+#+begin_src emacs-lisp
+(defun apollo/enter-or-exit-special-editor ()
+  (interactive)
+  (if (texmathp)
+      (if (eq major-mode 'org-mode)
+	  ((lambda ()
+	     (org-edit-special)
+	     ;(save-window-excursion (latex-math-preview-expression))
+	     (apollo/math-preview)))
+	((lambda ()
+	   (ignore-errors (kill-buffer "*latex-math-preview-expression*"))
+	   (ignore-errors (kill-matching-buffers "latex-math-preview-tex-processing-error" :noask 't))
+	   (org-edit-src-exit))))
+    (if (eq major-mode 'org-mode)
+	(org-edit-special)
+      (org-edit-src-exit))))
+#+end_src
+
+#+RESULTS:
+: apollo/enter-or-exit-special-editor
+
+
+** Inkscape daemon
+#+begin_src emacs-lisp
+(defun apollo/start-inkscape-watcher ()
+
+  (interactive)
+
+
+  (server-start)
+
+  (start-process "" "*inkscape-watcher*" "python"
+
+"/home/john/repos/inkscape-shortcut-manager/main.py"))
+
+
+(defun apollo/stop-inkscape-watcher () (interactive) (kill-buffer "*inkscape-watcher*"))
+#+end_src
+
+#+RESULTS:
+: apollo/stop-inkscape-watcher
+
+
+** apollo exit server
+#+begin_src emacs-lisp
+(defun apollo/exit-server () (interactive) (save-buffer) (server-edit))
+#+end_src
+
+#+RESULTS:
+: apollo/exit-server
+
+
+** Apollo set page offset
+
+#+begin_src emacs-lisp
+(defun apollo/set-page-offset ()
+  (interactive)
+  (setq-local apollo/pdf-real-page-zero (-
+					 (pdf-view-current-page)
+					 (string-to-number (ivy-read "Vilken sida är detta? " '())))))
+#+end_src
+
+
+** Apollo goto page
+
+#+begin_src emacs-lisp
+(defun apollo/pdf-goto-page ()
+  (interactive)
+  (pdf-view-goto-page (+
+		       (string-to-number (ivy-read "Vilken sida vill du gå till? " '()))
+		       apollo/pdf-real-page-zero)))
+#+end_src
+
+
+** Display math preview
+#+begin_src emacs-lisp
+(defun apollo/math-preview ()
+  (interactive)
+  (if (eq major-mode 'latex-mode)
+      (let ((win-num  (winum-get-number)))
+    (ignore-errors (latex-math-preview-expression))
+    (winum-select-window-by-number win-num)
+)))
+  ;((lambda () (ignore-errors (latex-math-preview-expression)) ;(previous-window-any-frame)
+#+end_src
+
+#+RESULTS:
+: apollo/math-preview
+
+
+** Agenda burly links
+
+#+begin_src emacs-lisp
+(defun apollo/agenda-burly-links () (interactive)
+       (find-file "/home/john/.emacs.d/org-agenda/agenda.org")
+       (delete-other-windows)
+       (goto-char (org-find-exact-headline-in-buffer "Burly"))
+       (org-narrow-to-subtree)
+       (org-shifttab)
+       (org-cycle)
+       (link-hint-open-link))
+#+end_src
+
+#+RESULTS:
+: apollo/agenda-burly-links
+
+
+
+** Goto todo agenda
+
+#+begin_src emacs-lisp
+(defun apollo/goto-todo-agenda () (interactive)
+       (find-file "/home/john/.emacs.d/org-agenda/agenda.org")
+       (widen)
+       (org-shifttab)
+       (evil-goto-first-line))
+#+end_src
+
+
+
+** follow-bookmark-link protocol
+#+begin_src emacs-lisp
+(require 'bookmark)
+
+(defcustom org-bookmark-link-protocol "bookmark-link"
+  "Protocol identifier for bookmark links."
+  :group 'bookmark-link
+  :type 'string)
+
+(defun apollo/follow-bookmark-link (name)
+  (bookmark-jump name))
+
+(org-link-set-parameters org-bookmark-link-protocol :follow #'apollo/follow-bookmark-link)
+(bookmark-all-names) ;behöver köra av någon anledning, då follow inte funkar annars
+#+end_src
+
+#+RESULTS:
+| :follow | apollo/follow-bookmark-link |
+
+
+** insert-bookmark-link
+#+begin_src emacs-lisp
+(defun apollo/insert-bookmark-link ()
+  (interactive)
+  (let ((name (ivy-read "Bookmark link to insert: " (bookmark-all-names))))
+    (insert "[[bookmark-link:" name "][" name "]]")))
+#+end_src
+
+#+RESULTS:
+: apollo/insert-bookmark-link
+
+
+** Switch to rmarkdown
+#+begin_src emacs-lisp
+(defun apollo/switch-from-org-to-rmd ()
+  (interactive)
+  (let ((file (ibuffer-buffer-file-name)))
+    (find-file (replace-regexp-in-string ".org" ".rmd" file t))))
+#+end_src
+
+#+RESULTS:
+: apollo/switch-from-org-to-rmd
+
+
+** Switch to org
+#+begin_src emacs-lisp
+(defun apollo/switch-from-rmd-to-org ()
+  (interactive)
+  (let ((file (ibuffer-buffer-file-name)))
+    (find-file (replace-regexp-in-string ".rmd" ".org" file t))))
+#+end_src
+
+#+RESULTS:
+: apollo/switch-from-rmd-to-org
+
+
+** Split to or from org and rmarkdown
+#+begin_src emacs-lisp
+(defun apollo/split-to-or-from-org-and-rmd ()
+  (interactive)
+  (cond ((ignore-errors (save-window-excursion (evil-window-down 1) t))
+	 (progn (evil-window-down 1) (evil-window-delete) ))
+	((ignore-errors (save-window-excursion (evil-window-up 1)) t)
+	 (progn (evil-window-up 1) (evil-window-delete)))
+	((eq major-mode 'org-mode)
+	 (progn
+	   (evil-window-split)
+	   (evil-window-down 1)
+	   (apollo/switch-from-org-to-rmd)
+	   (evil-window-up 1)))
+	((memq major-mode '(markdown-mode ess-r-mode))
+	 (progn
+	   (evil-window-split)
+	   (evil-window-down 1)
+	   (apollo/switch-from-rmd-to-org)
+	   (evil-window-up 1)))))
+#+end_src
+
+#+RESULTS:
+: apollo/split-to-or-from-org-and-rmd
+
+
+* Apollo lower polybar
+
+** Todo (old)
+#+begin_src emacs-lisp
+(setq apollo/polybar-agenda/todo "Kolla schemat")
+(defun apollo/polybar-agenda/set-todo () (interactive)
+       (setq apollo/polybar-agenda/todo (ivy-read "Vad ska du göra just nu? " '()))
+       )
+#+end_src
+
+#+RESULTS:
+: apollo/polybar-agenda/set-todo
+
+#+begin_src emacs-lisp
+(defun apollo/polybar-agenda/set-heading-todo ()
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (re-search-forward "* ")
+    (setq apollo/polybar-agenda/todo (buffer-substring-no-properties (point) (line-end-position)))))
+#+end_src
+
+#+RESULTS:
+: apollo/polybar-agenda/set-heading-todo
+
+
+
+** Todo stack (newer)
+
+*** Variable
+#+begin_src emacs-lisp
+(setq apollo/polybar-agenda/todo-stack '())
+#+end_src
+
+#+RESULTS:
+
+*** Push function
+#+begin_src emacs-lisp
+(defun apollo/polybar-agenda/todo-push ()
+  (interactive)
+  (push (ivy-read "Todo: " '()) apollo/polybar-agenda/todo-stack))
+#+end_src
+
+#+RESULTS:
+: apollo/polybar-agenda/todo-push
+
+*** Replace function
+#+begin_src emacs-lisp
+(defun apollo/polybar-agenda/todo-replace ()
+  (interactive)
+  (pop apollo/polybar-agenda/todo-stack)
+  (push (ivy-read "Todo: " '()) apollo/polybar-agenda/todo-stack))
+#+end_src
+
+#+RESULTS:
+: apollo/polybar-agenda/todo-push
+
+*** Read message function
+#+begin_src emacs-lisp
+(defun apollo/polybar-agenda/todo-read ()
+    (interactive)
+    (if (not apollo/polybar-agenda/todo-stack)
+	"Kolla schema"
+      (car apollo/polybar-agenda/todo-stack)))
+#+end_src
+
+#+RESULTS:
+: apollo/polybar-agenda/todo-read
+
+*** Read size function
+#+begin_src emacs-lisp
+(defun apollo/polybar-agenda/todo-size-read ()
+    (interactive)
+  (length apollo/polybar-agenda/todo-stack))
+
+(apollo/polybar-agenda/todo-size-read)
+#+end_src
+
+#+RESULTS:
+: 2
+
+*** Remove
+#+begin_src emacs-lisp
+(defun apollo/polybar-agenda/todo-pop () (interactive)
+       (pop apollo/polybar-agenda/todo-stack)
+       )
+#+end_src
+
+#+RESULTS:
+: apollo/polybar-agenda/todo-pop
+
+*** Push org heading
+
+#+begin_src emacs-lisp
+(defun apollo/polybar-agenda/org-heading-push () (interactive)
+  (push (org-element-property :title (org-element-at-point)) apollo/polybar-agenda/todo-stack)
+       )
+#+end_src
+
+** Fetch schedule
+#+begin_src emacs-lisp
+(defun apollo/polybar-agenda/fetch () (interactive)
+       (save-window-excursion
+	 (progn
+	   (evil-window-vsplit)
+	   (org-agenda-list 1)
+	   (buffer-substring-no-properties 1 (point-max)))))
+#+end_src
+
+#+RESULTS:
+: apollo/polybar-agenda/fetch
+
+
+** Habit point system
+
+*** Vars
+#+begin_src emacs-lisp
+(setq apollo/polybar-habit/habit-points nil)
+(setq apollo/polybar-habit/habit-points-day nil)
+(setq apollo/polybar-habit/habit-points-state nil)
+(setq apollo/polybar-habit/habit-period nil)
+
+
+(setq apollo/polybar-habit/loaded-variables nil)
+(require 'midnight)
+(midnight-delay-set 'midnight-delay 16200)
+(add-hook 'midnight-hook (lambda ()
+			   (setq apollo/polybar-habit/loaded-variables nil)))
+#+end_src
+
+#+RESULTS:
+
+
+*** Update vars
+#+begin_src emacs-lisp
+(defun apollo/polybar-habit/update-vars () (interactive)
+
+    (save-window-excursion
+
+      (find-file "/home/john/.emacs.d/org-agenda/agenda.org")
+      (widen)
+
+      (setq apollo/polybar-habit/habit-points
+	    (string-to-number
+	     (car (org-property-values "habit-points"))))
+
+      (setq apollo/polybar-habit/habit-points-day 
+	    (car (org-property-values "habit-points-day")))
+
+      (setq apollo/polybar-habit/habit-points-state
+	    (car (org-property-values "habit-points-state")))
+
+      (setq apollo/polybar-habit/habit-period
+	    (string-to-number
+	     (car (org-property-values "habit-period")))))
+
+    (setq apollo/polybar-habit/loaded-variables 't)
+       )
+#+end_src
+
+#+RESULTS:
+: apollo/polybar-habit/update-vars
+
+
+*** habit points period
+#+begin_src emacs-lisp
+(defun apollo/polybar-habit/get-habit-period () (interactive)
+       (+
+	(* (string-to-number (format-time-string "%H")) 2)
+	(/ (string-to-number (format-time-string "%M")) 30)))
+#+end_src
+
+#+RESULTS:
+: apollo/polybar-habit/get-habit-period
+
+
+*** write property
+#+begin_src emacs-lisp
+(defun apollo/polybar-habit/write-property (property value)
+  (interactive)
+  (save-window-excursion
+    (find-file "/home/john/.emacs.d/org-agenda/agenda.org")
+    (widen)
+    (goto-char (org-find-exact-headline-in-buffer "Polybar habit-points"))
+    (org-set-property property value)
+    (save-buffer)))
+#+end_src
+
+#+RESULTS:
+: apollo/polybar-habit/write-property
+
+
+*** Update/read habit state function
+
+#+begin_src emacs-lisp
+(defun apollo/polybar-habit/update-read-state () (interactive)
+
+       (if (not apollo/polybar-habit/loaded-variables)
+	   (apollo/polybar-habit/update-vars))
+
+       (if (not (string-equal
+		 (format-time-string "%Y-%m-%d")
+		 apollo/polybar-habit/habit-points-day))
+	   (progn
+	      (apollo/polybar-habit/write-property
+	       "habit-points"
+	       "0")
+	      (apollo/polybar-habit/write-property
+	       "habit-points-day"
+	       (format-time-string "%Y-%m-%d"))
+	      (apollo/polybar-habit/write-property
+	       "habit-points-state"
+	       "")
+	      (apollo/polybar-habit/write-property
+	       "habit-period"
+	       "0")
+	      (apollo/polybar-habit/update-vars)))
+       
+       (if (not (eq
+		 (apollo/polybar-habit/get-habit-period)
+		 apollo/polybar-habit/habit-period))
+	   (progn
+	     (apollo/polybar-habit/write-property
+	      "habit-points-state"
+	      "")
+	     (apollo/polybar-habit/write-property
+	      "habit-period"
+	      (number-to-string (apollo/polybar-habit/get-habit-period)))
+	     (apollo/polybar-habit/update-vars)))
+
+       (if apollo/polybar-habit/habit-points-state
+	   apollo/polybar-habit/habit-points-state
+	 ""))
+#+end_src
+
+#+RESULTS:
+: apollo/polybar-habit/update-read-state
+
+
+*** Send 1 min event
+Vill ändra till completed texten och öka countern med 1.
+#+begin_src emacs-lisp
+(defun apollo/polybar-habit/send-1-min () (interactive)
+       (if (not apollo/polybar-habit/habit-points-state)
+	   (progn
+	     (apollo/polybar-habit/write-property
+	      "habit-points-state"
+	      "Completed! ")
+	     (apollo/polybar-habit/write-property
+	      "habit-points"
+	      (number-to-string (+ 1 apollo/polybar-habit/habit-points)))
+	     (apollo/polybar-habit/update-vars))))
+#+end_src
+
+#+RESULTS:
+: apollo/polybar-habit/send-1-min
+
+
+*** Update read points funktion
+Vi skickar en event om:
+- Det är org pomodoro thingy
+- Org pomodoro thingy en är pomodoro (och inte break eller något)
+- Det har gått mer än 1 minut.
+#+begin_src emacs-lisp
+(defun apollo/polybar-habit/update-read-points () (interactive)
+       (if (org-pomodoro-active-p)
+	   (cl-case org-pomodoro-state
+             (:pomodoro
+	      (if (>= (- (* 60 org-pomodoro-length) (org-pomodoro-remaining-seconds))
+		      60)
+		  (apollo/polybar-habit/send-1-min)))))
+       (if apollo/polybar-habit/habit-points
+	   apollo/polybar-habit/habit-points
+	 ""))
+#+end_src
+
+#+RESULTS:
+: apollo/polybar-habit/update-read-points
+
+
+* Apollo Org notes
+
+** Apollo regex search in string
+#+begin_src emacs-lisp
+(defun apollo/re-seq (regexp string)
+  "Get a list of all regexp matches in a string"
+  (save-match-data
+    (let ((pos 0)
+          matches)
+      (while (string-match regexp string pos)
+        (push (match-string 0 string) matches)
+        (setq pos (match-end 0)))
+      matches)))
+#+end_src
+
+#+RESULTS:
+: apollo/re-seq
+
+
+
+** Regex variables
+#+begin_src emacs-lisp
+(setq apollo/org-notes/linkreg "\\[\\[[a-zåäöA-ZÅÄÖ0-9 -: / + ~]*\\]\\[[a-zåäöA-ZÅÄÖ0-9 -:  / + ~]*\\]\\]")
+#+end_src
+
+
+** Pdf controll
+
+*** Scroll backward
+#+begin_src emacs-lisp
+(defun apollo/org-notes/scroll-backward () (interactive)
+(let ((win-num (winum-get-number)))
+	    (evil-window-left 1)
+      (evil-collection-pdf-view-previous-line-or-previous-page)
+	    (winum-select-window-by-number win-num))
+       )
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/scroll-backward
+
+*** Scroll forward
+#+begin_src emacs-lisp
+(defun apollo/org-notes/scroll-forward () (interactive)
+(let ((win-num (winum-get-number)))
+	    (evil-window-left 1)
+      (evil-collection-pdf-view-next-line-or-next-page)
+	    (winum-select-window-by-number win-num))
+       )
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/scroll-forward
+
+*** Page backward
+#+begin_src emacs-lisp
+(defun apollo/org-notes/page-backward () (interactive)
+(let ((win-num (winum-get-number)))
+	    (evil-window-left 1)
+      (pdf-view-scroll-down-or-previous-page)
+	    (winum-select-window-by-number win-num))
+       )
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/page-backward
+
+*** Page forward
+#+begin_src emacs-lisp
+(defun apollo/org-notes/page-forward () (interactive)
+(let ((win-num (winum-get-number)))
+	    (evil-window-left 1)
+      (pdf-view-scroll-up-or-next-page)
+	    (winum-select-window-by-number win-num))
+       )
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/page-forward
+
+*** Copy paste link
+#+begin_src emacs-lisp
+(defun apollo/org-notes/copy-paste-pdf-link () (interactive)
+(let ((win-num (winum-get-number)))
+  (evil-window-left 1)
+  (org-store-link 1 t)
+  (winum-select-window-by-number win-num)
+  (call-interactively 'org-insert-link)
+  ))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/copy-pdf-link
+
+*** Copy paste pdf link non interactive
+#+begin_src emacs-lisp
+(defun apollo/org-notes/copy-paste-pdf-link-non-interactive () (interactive)
+(let ((win-num (winum-get-number)))
+  (evil-window-left 1)
+  (org-store-link 1 t)
+  (winum-select-window-by-number win-num)
+  (org-insert-last-stored-link 1)
+  ))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/copy-paste-pdf-link-non-interactive
+
+*** Set page
+#+begin_src emacs-lisp
+(defun apollo/org-notes/set-pdf-page () (interactive)
+(let ((win-num (winum-get-number)))
+  (evil-window-left 1)
+  (apollo/set-page-offset)
+  (winum-select-window-by-number win-num)
+  ))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/set-pdf-page
+
+*** Goto page
+#+begin_src emacs-lisp
+(defun apollo/org-notes/goto-pdf-page () (interactive)
+(let ((win-num (winum-get-number)))
+  (evil-window-left 1)
+  (apollo/pdf-goto-page)
+  (winum-select-window-by-number win-num)
+  ))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/goto-pdf-page
+
+
+*** Layout fix pdf scale
+#+begin_src emacs-lisp
+(defun apollo/layout-fix-pdf () (interactive)
+
+       (let ((pdf-scale (string-to-number (car (org-property-values "pdf-scale")))))
+	 (evil-window-left 1)		;goto left
+	 (pdf-view-scale-reset)		;zoom out to reset weird pos
+	 (pdf-view-enlarge pdf-scale)		;zoom in with pdf-scale
+	 (evil-window-right 1))		;go back right
+       )
+#+end_src
+
+#+RESULTS:
+: apollo/layout-fix-pdf
+
+*** Set pdf scale
+#+begin_src emacs-lisp
+(defun apollo/org-notes/set-pdf-scale ()
+  (interactive)
+  (save-excursion
+    (widen)
+    (if (org-find-property "pdf-scale")
+	(save-excursion
+	  (goto-char (org-find-exact-headline-in-buffer "org-notes: pdf-scale"))
+	  (org-set-property "pdf-scale" (ivy-read "pdf-scale: " '())))
+      (save-excursion
+	(org-id-goto (apollo/org-notes/create-heading-name "pdf-scale"))
+	(org-set-property "pdf-scale" (ivy-read "pdf-scale: " '()))))))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/set-pdf-scale
+
+
+** Create org notes heading name
+#+begin_src emacs-lisp
+(defun apollo/org-notes/create-heading-name (name)
+  (interactive)
+  (save-excursion
+    (widen)
+    (if (not (org-find-property "org-notes-id" "1"))
+	(progn
+	  (goto-char (max-char))
+	  (insert "\n* org-notes")
+	  (org-set-property "org-notes-id" "1")))
+    (goto-char (max-char))
+    (insert (format "\n** %s: %s" "org-notes" name))
+    (org-id-get-create)))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/create-heading-name
+
+
+** Create org notes heading
+#+begin_src emacs-lisp
+(defun apollo/org-notes/create-heading ()
+  (interactive)
+  (if (evil-visual-state-p)
+      (progn
+	(kill-region evil-visual-beginning evil-visual-end)
+	(insert (format
+		 "[[org-notes:%s][%s]]"
+		 (apollo/org-notes/create-heading-name (car kill-ring))
+		 (car kill-ring))))
+    (let ((name (ivy-read "name of heading: " '())))
+      (insert (format
+	       "[[org-notes:%s][%s]]"
+	       (apollo/org-notes/create-heading-name name)
+	       name))))
+  (apollo/org-notes/narrow-to-id))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/create-heading
+
+
+** Create heading with page
+#+begin_src emacs-lisp
+(defun apollo/org-notes/create-heading-with-page () (interactive)
+       (apollo/org-notes/create-heading)
+       (widen)
+       (save-excursion
+	 (evil-goto-line)
+	 (apollo/org-notes/copy-paste-pdf-link-non-interactive))
+       (org-narrow-to-subtree))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/create-heading-with-page
+
+
+
+
+
+
+
+
+** Selection to new heading
+#+begin_src emacs-lisp
+(defun apollo/org-notes/selection-to-new-heading ()
+  (interactive)
+  (if (evil-visual-state-p) (kill-region evil-visual-beginning evil-visual-end))
+  (evil-exit-visual-state)
+  (apollo/org-notes/create-heading)
+  (widen)
+  (save-excursion
+    (evil-goto-line)
+    (save-excursion
+      (insert (car kill-ring)))
+    (apollo/org-latex-preview))
+  (org-narrow-to-subtree))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/selection-to-new-heading
+
+** Org notes history
+#+begin_src emacs-lisp
+(setq apollo/org-notes/point-history '())
+
+
+(defun apollo/org-notes/set-base-point ()
+  (interactive)
+  (save-excursion
+    (widen)
+    (let ((base-point (point)))
+      (if (org-find-property "base-point")
+	  (save-excursion
+	    (goto-char (org-find-exact-headline-in-buffer "org-notes: base-point"))
+	    (org-set-property "base-point" (number-to-string base-point)))
+	(save-excursion
+	  (org-id-goto (apollo/org-notes/create-heading-name "base-point"))
+	  (org-set-property "base-point" (number-to-string base-point))))))
+  (apollo/org-notes/narrow-to-id))
+
+
+
+(defun apollo/org-notes/previous-point ()
+  (interactive)
+  (widen)
+  (if apollo/org-notes/point-history
+      (goto-char (pop apollo/org-notes/point-history))
+    (goto-char (string-to-number (car (org-property-values "base-point")))))
+  (apollo/org-notes/narrow-to-id))
+#+end_src
+
+
+** Org notes id follow
+#+begin_src emacs-lisp
+(defcustom org-notes-protocol "org-notes"
+  "Protocol identifier for pomodoro links."
+  :group 'org-notes
+  :type 'string)
+
+
+(defun org-notes-follow (id)
+  ; Följande parantes är basically: (add-to-list-local 'apollo/org-notes/point-history (point))
+  (if (member (point) apollo/org-notes/point-history)
+      apollo/org-notes/point-history
+    (setq-local
+     apollo/org-notes/point-history
+     (cons (point) apollo/org-notes/point-history)))
+  (org-id-goto id)
+  (apollo/org-notes/narrow-to-id))
+
+
+(org-link-set-parameters org-notes-protocol :follow #'org-notes-follow)
+
+#+end_src
+
+#+RESULTS:
+| :follow | org-notes-follow |
+
+
+** copy-whole-link-at-point
+#+begin_src emacs-lisp
+(defun apollo/org-notes/copy-whole-link-at-point ()
+  (interactive)
+  (setq apollo/org-notes/copy-end (+ 2 (re-search-forward "\\]\\]")))
+  (setq apollo/org-notes/copy-start (re-search-backward "\\[\\["))
+  (copy-region-as-kill apollo/org-notes/copy-start apollo/org-notes/copy-end))
+
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/copy-whole-link-at-point
+
+
+** Copy paste link
+
+#+begin_src emacs-lisp
+(defun apollo/org-notes/copy-paste-link ()
+  (interactive)
+  (widen)
+  (ivy-read
+   "select link: "
+   (org-element-map
+       (org-element-parse-buffer)
+       'link
+     (lambda (link) (cons (substring (format "%s" (org-element-contents link)) 1 -1) link)))
+   :action (lambda (x)
+	     (let ((obj (cdr x)))
+	       (insert
+		(buffer-substring
+		 (org-element-property :begin obj)
+		 (org-element-property :end obj))))))
+  (org-narrow-to-subtree))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/copy-paste-link
+
+** Ivy open link advanced
+#+begin_src emacs-lisp
+(defun apollo/org-notes/ivy-open-link-advanced ()
+  (interactive)
+  (widen)
+  (save-window-excursion
+    (save-excursion
+      (goto-char 0)
+      (re-search-forward
+       (regexp-quote
+	(car (cdr (assoc :uri (text-properties-at
+			       0
+			       (ivy-read
+				"select link: "
+				(apollo/re-seq
+				 apollo/org-notes/linkreg
+				 (buffer-string)))))))))
+      (setq apollo/org-notes/before-link-point (point))
+      (setq apollo/org-notes/before-buffer-name (buffer-name))
+      (link-hint-open-link-at-point)
+      (setq apollo/org-notes/after-link-point (point))
+      (setq apollo/org-notes/after-buffer-name (buffer-name))
+      (setq apollo/org-notes/page-if-pdf (ignore-errors (pdf-view-current-page)))))
+  (if (string= apollo/org-notes/before-buffer-name apollo/org-notes/after-buffer-name)
+      (if (/= apollo/org-notes/before-link-point apollo/org-notes/after-link-point)
+	  (progn
+	    (goto-char apollo/org-notes/after-link-point)
+	    (apollo/org-notes/narrow-to-id)))
+    (if apollo/org-notes/page-if-pdf
+	(progn
+	  (let ((win-num (winum-get-number)))
+	    (evil-window-left 1)
+	    (switch-to-buffer apollo/org-notes/after-buffer-name)
+	    (pdf-view-goto-page apollo/org-notes/page-if-pdf)
+	    (winum-select-window-by-number win-num)
+	    (apollo/org-notes/narrow-to-id)))
+      (switch-to-buffer apollo/org-notes/after-buffer-name))))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/ivy-open-link
+
+** ivy open link
+
+#+begin_src emacs-lisp
+(defun apollo/org-notes/ivy-open-link ()
+  (interactive)
+  (push (point) apollo/org-notes/point-history)
+  (widen)
+  (let ((buffer-element (org-element-parse-buffer)))
+    (apollo/org-notes/narrow-to-id)
+    (ivy-read
+     "select heading: "
+     (org-element-map
+	 buffer-element
+	 'link
+       (lambda (link) (cons (substring (format "%s" (org-element-contents link)) 1 -1) (org-element-property :path link))))
+     :action (lambda (x)
+	       (widen)
+	       (org-id-goto (cdr x))
+	       (apollo/org-notes/narrow-to-id)))))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/ivy-open-link
+
+** Set pdf window
+#+begin_src emacs-lisp
+(setq pdf-window 1)
+(defun apollo/set-pdf-window ()
+  (interactive)
+  (setq pdf-window (ivy-read "Window number: " '())))
+#+end_src
+
+#+RESULTS:
+: apollo/set-pdf-window
+
+
+** Avy Open link command
+#+begin_src emacs-lisp
+(defun apollo/org-notes/avy-open-link ()
+  (interactive)
+  (widen)
+  (save-window-excursion
+    (setq first-point (point))
+    (setq original-window (winum-get-number))
+    (link-hint-open-link)
+    (setq org-links-window (winum-get-number))
+    (setq link-buffer (buffer-name))
+    (setq after-point (point))
+    (setq after-point-is-link-p (link-hint--org-link-at-point-p))
+    (setq page-if-pdf (ignore-errors (pdf-view-current-page))))
+  (save-window-excursion
+    (winum-select-window-by-number org-links-window)
+    (setq org-links-buffer (buffer-name)))
+
+(if (string= org-links-buffer link-buffer)
+    (if after-point-is-link-p
+	(progn
+	  (winum-select-window-by-number original-window)
+	  (goto-char first-point))
+      (progn
+	(winum-select-window-by-number original-window)
+	(switch-to-buffer link-buffer)
+	(goto-char after-point)
+	(apollo/org-notes/narrow-to-id)))
+  (if page-if-pdf
+      (progn
+	(winum-select-window-by-number pdf-window)
+	(switch-to-buffer link-buffer)
+	(pdf-view-goto-page page-if-pdf)
+	(winum-select-window-by-number original-window)
+	(goto-char first-point))
+    (progn
+      (winum-select-window-by-number original-window)
+      (switch-to-buffer link-buffer))))
+(if (eq major-mode 'org-mode) (apollo/org-notes/narrow-to-id)))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/avy-open-link
+
+
+
+
+Först location (innan man sätter igång kommandot) 
+
+org buffer men link location 
+
+
+
+** Set pdf window
+#+begin_src emacs-lisp
+(setq pdf-window 1)
+(defun apollo/set-pdf-window ()
+  (interactive)
+  (setq pdf-window (ivy-read "Window number: " '())))
+#+end_src
+
+#+RESULTS:
+: apollo/set-pdf-window
+
+
+** Heading id at point
+#+begin_src emacs-lisp
+(defun apollo/heading-id-at-point ()
+  (interactive)
+  (org-element-property :ID (org-element-at-point)))
+#+end_src
+
+#+RESULTS:
+: apollo/heading-id-at-point
+
+** narrow-to-id
+#+begin_src emacs-lisp
+(defun apollo/org-notes/narrow-to-id ()
+  (interactive)
+  (save-excursion
+    (if (not (apollo/heading-id-at-point))
+	(ignore-errors (re-search-backward ":ID:")))
+    (org-narrow-to-subtree)))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/narrow-to-id
+
+
+
+
+** Create question
+#+begin_src emacs-lisp
+(defun apollo/org-notes/create-question ()
+  (interactive)
+  (let ((question (ivy-read "Question: " '())))
+    (save-excursion
+      (widen)
+      (if (not (org-find-property "org-notes-id" "1"))
+	  (progn
+	    (goto-char (max-char))
+	    (insert "\n* org-notes")
+	    (org-set-property "org-notes-id" "1")))
+      (goto-char (max-char))
+      (insert (format "\n** %s %s" "QUESTION" question))
+      (org-id-get-create))
+    (apollo/org-notes/narrow-to-id)))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/create-question
+
+,qq
+
+** select tags with id
+#+begin_src emacs-lisp
+(defun apollo/select-tags-with-id (tags fun)
+  (widen)
+  (let ((buffer-element (org-element-parse-buffer)))
+    (apollo/org-notes/narrow-to-id)
+    (ivy-read "Select question: " 
+	      (mapcar (lambda (x) (cons (nth 1 x) (nth 2 x)))
+		      (remove-if (lambda (x) (not (member (car x) tags)))
+				 (org-element-map buffer-element 'headline
+				   (lambda (x) (list (org-element-property :todo-keyword x) (substring (format "%s" (org-element-property :title x)) 1 -1)
+						     (org-element-property :ID x)
+						     )))))
+	      :action fun)))
+#+end_src
+
+#+RESULTS:
+: apollo/select-tags-with-id
+
+** open questions
+#+begin_src emacs-lisp
+(defun apollo/org-notes/open-questions () (interactive)
+       (apollo/select-tags-with-id
+	'("QUESTION")
+	(lambda (x)
+	  (push (point) apollo/org-notes/point-history)
+	  (widen)
+	  (org-id-goto (cdr x))
+	  (org-narrow-to-subtree))))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/open-questions
+
+,q,
+
+** All questions
+
+#+begin_src emacs-lisp
+(defun apollo/org-notes/all-questions () (interactive)
+       (apollo/select-tags-with-id
+	'("QUESTION" "ANSWERED")
+	(lambda (x)
+	  (push (point) apollo/org-notes/point-history)
+	  (widen)
+	  (org-id-goto (cdr x))
+	  (org-narrow-to-subtree))))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/all-questions
+
+,qa
+
+
+** Apollo view open todos
+#+begin_src emacs-lisp
+(defun apollo/org-notes/view-open-todos () (interactive)
+       (apollo/select-tags-with-id
+	'("TODO")
+	(lambda (x)
+	  (push (point) apollo/org-notes/point-history)
+	  (widen)
+	  (org-id-goto (cdr x))
+	  (org-narrow-to-subtree))))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/view-open-todos
+
+, q t
+
+** Apollo view closed todos
+#+begin_src emacs-lisp
+(defun apollo/org-notes/view-closed-todos () (interactive)
+       (apollo/select-tags-with-id
+	'("DONE")
+	(lambda (x)
+	  (push (point) apollo/org-notes/point-history)
+	  (widen)
+	  (org-id-goto (cdr x))
+	  (org-narrow-to-subtree))))
+#+end_src
+
+, q d
+
+
+
+* Modified functions
+
+
+* Commit logging
+testar ssh med apollo
+stuff
+
+Test gnustow

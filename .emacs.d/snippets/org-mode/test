@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: test
+# --
+Första stoppet: ${1:`(current-kill 0)`}. Andra stoppet:$2.
+
+$0

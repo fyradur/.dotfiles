@@ -1,0 +1,4 @@
+# key: Sum
+# name: sum with prop argument
+# --
+\sum_{ $1 } $0

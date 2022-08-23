@@ -1,0 +1,4 @@
+# key: Exp
+# name: Exponentialfördelning
+# --
+\\text{Exp}(${1:\beta}) $0

@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: Latex org
+# key: template-latex
+# --
+#+TITLE: $1
+#+DATE: \today
+#+AUTHOR: John Möller
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t c:nil  d:(not "LOGBOOK") date:t
+#+OPTIONS: e:t email:nil f:t inline:t num:nil p:nil pri:nil stat:t
+#+OPTIONS: tags:t tasks:t tex:t timestamp:t toc:nil todo:t |:t
+#+EXCLUDE_TAGS: noexport
+#+KEYWORDS:
+#+LANGUAGE: se
+#+LaTeX_CLASS: article
+
+$0

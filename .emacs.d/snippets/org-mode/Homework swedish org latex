@@ -1,0 +1,14 @@
+# key: nil
+# name: Homework swedish org latex
+# --
+#+title: ${1:Assignment name} ${2:Course + semester + year}
+#+author: ${3:John Möller}
+#+OPTIONS: title:nil author:nil toc:nil num:nil
+#+LaTeX_CLASS: cleanse
+#+LATEX_HEADER_EXTRA: \input{/home/john/code/tex/hw1_se.tex}
+#+begin_export latex
+\noindent $2 \hfill $1 \\\ $3
+
+\hrulefill
+#+end_export
+

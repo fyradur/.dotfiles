@@ -1,0 +1,8 @@
+# key: dm
+# name: Display math
+# condition: (and (orgmathp) 'auto)
+# --
+\begin{align*}
+$1
+\end{align*}
+$0

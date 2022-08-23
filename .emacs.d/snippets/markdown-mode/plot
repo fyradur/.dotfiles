@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: plot
+# key: plot
+# --
+\`\`\`{r, echo=TRUE, fig.cap='$1.'}
+$2
+plot(${3:x}, ${4:y},
+     type = "${5:l}",
+     main = "$6",
+     ylab = "$7", 
+     xlab = "$8")
+\`\`\`
+$0

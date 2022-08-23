@@ -1,0 +1,5 @@
+# key: mm
+# name: cap
+# condition: (and (texmathp) 'auto)
+# --
+\cap $0

@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: daily
+# key: daily
+# --
+* Pomos
+
+[[pomo:-1][Fix pomodoro vars]]
+[[pomo:1][Start 1 min (2p)]]
+[[pomo:25][Start 25 min (100p)]] (reload 5 minuter)
+
+[[pomo:2][Start 2 min (10p)]]
+[[pomo:5][Start 5 min (20p)]]
+[[pomo:10][Start 10 min (40p)]]
+[[pomo:15][Start 15 min (60p)]]
+[[pomo:20][Start 20 min (75p)]]
+
+* Schema
+* Journal
+* Scratch history

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: install package
+# key: install
+# --
+install.packages('$1', repos='http://cran.us.r-project.org')$0

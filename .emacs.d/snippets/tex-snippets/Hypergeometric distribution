@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Hypergeometric distribution
+# key: hyp
+# --
+\\text{Hyp}(${1:N},${2:n},${3:m}) $0

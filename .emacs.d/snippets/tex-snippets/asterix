@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: asterix
+# key: ast
+# condition: (and (texmathp) 'auto)
+# --
+^*

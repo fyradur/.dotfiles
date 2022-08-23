@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# key: eqv
+# name: Equivalent and newline
+# --
+\\\
+\\iff & $0

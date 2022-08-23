@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Inline math
+# key: mk
+# condition: 'auto
+# expand-env: ((yas-after-exit-snippet-hook #'org-latex-preview ))
+# --
+\( $1 \) $0

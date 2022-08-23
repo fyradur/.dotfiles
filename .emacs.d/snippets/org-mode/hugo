@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: hugo
+# key: hugo
+# --
+#+title: $1
+#+author: John Möller
+#+lastmod: 2021-09-27
+#+categories[]: $2
+#+draft: true
+#+variable: value
+#+list[]: value_1 value_2 value_3
+$0

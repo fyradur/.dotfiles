@@ -1,0 +1,5 @@
+# key: IIInt
+# name: 3d Integral r
+# condition: (and (texmathp) 'auto)
+# --
+\iiint_{ ${1: D} } $2 ${3:dxdydz} $0

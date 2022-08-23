@@ -1,0 +1,4 @@
+# key: ser
+# name: Series
+# --
+\\left\\{ $1 \\right\\}_{${2:n}=${3:1}}^{${4:\infty}} $0

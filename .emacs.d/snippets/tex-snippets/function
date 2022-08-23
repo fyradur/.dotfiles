@@ -1,0 +1,5 @@
+# key: fun
+# name: function
+# condition: (and (texmathp) 'auto)
+# --
+\text{$1}($2)$0

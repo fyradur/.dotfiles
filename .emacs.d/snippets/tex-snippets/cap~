@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: cap
+# key: Nn
+# condition: (and (texmathp) 'auto)
+# --
+\cap $0

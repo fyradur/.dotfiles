@@ -1,0 +1,5 @@
+# key: JJ
+# name: Double backslash
+# condition: (and (texmathp) 'auto)
+# --
+\\\\ 

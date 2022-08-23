@@ -1,0 +1,10 @@
+# key: dn
+# name: Display numberred
+# expand-env: ((yas-after-exit-snippet-hook #'org-latex-preview))
+# condition: (and (orgmathp) 'auto)
+# --
+\begin{align}
+$1
+.
+\end{align}
+$0

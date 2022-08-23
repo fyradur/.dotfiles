@@ -1,0 +1,5 @@
+# key: lra
+# name: left right <
+# condition: (and (texmathp) 'auto)
+# --
+\left< ${1:`yas-selected-text`} \right> $0

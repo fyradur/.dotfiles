@@ -1,0 +1,4 @@
+# key: iInt
+# name: 2d Integral par
+# --
+\int_{ ${1:- \infty} }^{ ${2: \infty}} \int_{ ${3:- \infty} }^{ ${4: \infty}} $5 ${6:dxdy} $0

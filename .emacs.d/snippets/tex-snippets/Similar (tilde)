@@ -1,0 +1,5 @@
+# key: sim
+# name: Similar (tilde)
+# condition: (and (texmathp) 'auto)
+# --
+\\sim 

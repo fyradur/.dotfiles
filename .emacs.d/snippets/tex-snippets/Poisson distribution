@@ -1,0 +1,4 @@
+# key: po
+# name: Poisson distribution
+# --
+\\text{Po}(${1:\\lambda}) $0

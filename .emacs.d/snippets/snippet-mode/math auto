@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: math auto
+# --
+# condition: (and (texmathp) 'auto)

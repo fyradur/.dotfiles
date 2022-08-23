@@ -1,0 +1,7 @@
+# key: mat
+# name: Paranthesis matrix
+# --
+\left( \begin{array}{$2}
+$1
+\end{array} \right)
+$0

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: circled times sign
+# key: o*
+# --
+\bigotimes $0

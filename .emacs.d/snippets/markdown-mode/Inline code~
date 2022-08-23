@@ -1,0 +1,6 @@
+# key: mk
+# name: Inline code
+# condition: 'auto
+# --
+\`r $1\` $0
+

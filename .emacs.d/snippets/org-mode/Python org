@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Python org
+# --
+#+title: $1
+#+description: $2
+#+PROPERTY: header-args :tangle ./$3.py :padline 2
+
+$0

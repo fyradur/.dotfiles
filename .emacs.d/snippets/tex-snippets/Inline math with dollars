@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: Inline math with dollars
+# key: dk
+# condition: (and (orgmathp) 'auto)
+# --
+$ $1 $$0

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Variance
+# key: V
+# --
+\text{Var}(${1:X}) $0

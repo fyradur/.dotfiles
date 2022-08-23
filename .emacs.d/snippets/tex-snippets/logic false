@@ -1,0 +1,5 @@
+# key: LL
+# name: logic false
+# condition: (and (texmathp) 'auto)
+# --
+\lfalse $0

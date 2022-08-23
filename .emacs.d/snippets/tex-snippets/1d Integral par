@@ -1,0 +1,5 @@
+# key: int
+# name: 1d Integral par
+# condition: (and (texmathp) 'auto)
+# --
+\int_{ ${1:- \infty} }^{ ${2: \infty}} $3 d${4:x} $0

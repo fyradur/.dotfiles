@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: display block
+# key: disp
+# --
+\`\`\`{r, echo=TRUE, fig.cap='$1.'}
+$2
+\`\`\`
+$0

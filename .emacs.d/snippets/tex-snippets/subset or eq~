@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: subset or eq
+# key: _cc
+# condition: (and (texmathp) 'auto)
+# --
+\subseteq $0

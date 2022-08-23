@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Newline
+# key: nl
+# condition: (and (texmathp) 'auto)
+# --
+\\
+$0

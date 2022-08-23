@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: latex space
+# key: ,,
+# condition: (and (texmathp) 'auto)
+# --
+\, $0

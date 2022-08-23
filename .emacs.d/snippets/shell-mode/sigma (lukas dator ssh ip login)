@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sigma (lukas dator ssh ip login)
+# key: sigma
+# --
+ssh lukas@192.168.0.18

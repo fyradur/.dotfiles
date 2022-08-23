@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: auto expand
+# key: auto
+# --
+\# condition: (and (texmathp) 'auto)

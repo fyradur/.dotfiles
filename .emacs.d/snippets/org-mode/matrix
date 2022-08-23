@@ -1,0 +1,4 @@
+# key: matr
+# name: matrix
+# --
+matrix([[$1]$2])$0

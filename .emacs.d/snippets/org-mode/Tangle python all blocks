@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: Tangle python all blocks
+# --
+#+PROPERTY: header-args$1 :tangle ./$2.py $0

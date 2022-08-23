@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: Latex org
+# key: template-latex
+# --
+#+TITLE: $1
+#+DATE: \today
+#+AUTHOR: John Möller
+#+OPTIONS: num:t
+#+OPTIONS: tags:t tasks:t tex:t timestamp:t toc:nil todo:t |:t
+#+EXCLUDE_TAGS: noexport
+#+KEYWORDS:
+#+LANGUAGE: se
+#+LaTeX_CLASS: ${2:notesse}
+#+LATEX_HEADER: \input{/home/john/texstuff/org/env.tex}
+#+LATEX_HEADER: \input{/home/john/texstuff/org/bold.tex}
+#+STARTUP: latexpreview
+
+$0

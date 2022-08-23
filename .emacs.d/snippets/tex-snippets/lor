@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: lor
+# key: vv
+# condition: (and (texmathp) 'auto)
+# --
+\lor 

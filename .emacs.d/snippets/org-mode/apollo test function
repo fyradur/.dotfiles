@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: apollo test function
+# key: apollo
+# --
+** $1
+#+begin_src emacs-lisp
+(defun apollo/test/${1:function} () (interactive)
+$2
+       )
+
+#+end_src
+[[elisp-safe:apollo/test/$1][$1]]
+$0

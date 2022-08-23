@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# key: iIInt
+# name: 3d Integral par
+# condition: (and (texmathp) 'auto)
+# --
+\int_{ ${1:- \infty} }^{ ${2: \infty}} \int_{ ${3:- \infty} }^{ ${4: \infty}} \int_{ ${5:- \infty} }^{ ${6: \infty}} $7 ${8:dxdydz} $0

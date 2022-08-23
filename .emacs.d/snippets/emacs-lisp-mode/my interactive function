@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: my interactive function
+# key: apollo
+# --
+(defun apollo/$1 ($2) (interactive)
+$3
+)

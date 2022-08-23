@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: Normal subgroup
+# key: <|
+# condition: (and (texmathp) 'auto)
+# --
+\trianglelefteq $0

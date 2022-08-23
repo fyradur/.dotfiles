@@ -1,0 +1,4 @@
+# key: norm
+# name: norm
+# --
+\left| ${1:`yas-selected-text`} \right| $0

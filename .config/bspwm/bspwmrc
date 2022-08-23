@@ -1,0 +1,37 @@
+#! /bin/sh
+
+pgrep -x sxhkd > /dev/null || sxhkd &
+
+bspc monitor -d I II III IV V VI VII VIII IX X
+
+bspc config border_width         2
+bspc config window_gap          12
+
+bspc config split_ratio          0.52
+bspc config borderless_monocle   true
+bspc config gapless_monocle      true
+
+bspc rule -a Gimp desktop='^8' state=floating follow=on
+bspc rule -a Chromium desktop='^2'
+bspc rule -a mplayer2 state=floating
+bspc rule -a Emacs state=fullscreen
+bspc rule -a Kupfer.py focus=on
+bspc rule -a Screenkey manage=off
+xmodmap ~/.Xmodmap_original 
+xmodmap -e "remove Lock = Caps_Lock"
+xmodmap -e "remove Control = Control_L"
+xmodmap -e "keycode   9 = Caps_Lock NoSymbol Caps_Lock"
+xmodmap -e "keycode  37 = Escape NoSymbol Escape"
+xmodmap -e "keycode  49 = Super_L NoSymbol Super_L"
+xmodmap -e "keycode  66 = Control_L NoSymbol Control_L"
+xmodmap -e "keycode 133 = Super_L NoSymbol Super_L"
+xmodmap -e "add Lock = Caps_Lock"
+xmodmap -e "add Control = Control_L"
+
+xrandr --output DP-2-2 --same-as eDP-1
+xbindkeys -f ~/.xbindkeysrc
+xset r rate 300 50
+picom &
+feh --bg-scale /home/john/.wallpaper.jpg
+/home/john/.config/polybar/launch.sh &
+emacs &

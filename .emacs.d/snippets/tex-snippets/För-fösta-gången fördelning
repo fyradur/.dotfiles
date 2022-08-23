@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: För-fösta-gången fördelning
+# key: ffg
+# --
+\\text{ffg}(${1:p}) $0

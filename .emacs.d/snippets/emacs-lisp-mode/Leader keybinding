@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: Leader keybinding
+# --
+(apollo/leader-keys
+       "" nil
+       ${3:"${1:a}" '(:ignore t :which-key "${2:the prefix a stands for}")}
+       "${4:ab}" '(${5:command} :which-key "${6:ab activates the command to the left}")
+       )
+       
+$0

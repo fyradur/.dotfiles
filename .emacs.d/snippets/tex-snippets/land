@@ -1,0 +1,5 @@
+# key: ää
+# name: land
+# condition: (and (texmathp) 'auto)
+# --
+\land 

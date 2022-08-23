@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: latex block
+# --
+#+begin_export latex
+$1
+#+end_export
+$0

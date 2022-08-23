@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Poisson distribution
+# key: po
+# --
+\\text{Po}({1:\\lambda}) $0

@@ -1,0 +1,4 @@
+# key: Int
+# name: 1d Integral r
+# --
+\int_{ ${1: D} } $2 d${3:x} $0

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# key: fun
+# name: function
+# --
+\text{$1}($2)$0

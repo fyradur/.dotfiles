@@ -1,0 +1,9 @@
+# key: lem
+# name: Lemma
+# expand-env: ((yas-after-exit-snippet-hook #'apollo/org-tex-exit-env))
+# --
+`(string-utils-string-repeat "*" (+ 1 (apollo/org-current-export-level)))` lem: $1
+\begin{lemma}[$1]
+$2
+\end{lemma}
+$0

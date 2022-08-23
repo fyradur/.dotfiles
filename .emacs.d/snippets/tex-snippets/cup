@@ -1,0 +1,5 @@
+# key: uu
+# name: cup
+# condition: (and (texmathp) 'auto)
+# --
+\cup $0

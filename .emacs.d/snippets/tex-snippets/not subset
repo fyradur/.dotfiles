@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: not subset
+# key: ncc
+# condition: (and (texmathp) 'auto)
+# --
+\not\subset $0

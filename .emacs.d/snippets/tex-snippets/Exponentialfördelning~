@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Exponentialfördelning
+# key: Exp
+# --
+\\text{Exp}(${1:\beta}) $0

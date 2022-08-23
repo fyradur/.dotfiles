@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: sum with prop argument
+# key: Sum
+# --
+\sum_{$1} $0

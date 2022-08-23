@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# key: v..
+# name: vertical dots
+# condition: (and (texmathp) 'auto)
+# --
+\vdots $0

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: orgenum
+# key: orgenum
+# --
+#+LATEX: \begin{enumerate}
+$1
+#+LATEX: \end{enumerate}
+$0

@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Avsnitt
+# expand-env: ((yas-after-exit-snippet-hook #'apollo/org-tex-exit-env))
+# key: avs
+# --
+* $1
+\avsnitt{$1}{$2}{$3}
+$0

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: img
+# key: img
+# --
+#+ATTR_LATEX: :width $1cm :options angle=$2
+[[./img/$3.png]]
+$4

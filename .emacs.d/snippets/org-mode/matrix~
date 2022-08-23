@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: matrix
+# key: matr
+# --
+matrix([[$1]])$0

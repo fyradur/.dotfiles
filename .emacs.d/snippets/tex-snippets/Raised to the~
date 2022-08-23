@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Raised to the
+# key: td
+# expand-env: ((org-use-sub-superscripts 'nil))
+# condition: (and (texmathp) 'auto)
+# --
+`(evil-delete-backward-char-and-join 1)`^{$1} $0

@@ -1,0 +1,5 @@
+# key: cal
+# name: math caligraphy
+# condition: (and (texmathp) 'auto)
+# --
+\mathcal{$1} $0

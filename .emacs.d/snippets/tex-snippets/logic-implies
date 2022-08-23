@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: Implies
+# key: |-
+# condition: (and (texmathp) 'auto)
+# --
+\vdash $0

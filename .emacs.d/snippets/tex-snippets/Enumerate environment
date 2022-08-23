@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: Enumerate environment
+# key: enum
+# --
+\begin{enumerate}
+$1
+\end{enumerate}
+$0

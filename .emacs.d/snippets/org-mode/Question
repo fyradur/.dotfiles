@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: Question
+# key: que
+# expand-env: ((yas-after-exit-snippet-hook #'apollo/org-tex-exit-env))
+# --
+`(string-utils-string-repeat "*" (+ 1 (apollo/org-current-export-level)))` que: $1
+#+LATEX: \begin{question}[$1]  \label{que:$1}
+$2
+#+LATEX: \end{question}
+$0

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# key: tprf
+# name: Prooftry
+# expand-env: ((yas-after-exit-snippet-hook #'apollo/org-tex-exit-env))
+# --
+`(string-utils-string-repeat "*" (+ 1 (apollo/org-current-export-level)))` tprf: $1
+#+LATEX: \begin{prooftry}[$1] \label{tprf:$1}
+$2
+#+LATEX: \end{prooftry}
+$0

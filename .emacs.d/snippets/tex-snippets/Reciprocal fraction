@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: Reciprocal fraction
+# --
+\frac{$1}{${2:`yas-selected-text`}} $0

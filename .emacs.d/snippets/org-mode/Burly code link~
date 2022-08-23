@@ -1,0 +1,6 @@
+# key: burly
+# name: Burly code link
+# --
+*** [[$1][ $2]]
+${2:Link description}
+#+LINK: ${1:link_abrev} burly:${3:burly link code}

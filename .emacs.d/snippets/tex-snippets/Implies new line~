@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: Implies new line
+# key: imp
+# --
+\\
+\implies & $0

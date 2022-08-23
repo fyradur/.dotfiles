@@ -1,0 +1,4 @@
+# key: p
+# name: parenthesis
+# --
+`(delete-backward-char 1)`($1)$0

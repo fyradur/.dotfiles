@@ -1,0 +1,5 @@
+# key: TT
+# name: True symbol
+# condition: (and (texmathp) 'auto)
+# --
+\ltrue $0

@@ -1,0 +1,5 @@
+# key: nn
+# name: Next matrix entry
+# condition: (and (texmathp) 'auto)
+# --
+ &  $0

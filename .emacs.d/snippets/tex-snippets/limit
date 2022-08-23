@@ -1,0 +1,5 @@
+# key: lim
+# name: limit
+# condition: (and (texmathp) 'auto)
+# --
+\lim_{ ${1:x} \to ${2:\infty} } $0

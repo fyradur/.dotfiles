@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# key: IInt
+# name: 2d Integral r
+# --
+\iint_{ ${1: D} } $2 ${3:dxdy} $0

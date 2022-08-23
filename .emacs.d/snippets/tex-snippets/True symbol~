@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: True symbol 
+# key: TT
+# --
+\top $0

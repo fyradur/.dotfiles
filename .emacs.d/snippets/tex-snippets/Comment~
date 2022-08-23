@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Comment
+# key: com
+# --
+&& \text{ $1 } $0

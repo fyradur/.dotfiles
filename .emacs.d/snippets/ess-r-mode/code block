@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: code block
+# key: dm
+# condition: 'auto
+# --
+\`\`\`{r}
+$1
+\`
+$0

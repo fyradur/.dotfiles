@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: plot
+# key: plot
+# --
+\`\`\`{r, echo=FALSE, fig.cap='Diagram $1: $2.'}
+plot($3)
+\`\`\`
+$0

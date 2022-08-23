@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Rekangulär (likformig) fördelning
+# key: re
+# --
+\\text{Re}(${1:a},${2:b}) $0

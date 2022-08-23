@@ -1,0 +1,5 @@
+# key: Int
+# name: 1d Integral r
+# condition: (and (texmathp) 'auto)
+# --
+\int_{ ${1: D} } $2 d${3:x} $0
