@@ -94,7 +94,7 @@ separator-foreground = ${colors.disabled}
 
 font-0 = "Fira code:size=15:antialias=true;2"
 
-modules-left = schedule
+modules-left = 
 modules-center = agenda agenda-stack-size
 modules-right = habit-points habit-checkbox date
 fixed-center = true

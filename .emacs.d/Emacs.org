@@ -2972,6 +2972,13 @@ Spc l s
 (add-hook 'org-mode-hook #'xenops-mode)
 #+end_src
 
+* Command log
+
+#+begin_src emacs-lisp
+(use-package command-log-mode)
+(global-command-log-mode)
+#+end_src
+
 * Apollo functions
 
 ** Org math
