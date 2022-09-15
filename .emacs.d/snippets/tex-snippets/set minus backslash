@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-# name: Subset
-# key: cc
+# name: set minus backslash
+# key: hH
 # condition: (and (texmathp) 'auto)
 # --
-\subseteq $0
+\textbackslash $0

@@ -1,0 +1,18 @@
+# key: nil
+# name: Homework notestex english
+# --
+#+title: ${1:Stor titel} // ${2:Metric and Topological Spaces}
+#+author: ${3:John Möller}
+#+OPTIONS: title:nil author:t toc:nil num:t
+#+LaTeX_CLASS: cleanse
+#+LATEX_HEADER_EXTRA: \documentclass[10pt]{article}
+#+LATEX_HEADER_EXTRA: \usepackage[T1]{fontenc}     
+#+LATEX_HEADER_EXTRA: \usepackage[utf8]{inputenc} 
+#+LATEX_HEADER_EXTRA: \usepackage[swedish]{babel}
+#+LATEX_HEADER_EXTRA: \usepackage{amsfonts,amsmath,amssymb}
+#+LATEX_HEADER_EXTRA: \usepackage{/home/john/Documents/skola/tex/old_notestex_en}
+#+LATEX:\title{{$1}\\\\{\normalsize{\itshape $2}}}
+#+LATEX:\pagestyle{fancynotes}
+#+LATEX:\maketitle
+
+$0

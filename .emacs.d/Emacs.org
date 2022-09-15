@@ -446,6 +446,7 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
           "fs" '(save-buffer :which-key "save file")
           "ff" '(counsel-find-file :which-key "find file")
           "fn" '(dired-create-empty-file :which-key "create new file in dired")
+          "fp" '(apollo/create-tex-project :which-key "Find project")
 
 
           "k"  '(:ignore t :which-key "killring")
@@ -504,7 +505,8 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
           "p"  '(:ignore t :which-key "Pomodoro points/polybar")
           "pu" '(apollo/pomo-points/update-points :which-key "Update points")
           "pr" '(apollo/pomo-points/reset-points :which-key "Reset points")
-          "ps" '(apollo/pomo-points/reset-subcent-points :which-key "Reset subcent points")
+          ;"ps" '(apollo/pomo-points/reset-subcent-points :which-key "Reset subcent points")
+          "ps" '(apollo/pomo-points/subtract-cent :which-key "Subtract 100 points")
           "pa" '(apollo/pomo-points/add-points-manually :which-key "Add points manually")
           "pf" '(apollo/pomo-points/kill :which-key "Kill pomodoro timer")
           "pp" '(apollo/pomo-points/25-pomo :which-key "Activate 25 min pomo")
@@ -1983,6 +1985,16 @@ Jag definerar org-pomodoro-active-p till nil så att apollo funktionen funkar. D
 #+RESULTS:
 : apollo/pomo-points/25-pomo
 
+*** Subtract cent
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/subtract-cent ()
+  (interactive)
+  (let ((previous-total (apollo/pomo-points/get-points)))
+    (if (>= previous-total 100)
+	(apollo/pomo-points/write-points
+	 (- previous-total 100)))))
+#+end_src
+
 ** Org capture templates
 #+begin_src emacs-lisp
 (setq org-capture-templates
@@ -2372,6 +2384,7 @@ Jag definerar org-pomodoro-active-p till nil så att apollo funktionen funkar. D
                              (yas-expand-snippet "\\Span($1)$0"))
                     "oo" "\\\circ"
 		      "sr" "^2 "
+		      "hH" " \\textbackslash "
 		      "+" (lambda () (interactive) (if (string-equal
 							" "
 							(buffer-substring (- (point) 1) (point)))
@@ -2968,9 +2981,12 @@ Spc l s
 * Xenops
 #+begin_src emacs-lisp
 (use-package xenops)
-(setq xenops-math-image-scale-factor 1.8)
+(setq xenops-math-image-scale-factor 2.2)
 (add-hook 'org-mode-hook #'xenops-mode)
 #+end_src
+
+#+RESULTS:
+| xenops-mode | evil-tex-mode | org-pdftools-setup-link | org-ref-org-menu | (lambda nil (add-hook 'after-save-hook #'apollo/org-babel-tangle-config)) | org-tempo-setup | org-bullets-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | literate-calc-minor-mode | apollo/org-mode-setup | (lambda nil (apollo/org-set-pretty-entities 1)) | laas-mode | (lambda nil (display-line-numbers-mode 0)) |
 
 * Command log
 
@@ -3042,13 +3058,12 @@ Window excursion funkar inte enbar på org latex preview, men den funkar när vi
 ** Open compiled latex pdf
 
 #+begin_src emacs-lisp
-
 (defun apollo/org-open-latex-pdf ()
   (interactive)
   (let ((file (ibuffer-buffer-file-name)))
-	(browse-url-of-file
+      (evil-window-next 1)
+	(find-file
 	 (replace-regexp-in-string "\\.org" ".pdf" file t))))
-	
 #+end_src
 
 
@@ -3488,6 +3503,28 @@ Sen om du vill att en snippet ska autoexpanda med texenv så lägger du till:
 
 #+RESULTS:
 : apollo/split-to-or-from-org-and-rmd
+
+
+
+** Apollo create tex project
+
+#+begin_src emacs-lisp
+(defun apollo/create-tex-project ()
+  (interactive)
+  (let ((project (ivy-read "Name of project: " '())))
+    (shell-command
+     (format "mkdir '/home/john/Documents/skola/randomtex/%s'" project))
+    (shell-command
+     (format "touch '/home/john/Documents/skola/randomtex/%s/file.org'" project))
+    (find-file (format "/home/john/Documents/skola/randomtex/%s/file.org" project)))
+  (delete-other-windows)
+  (evil-window-vsplit)
+  (evil-window-right 1)
+  (evil-window-decrease-width 10))
+#+end_src
+
+#+RESULTS:
+: apollo/create-tex-project
 
 
 * Apollo lower polybar

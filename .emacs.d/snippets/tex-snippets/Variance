@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: Variance
-# key: V
+# key: Va
 # --
 \text{Var}(${1:X}) $0
