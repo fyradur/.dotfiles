@@ -3511,21 +3511,34 @@ Sen om du vill att en snippet ska autoexpanda med texenv så lägger du till:
 #+begin_src emacs-lisp
 (defun apollo/create-tex-project ()
   (interactive)
-  (let ((project (ivy-read "Name of project: " '())))
-    (shell-command
-     (format "mkdir '/home/john/Documents/skola/randomtex/%s'" project))
-    (shell-command
-     (format "touch '/home/john/Documents/skola/randomtex/%s/file.org'" project))
-    (find-file (format "/home/john/Documents/skola/randomtex/%s/file.org" project)))
-  (delete-other-windows)
-  (evil-window-vsplit)
-  (evil-window-right 1)
-  (evil-window-decrease-width 10))
+
+  (let ((existing-projects (split-string (shell-command-to-string "ls /home/john/Documents/skola/randomtex") "\n")))
+    (let ((project (ivy-read "Name of project: " existing-projects)))
+      (if (member project existing-projects)
+	  (progn
+	    (find-file
+	     (format "/home/john/Documents/skola/randomtex/%s/file.pdf" project))
+	    (delete-other-windows)
+	    (evil-window-vsplit)
+	    (evil-window-right 1)
+	    (evil-window-decrease-width 10)
+	    (find-file
+	     (format "/home/john/Documents/skola/randomtex/%s/file.org" project)))
+	(progn
+	  (shell-command
+	   (format "mkdir '/home/john/Documents/skola/randomtex/%s'" project))
+	  (shell-command
+	   (format "touch '/home/john/Documents/skola/randomtex/%s/file.org'" project))
+	  (find-file
+	   (format "/home/john/Documents/skola/randomtex/%s/file.org" project))
+	  (delete-other-windows)
+	  (evil-window-vsplit)
+	  (evil-window-right 1)
+	  (evil-window-decrease-width 10))))))
 #+end_src
 
 #+RESULTS:
 : apollo/create-tex-project
-
 
 * Apollo lower polybar
 

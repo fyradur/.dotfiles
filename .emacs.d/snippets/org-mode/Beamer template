@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: Beamer template
+# --
+#+title: $1
+#+author: ${2:John Möller}
+#+OPTIONS: title:t author:t toc:nil num:nil date:t
+#+date: ${3:Month DD, YYYY}
+#+LaTeX_CLASS: cleanse
+#+LATEX_HEADER_EXTRA: \documentclass{beamer}
+#+LATEX_HEADER_EXTRA: \usetheme{metropolis}
+#+LATEX_HEADER_EXTRA: \institute{$4}
+#+STARTUP: latexpreview
+
