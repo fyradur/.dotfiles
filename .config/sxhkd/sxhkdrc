@@ -15,6 +15,10 @@ super + Return
 super + space
 	rofi -show drun
 
+# script launcher
+super + alt + space
+	notify-send $(rofi -show run) -t 4000
+
 # make sxhkd reload its configuration files:
 super + Escape
 	pkill -USR1 -x sxhkd

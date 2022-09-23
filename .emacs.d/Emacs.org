@@ -2678,8 +2678,8 @@ Jag behöver typ installa emacs-pdf-tools-git från aur.
 
 * Org-ref
 #+begin_src emacs-lisp
-(setq reftex-default-bibliography '("/home/john/texstuff/ref.bib"))
-(setq org-ref-default-bibliography '("/home/john/texstuff/ref.bib"))
+(setq reftex-default-bibliography '("/home/john/Documents/skola/tex/ref.bib"))
+(setq org-ref-default-bibliography '("/home/john/Documents/skola/tex/ref.bib"))
 #+end_src
 
 #+RESULTS:
