@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: maps to
-# key: |>
+# key: _>
 # condition: (and (texmathp) 'auto)
 # --
-\mapsto
+\mapsto 

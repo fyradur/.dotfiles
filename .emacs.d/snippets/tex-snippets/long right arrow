@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: long right arrow
-# key: _>
-# condition: (and (texmathp) 'auto)
-# --
-\Longrightarrow

@@ -251,6 +251,9 @@ interval = 5
 label-foreground = #00FF00
 
 [module/battery]
+format-prefix = "BAT "
+format-prefix-foreground = ${colors.primary}
+
 type = internal/battery
 
 ; This is useful in case the battery never reports 100% charge

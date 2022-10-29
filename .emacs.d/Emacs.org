@@ -506,7 +506,7 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
           "pu" '(apollo/pomo-points/update-points :which-key "Update points")
           "pr" '(apollo/pomo-points/reset-points :which-key "Reset points")
           ;"ps" '(apollo/pomo-points/reset-subcent-points :which-key "Reset subcent points")
-          "ps" '(apollo/pomo-points/subtract-cent :which-key "Subtract 100 points")
+          "ps" '(apollo/pomo-points/halve-points :which-key "Halve points")
           "pa" '(apollo/pomo-points/add-points-manually :which-key "Add points manually")
           "pf" '(apollo/pomo-points/kill :which-key "Kill pomodoro timer")
           "pp" '(apollo/pomo-points/25-pomo :which-key "Activate 25 min pomo")
@@ -1790,13 +1790,13 @@ used to limit the exported source code blocks by language."
 (let ((minutes (/ (- (* 60 org-pomodoro-length) seconds) 60)))
 (cond
 
- ((>= minutes 20) (format "%d minutes - Earned: 75p | 25min = 100p" minutes))
- ((>= minutes 15) (format "%d minutes - Earned: 60p | 20min = 75p" minutes))
- ((>= minutes 10) (format "%d minutes - Earned: 40p | 15min = 60p" minutes))
- ((>= minutes 5) (format "%d minutes - Earned: 20p | 10min = 40p" minutes))
- ((>= minutes 2) (format "%d minutes - Earned: 10p | 5min = 20p" minutes))
- ((>= minutes 1) (format "%d minutes - Earned: 2p | 2min = 10p" minutes))
- ((>= minutes 0) (format "%d minutes - Earned: 0p | 1min = 2p" minutes)))))
+ ((>= minutes 20) (format "%d minutes - Earned: 45p | 25min = 60p" minutes))
+ ((>= minutes 15) (format "%d minutes - Earned: 35p | 20min = 45p" minutes))
+ ((>= minutes 10) (format "%d minutes - Earned: 25p | 15min = 35p" minutes))
+ ((>= minutes 5) (format "%d minutes - Earned: 10p | 10min = 25p" minutes))
+ ((>= minutes 2) (format "%d minutes - Earned: 5p | 5min = 10p" minutes))
+ ((>= minutes 1) (format "%d minutes - Earned: 1p | 2min = 5p" minutes))
+ ((>= minutes 0) (format "%d minutes - Earned: 0p | 1min = 1p" minutes)))))
 #+end_src
 
 #+RESULTS:
@@ -1929,13 +1929,13 @@ Jag definerar org-pomodoro-active-p till nil så att apollo funktionen funkar. D
 #+begin_src emacs-lisp
 (defun apollo/pomo-points/time-to-points (seconds-left pomo-length)
   (let ((minutes (/ (- (* 60 pomo-length) seconds-left) 60)))
-    (cond ((>= minutes 25) 100)
-	  ((>= minutes 20) 75)
-	  ((>= minutes 15) 60)
-	  ((>= minutes 10) 40)
-	  ((>= minutes 5) 20)
-	  ((>= minutes 2) 10)
-	  ((>= minutes 1) 2)
+    (cond ((>= minutes 25) 60)
+	  ((>= minutes 20) 45)
+	  ((>= minutes 15) 35)
+	  ((>= minutes 10) 25)
+	  ((>= minutes 5) 10)
+	  ((>= minutes 2) 5)
+	  ((>= minutes 1) 1)
 	  ((>= minutes 0) 0))))
 #+end_src
 
@@ -1995,6 +1995,14 @@ Jag definerar org-pomodoro-active-p till nil så att apollo funktionen funkar. D
 	 (- previous-total 100)))))
 #+end_src
 
+*** Halve points
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/halve-points ()
+  (interactive)
+  (let ((previous-total (apollo/pomo-points/get-points)))
+    (apollo/pomo-points/write-points (/ previous-total 2)))
+  (apollo/pomo-points/update-points))
+#+end_src
 ** Org capture templates
 #+begin_src emacs-lisp
 (setq org-capture-templates
@@ -2373,6 +2381,7 @@ Jag definerar org-pomodoro-active-p till nil så att apollo funktionen funkar. D
                     "inn" "\\in "
                     "<->" "\\leftrightarrow "
                     "%%" "\\% "
+                    ";;>" "\\Longrightarrow "
                     ;; bind to functions!
                     ;;"frac" (lambda () (interactive)
                     ;;        (yas-expand-snippet "\\frac{$1}{$2}$0"))
