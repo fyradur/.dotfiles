@@ -62,8 +62,8 @@ super + g
 #
 
 # set the window state
-super + {t,shift + t,s,f}
-	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+#super + {t,shift + t,s,f}
+#	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
 
 # set the node flags
 super + ctrl + {m,x,y,z}
@@ -166,10 +166,10 @@ XF86MonBrightnessUp
 	xbacklight -inc 5
 
 # Push to agenda stack
-super + shift + a
+super + shift + t
     /home/john/scripts/push-stack
 
 # Pop agenda stack
-super + shift + p
+super + shift + r
     /home/john/scripts/pop-stack
 
