@@ -598,6 +598,7 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
           "n" '(:ignore t :which-key "org roam (n för node idk)")
           "nl" '(org-roam-buffer-toggle :which-key "toggle nodes with mention")
           "nf" '(org-roam-node-find :which-key "find node")
+          "nF" '(consult-org-roam-search :which-key "search node")
           "ni" '(org-roam-node-insert :which-key "insert node")
           "nc" '(org-roam-dailies-capture-today  :which-key "roam capture")
           "nt" '(org-roam-dailies-goto-today :which-key "goto org roam dailies today")
@@ -2964,6 +2965,25 @@ Spc l s
 (add-hook 'org-mode-hook #'evil-tex-mode)
 #+end_src
 
+* Selectrum
+#+begin_src emacs-lisp
+(use-package selectrum)
+(selectrum-mode 1)
+#+end_src
+
+#+RESULTS:
+* Consult
+Perhaps måste installera ripgrep
+#+begin_src emacs-lisp
+(use-package consult)
+#+end_src
+* consult org roam
+
+#+begin_src emacs-lisp
+(use-package consult-org-roam)
+#+end_src
+
+#+RESULTS:
 
 * Sage shell mode
 #+begin_src emacs-lisp
