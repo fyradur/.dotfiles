@@ -1,0 +1,3 @@
+#!/bin/sh
+
+wc -l < /home/john/.stack.txt 

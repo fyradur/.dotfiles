@@ -231,12 +231,12 @@ interval = 5
 
 [module/agenda]
 type = custom/script
-exec = ~/scripts/agenda.sh
+exec = ~/scripts/view-stack
 interval = 1
 
 [module/agenda-stack-size]
 type = custom/script
-exec = ~/scripts/agenda-stack-size.sh
+exec = ~/scripts/size-stack
 interval = 1
 
 [module/habit-points]
