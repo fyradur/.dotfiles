@@ -94,7 +94,7 @@ separator-foreground = ${colors.disabled}
 
 font-0 = "Fira code:size=15:antialias=true;2"
 
-modules-left = 
+modules-left =  timer
 modules-center = agenda agenda-stack-size
 modules-right = habit-points habit-checkbox date
 fixed-center = true
@@ -280,6 +280,20 @@ adapter = AC
 ;
 ; Default: 5
 poll-interval = 5
+
+
+[module/timer]
+
+type = custom/script
+
+exec = /home/john/scripts/polybar-timer.sh tail 'TIMER' 5
+tail = true
+
+click-left = /home/john/scripts/polybar-timer.sh new 10 'Pomo session' 'Paused' 'notify-send -u critical -t 0 "Session finished"' ; /home/john/scripts/polybar-timer.sh update %pid%
+click-middle = /home/john/scripts/polybar-timer.sh cancel ; /home/john/scripts/polybar-timer.sh update %pid%
+click-right = /home/john/scripts/polybar-timer.sh togglepause ; /home/john/scripts/polybar-timer.sh update %pid%
+scroll-up = /home/john/scripts/polybar-timer.sh increase 60 || /home/john/scripts/polybar-timer.sh new 1 'TIMER' 'PAUSED' 'notify-send -u critical "Timer expired."' ; /home/john/scripts/polybar-timer.sh update %pid%
+scroll-down = /home/john/scripts/polybar-timer.sh increase -60 ; /home/john/scripts/polybar-timer.sh update %pid%
 
 [settings]
 screenchange-reload = true
