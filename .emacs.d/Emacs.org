@@ -2972,6 +2972,20 @@ Spc l s
 #+end_src
 
 #+RESULTS:
+: t
+
+* Selectrum prescient
+#+begin_src emacs-lisp
+(use-package selectrum-prescient
+  :after selectrum
+  :config
+  (selectrum-prescient-mode +1)
+  (prescient-persist-mode +1))
+#+end_src
+
+#+RESULTS:
+: t
+
 * Consult
 Perhaps måste installera ripgrep
 #+begin_src emacs-lisp
