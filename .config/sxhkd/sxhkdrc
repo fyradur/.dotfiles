@@ -4,7 +4,7 @@
 
 # terminal emulator
 super + Return
-	emacsclient -c -e "(shell)"
+	emacsclient -c -e "(shell) (evil-goto-line) (evil-append-line 1)"
 
 # terminal emulator
 # super + odiaeresis 
