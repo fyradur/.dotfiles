@@ -82,7 +82,7 @@
 
    #+end_src
    
-
+   
 * Syntax and other UI
 
 ** Rainbow-delimiters
@@ -2847,6 +2847,7 @@ Jag behöver typ installa emacs-pdf-tools-git från aur.
        (apollo/org-notes/narrow-to-id)
        (remove-if (lambda (x) (equal burly-opened-bookmark-name (car x))) apollo/opened-layouts)
        (push (cons burly-opened-bookmark-name  (current-window-configuration)) apollo/opened-layouts)
+       (apollo/org-notes/setup-pdf-page)
        )
 #+end_src
 
@@ -3405,8 +3406,12 @@ Sen om du vill att en snippet ska autoexpanda med texenv så lägger du till:
   (interactive)
   (setq-local apollo/pdf-real-page-zero (-
 					 (pdf-view-current-page)
-					 (string-to-number (ivy-read "Vilken sida är detta? " '())))))
+					 (string-to-number (ivy-read "Vilken sida är detta? " '()))))
+  (setq apollo/org-notes/pdf-page-temp apollo/pdf-real-page-zero))
 #+end_src
+
+#+RESULTS:
+: apollo/set-page-offset
 
 
 ** Apollo goto page
@@ -3978,11 +3983,26 @@ Vi skickar en event om:
   (evil-window-left 1)
   (apollo/set-page-offset)
   (winum-select-window-by-number win-num)
+  (apollo/org-notes/set-pdf-page-from-temp)
   ))
 #+end_src
 
 #+RESULTS:
 : apollo/org-notes/set-pdf-page
+
+*** Setup pdf page
+This is for setting the local pdf offset variable in the pdf buffer from the org notes property.
+#+begin_src emacs-lisp
+(defun apollo/org-notes/setup-pdf-page () (interactive)
+(let ((win-num (winum-get-number))
+      (page-offset (string-to-number (car (org-property-values "pdf-page")))))
+  (evil-window-left 1)
+  (setq-local apollo/pdf-real-page-zero page-offset)
+  (evil-window-right 1)))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/setup-pdf-page
 
 *** Goto page
 #+begin_src emacs-lisp
@@ -4012,6 +4032,28 @@ Vi skickar en event om:
 
 #+RESULTS:
 : apollo/layout-fix-pdf
+
+*** Set pdf page from temp
+
+I should probably narrow at the end, but I copied this method from set-pdf-scale which didn't narrow at the end. Maybe it's for a reason maybe it's not, but I'm too lazy to test and risk considering the reward is that it automatically narrows when i set a page, which isn't so often to begin with, so I don't really care. I can narrow manually.
+
+#+begin_src emacs-lisp
+(defun apollo/org-notes/set-pdf-page-from-temp ()
+  (interactive)
+  (save-excursion
+    (widen)
+    (if (org-find-property "pdf-page")
+	(save-excursion
+	  (goto-char
+	   (org-find-exact-headline-in-buffer "org-notes: pdf-page"))
+	  (org-set-property "pdf-page" (number-to-string apollo/org-notes/pdf-page-temp)))
+      (save-excursion
+	(org-id-goto (apollo/org-notes/create-heading-name "pdf-page"))
+	(org-set-property "pdf-page" (number-to-string apollo/org-notes/pdf-page-temp))))))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/set-pdf-page-from-temp
 
 *** Set pdf scale
 #+begin_src emacs-lisp
