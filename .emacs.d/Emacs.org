@@ -3032,6 +3032,41 @@ Perhaps måste installera ripgrep
 #+RESULTS:
 | xenops-mode | evil-tex-mode | org-pdftools-setup-link | org-ref-org-menu | (lambda nil (add-hook 'after-save-hook #'apollo/org-babel-tangle-config)) | org-tempo-setup | org-bullets-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | literate-calc-minor-mode | apollo/org-mode-setup | (lambda nil (apollo/org-set-pretty-entities 1)) | laas-mode | (lambda nil (display-line-numbers-mode 0)) |
 
+* shrface (eww with org stuff)
+
+** Installation 
+#+begin_src emacs-lisp
+(use-package shrface
+  :defer t
+  :config
+  (shrface-basic)
+  (shrface-trial)
+  (setq shrface-href-versatile t))
+
+  (add-hook 'eww-after-render-hook #'shrface-mode)
+#+end_src
+
+** Keybidnings
+#+begin_src emacs-lisp
+(general-define-key
+ :states '(normal visual)
+ :keymaps '(override)
+ :predicate '(memq major-mode '(eww-mode))
+ "<tab>" '(shrface-outline-cycle :which-key "Cycle outline")
+ "C-j" '(org-next-visible-heading :which-key "Org next visible heading")
+ "C-k" '(org-previous-visible-heading :which-key "Org previous visible heading")
+ "M-l" '(shrface-links-counsel :which-key "Links counsel")
+ "M-h" '(shrface-headlines-counsel :which-key "Headlines counsel"))
+#+end_src
+
+** Return keybinding
+#+begin_src emacs-lisp
+(general-define-key
+ :states '(normal visual)
+ :keymaps '(override)
+ :predicate '(and (not (link-hint--shr-url-at-point-p)) (memq major-mode '(eww-mode)))
+ "<RET>" '((lambda () (interactive) (shr-next-link) (shr-browse-url)) :which-key "Find next link to the right and goto it"))
+#+end_src
 * Command log
 
 #+begin_src emacs-lisp
@@ -3107,7 +3142,9 @@ Window excursion funkar inte enbar på org latex preview, men den funkar när vi
   (let ((file (ibuffer-buffer-file-name)))
       (evil-window-next 1)
 	(find-file
-	 (replace-regexp-in-string "\\.org" ".pdf" file t))))
+	 (replace-regexp-in-string "\\.org" ".pdf" file t))
+  (evil-window-right 1)
+	()))
 #+end_src
 
 
@@ -3121,7 +3158,9 @@ Window excursion funkar inte enbar på org latex preview, men den funkar när vi
   (let ((file (ibuffer-buffer-file-name)))
 
     (browse-url-of-file
-	 (replace-regexp-in-string "[-A-ZA-z0-9åäöÅÄÖ]*\\.org" "local-book.pdf" file t))))
+	 (replace-regexp-in-string "[-A-ZA-z0-9åäöÅÄÖ]*\\.org" "local-book.pdf" file t)))
+
+  (evil-window-right 1))
 	
 #+end_src
 
