@@ -1070,6 +1070,9 @@ Måste också sudo pacman -S python-xlib python-pyqt5 python-pymediainfo
    "C-j"
    '(org-next-visible-heading
      :which-key "Goto next visible heading.")
+   "C-b"
+   '(evil-scroll-line-to-top
+     :which-key "Set point to top of screen")
    "RET"
    '(org-ctrl-c-ctrl-c
      :which-key "Org ctrl c ctrl c")
