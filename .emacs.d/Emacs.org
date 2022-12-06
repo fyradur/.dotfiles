@@ -384,6 +384,7 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
 
        "gk" '(avy-goto-word-0-above :which-key "Avy goto word above")
        "gj" '(avy-goto-word-0-below :which-key "Avy goto word below")
+       ; Since org-mode-map has higher priority and keybindings for this, I've made these keybindings for the org mode map aswell (in the org section).
 
        "gh" '(evilem-motion-backward-word-begin :which-key "Evil motion word backward")
        "gl" '(evilem-motion-forward-word-begin :which-key "Evil motion word forward")
@@ -1076,6 +1077,15 @@ Måste också sudo pacman -S python-xlib python-pyqt5 python-pymediainfo
    "RET"
    '(org-ctrl-c-ctrl-c
      :which-key "Org ctrl c ctrl c")
+
+
+   "g k"
+   '(avy-goto-word-0-above
+     :which-key "Avy word 0 above")
+   "g j"
+   '(avy-goto-word-0-below
+     :which-key "Avy word 0 below")
+
 
    "K"
    '(apollo/org-notes/scroll-backward
