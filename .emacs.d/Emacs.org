@@ -3077,7 +3077,10 @@ Perhaps måste installera ripgrep
  "C-j" '(org-next-visible-heading :which-key "Org next visible heading")
  "C-k" '(org-previous-visible-heading :which-key "Org previous visible heading")
  "M-l" '(shrface-links-counsel :which-key "Links counsel")
- "M-h" '(shrface-headline-counsel :which-key "Headlines counsel"))
+ ;"M-h" '(shrface-headline-counsel :which-key "Headlines counsel")
+ ", ." '(shrface-headline-counsel :which-key "Headline counsel")
+ ", w" '(widen :which-key "widen")
+ ", s" '(org-narrow-to-subtree :which-key "narrow to subtree"))
 #+end_src
 
 ** Return keybinding
