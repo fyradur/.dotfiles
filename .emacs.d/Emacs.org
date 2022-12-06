@@ -367,6 +367,17 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
           :global-prefix "C-,")
 
       (general-define-key
+       :states '(normal visual)
+       :keymaps '(override)
+       "C-b"
+       '(evil-scroll-line-to-top
+         :which-key "Set point to top of screen")
+       "gk" '(avy-goto-word-0-above :which-key "Avy goto word above")
+       "gj" '(avy-goto-word-0-below :which-key "Avy goto word below")
+       "gh" '(evilem-motion-backward-word-begin :which-key "Evil motion word backward")
+       "gl" '(evilem-motion-forward-word-begin :which-key "Evil motion word forward"))
+   
+      (general-define-key
        :states '(normal)
        ;:keymaps  '(motion org-mode-map) 
        "<escape>" '(xenops-render :which-key "Render math stuff"))
@@ -1071,9 +1082,6 @@ Måste också sudo pacman -S python-xlib python-pyqt5 python-pymediainfo
    "C-j"
    '(org-next-visible-heading
      :which-key "Goto next visible heading.")
-   "C-b"
-   '(evil-scroll-line-to-top
-     :which-key "Set point to top of screen")
    "RET"
    '(org-ctrl-c-ctrl-c
      :which-key "Org ctrl c ctrl c")
@@ -3069,7 +3077,7 @@ Perhaps måste installera ripgrep
  "C-j" '(org-next-visible-heading :which-key "Org next visible heading")
  "C-k" '(org-previous-visible-heading :which-key "Org previous visible heading")
  "M-l" '(shrface-links-counsel :which-key "Links counsel")
- "M-h" '(shrface-headlines-counsel :which-key "Headlines counsel"))
+ "M-h" '(shrface-headline-counsel :which-key "Headlines counsel"))
 #+end_src
 
 ** Return keybinding
