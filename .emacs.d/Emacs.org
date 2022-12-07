@@ -2026,6 +2026,7 @@ Jag definerar org-pomodoro-active-p till nil så att apollo funktionen funkar. D
   (apollo/pomo-points/update-points))
 #+end_src
 ** Org capture templates
+
 #+begin_src emacs-lisp
 (setq org-capture-templates
       '(("i" "Important" entry (file+headline "/home/john/.emacs.d/org-agenda/agenda.org" "Important stuff")
@@ -2041,9 +2042,11 @@ Jag definerar org-pomodoro-active-p till nil så att apollo funktionen funkar. D
 	("h" "Händelser" entry (file+headline "/home/john/.emacs.d/org-agenda/agenda.org" "Händelser")
          "* %?\n  %i\n")
 	("n" "Note" entry (file+headline "/home/john/.emacs.d/org-agenda/agenda.org" "Notes")
-         "* %?\n  %i\n")))
+         "* %?\n  %i\n")
+	("p" "Problem" entry (file "/home/john/.emacs.d/org-agenda/problems.org")
+	 (file "/home/john/.emacs.d/org-templates/problem-template.org")
+	 )))
 #+end_src
-
 
 ** Org links
 *** Vars
@@ -3902,7 +3905,8 @@ Vill ändra till completed texten och öka countern med 1.
 	     (apollo/polybar-habit/write-property
 	      "habit-points"
 	      (number-to-string (+ 1 apollo/polybar-habit/habit-points)))
-	     (apollo/polybar-habit/update-vars))))
+	     (apollo/polybar-habit/update-vars)
+       (shell-command "pkill -f /home/john/scripts/desktop-1-loop"))))
 #+end_src
 
 #+RESULTS:

@@ -36,3 +36,5 @@ picom &
 feh --bg-scale /home/john/.wallpaper.jpg
 /home/john/.config/polybar/launch.sh &
 pgrep -x "emacs" > /dev/null || emacs &
+pkill /home/john/scripts/desktop-1-loop; 
+/home/john/scripts/desktop-1-loop &
