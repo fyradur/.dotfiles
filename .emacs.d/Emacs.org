@@ -174,7 +174,12 @@ Sätt igång emacs server så att man kan accesa den från terminalen med "emacs
 (require 'string-utils "/home/john/.emacs.d/elisp/string-utils")
 #+end_src
 
+* Dash.el
+#+begin_src emacs-lisp
+(use-package dash)
+#+end_src
 
+#+RESULTS:
 
 * Ivy, Swiper and Counsel
   
@@ -3055,6 +3060,7 @@ Perhaps måste installera ripgrep
 
 #+RESULTS:
 | xenops-mode | evil-tex-mode | org-pdftools-setup-link | org-ref-org-menu | (lambda nil (add-hook 'after-save-hook #'apollo/org-babel-tangle-config)) | org-tempo-setup | org-bullets-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | literate-calc-minor-mode | apollo/org-mode-setup | (lambda nil (apollo/org-set-pretty-entities 1)) | laas-mode | (lambda nil (display-line-numbers-mode 0)) |
+
 
 * shrface (eww with org stuff)
 

@@ -2,5 +2,5 @@
 while :
 do
     bspc desktop -f "I"
-    sleep 2
+    sleep 1
 done
