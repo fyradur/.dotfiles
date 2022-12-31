@@ -1066,6 +1066,8 @@ Måste också sudo pacman -S python-xlib python-pyqt5 python-pymediainfo
             "qv" '(apollo/org-notes/all-questions :which-key "View all questions")
             "qt" '(apollo/org-notes/view-open-todos :which-key "View all todo tags")
             "qd" '(apollo/org-notes/view-closed-todos :which-key "View all done tags")
+            "qa" '(apollo/org-notes/view-all-exercises :which-key "View all exercises")
+            "qe" '(apollo/org-notes/view-open-exercises :which-key "View open exercises")
 
             "." '(counsel-org-goto :which-key "Org goto (local file).")
 
@@ -4603,6 +4605,99 @@ org buffer men link location
 #+end_src
 
 , q d
+
+
+
+** Get all exercises
+Kom ihåg att jag använder dash.el
+#+begin_src emacs-lisp
+(defun apollo/org-notes/get-all-exercises () (interactive)
+(-filter
+ (lambda (x) (string-equal "exe" (nth 2 (nth 1 x))))
+ (org-element-map
+     (org-element-parse-buffer)
+     'headline
+   (lambda (headline)
+     (list
+      (org-element-property :begin headline)
+      (s-split-words (org-element-property :raw-value headline))
+      (org-element-map
+	  headline
+	  'node-property
+	(lambda (x)
+	  (list
+	   (org-element-property :key x)
+	   (org-element-property :value x))))
+      (org-element-property :todo-keyword headline))))))
+;(apollo/org-notes/get-all-exercises)
+#+end_src
+
+#+RESULTS:
+
+** All Exercises progress
+Progress variable
+#+begin_src emacs-lisp
+(setq apollo/org-notes/all-exercises-progress "No org-notes project")
+#+end_src
+
+#+begin_src emacs-lisp
+(defun apollo/org-notes/all-exercises-progress-fetch () (interactive)
+       (let* ((all-exercises (apollo/org-notes/get-all-exercises))
+	      (total-exercises (length all-exercises))
+	      (done-exercises (length (-filter (lambda (x) (string-equal "DONE" (nth 3 x))) all-exercises))))
+	 ; We prevent division by zero by checking if all-exercises is non nil
+	 (setq apollo/org-notes/all-exercises-progress (if all-exercises  (/ (* 1000 done-exercises) total-exercises) 0)))) 
+;(apollo/org-notes/all-exercises-progress-fetch)
+#+end_src
+
+#+RESULTS:
+: 0
+
+
+** View all exercises
+#+begin_src emacs-lisp
+(defun apollo/org-notes/view-all-exercises () (interactive)
+       (widen)
+       (apollo/org-notes/all-exercises-progress-fetch)
+       (let* ((exercises (apollo/org-notes/get-all-exercises))
+	      (join-list (lambda (x) (mapconcat 'identity x " ")))
+	      (title-exercises-alist
+	       (-map (lambda (x) (list (funcall join-list (cdr (nth 1 x))) (car x))) exercises)))
+	 (ivy-read
+	  "Select exercise"
+	  title-exercises-alist
+	  :action (lambda (x) (goto-char (car (last x))) ))
+     (org-narrow-to-subtree)
+	 title-exercises-alist))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/view-all-exercises
+
+
+
+** View open exercises
+
+#+begin_src emacs-lisp
+(defun apollo/org-notes/view-open-exercises () (interactive)
+       (widen)
+       (apollo/org-notes/all-exercises-progress-fetch)
+       (let* ((all-exercises (apollo/org-notes/get-all-exercises))
+	      (open-exercises (-filter (lambda (x) (not  (string-equal "DONE" (nth 3 x)))) all-exercises))
+	      (join-list (lambda (x) (mapconcat 'identity x " ")))
+	      (title-exercises-alist
+	       (-map (lambda (x) (list (funcall join-list (cdr (nth 1 x))) (car x))) open-exercises)))
+	 (ivy-read
+	  "Select exercise"
+	  title-exercises-alist
+	  :action (lambda (x) (goto-char (car (last x))) ))
+     (org-narrow-to-subtree)
+	 title-exercises-alist))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/view-open-exercises
+
 
 
 

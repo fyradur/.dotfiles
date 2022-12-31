@@ -94,7 +94,8 @@ separator-foreground = ${colors.disabled}
 
 font-0 = "Fira code:size=15:antialias=true;2"
 
-modules-left =  timer
+; previously i had timer on left
+modules-left =  exe-progress
 modules-center = agenda agenda-stack-size
 modules-right = habit-points habit-checkbox date
 fixed-center = true
@@ -243,6 +244,12 @@ interval = 1
 type = custom/script
 exec = ~/scripts/habit-points.sh
 interval = 5
+
+[module/exe-progress]
+type = custom/script
+exec = ~/scripts/exe-progress
+interval = 2
+format-foreground = ${colors.primary}
 
 [module/habit-checkbox]
 type = custom/script
