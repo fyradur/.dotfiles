@@ -392,6 +392,7 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
        ;:keymaps  '(motion org-mode-map) 
        "=" '(evil-end-of-line :which-key "End of line")
        "+" '(evil-scroll-line-to-top  :which-key "Scroll line to top (som zt)")
+       "-" '(apollo/org-notes/goto-mark-line :which-key "Goto mark line for org notes")
        "Ö" '(apollo/exit-server :which-key "Exit buffer server")
        "ö" '(apollo/enter-or-exit-special-editor :which-key "Special editor enter/exit.")
        "å" '(link-hint-open-link :which-key "Open org link regularly")
@@ -4699,6 +4700,26 @@ Progress variable
 : apollo/org-notes/view-open-exercises
 
 
+
+
+** goto mark line
+
+#+begin_src emacs-lisp
+(evil-define-command apollo/org-notes/goto-mark-line (char &optional noerror)
+  "Go to the line of the marker specified by CHAR."
+  :keep-visual t
+  :repeat nil
+  :type line
+  :jump t
+  (interactive (list (read-char)))
+  (widen)
+  (evil-goto-mark char noerror)
+  (evil-first-non-blank)
+  (org-narrow-to-subtree))
+#+end_src
+
+#+RESULTS:
+: apollo/org-notes/goto-mark-line
 
 
 * Modified functions
