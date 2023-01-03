@@ -1,5 +1,5 @@
-# key: ecc
-# name: subset or eq
+# key: scc
+# name: strict subset
 # condition: (and (texmathp) 'auto)
 # --
-\subseteq $0
+\subset $0

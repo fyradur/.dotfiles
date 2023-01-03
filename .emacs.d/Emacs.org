@@ -4713,6 +4713,7 @@ Progress variable
   :jump t
   (interactive (list (read-char)))
   (widen)
+  (push (point) apollo/org-notes/point-history)
   (evil-goto-mark char noerror)
   (evil-first-non-blank)
   (org-narrow-to-subtree))
