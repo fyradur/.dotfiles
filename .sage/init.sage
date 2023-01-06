@@ -1,4 +1,5 @@
 import re
+import numpy as np
 
 # better latex support when displaying text in graphics
 from matplotlib import rc
@@ -77,3 +78,10 @@ def matsolve(exprs, variables):
             eqs += [expr]
     print(eqs)
     return solve(eqs, variables)
+
+
+def transpose(lst):
+    array = np.array(lst)
+    transposed_array = array.T
+    transposed_list_of_lists = transposed_array.tolist()
+    return transposed_list_of_lists

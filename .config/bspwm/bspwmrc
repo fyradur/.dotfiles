@@ -1,6 +1,6 @@
 #! /bin/sh
 
-export PATH=${PATH}:/home/john/scripts
+export PATH=${PATH}:/home/john/scripts:/home/john/.local/bin
 pgrep -x sxhkd > /dev/null || sxhkd &
 
 bspc monitor -d I II III IV V VI VII VIII IX X

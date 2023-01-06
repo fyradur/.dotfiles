@@ -2248,6 +2248,10 @@ Jag definerar org-pomodoro-active-p till nil så att apollo funktionen funkar. D
 
    
    
+** Setting interpreter
+#+begin_src emacs-lisp
+(setq python-interpreter "python3")
+#+end_src
 * Company
 #+begin_src emacs-lisp
 (use-package company)
@@ -3064,6 +3068,28 @@ Perhaps måste installera ripgrep
 #+RESULTS:
 | xenops-mode | evil-tex-mode | org-pdftools-setup-link | org-ref-org-menu | (lambda nil (add-hook 'after-save-hook #'apollo/org-babel-tangle-config)) | org-tempo-setup | org-bullets-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | literate-calc-minor-mode | apollo/org-mode-setup | (lambda nil (apollo/org-set-pretty-entities 1)) | laas-mode | (lambda nil (display-line-numbers-mode 0)) |
 
+* Chatgpt
+
+** Dependency
+pip install epc
+pip install git+https://github.com/mmabrouk/chatgpt-wrapper
+chatgpt install
+
+This will prompt you to log in with your browser.
+
+NOTE: If you encounter any problems, please submit an issue or see chatgpt-wrapper.
+
+** Installation
+
+#+begin_src emacs-lisp
+(require 'quelpa-use-package)
+(use-package chatgpt
+  :quelpa ((chatgpt :fetcher git :url "https://github.com/joshcho/ChatGPT.el.git") :upgrade t)
+  :init
+  (require 'python)
+  (setq chatgpt-repo-path (expand-file-name "chatgpt/" quelpa-build-dir))
+  :bind ("C-c q" . chatgpt-query))
+#+end_src
 
 * shrface (eww with org stuff)
 
