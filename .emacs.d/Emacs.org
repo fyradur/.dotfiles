@@ -524,7 +524,7 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
           "pu" '(apollo/pomo-points/update-points :which-key "Update points")
           "pr" '(apollo/pomo-points/reset-points :which-key "Reset points")
           ;"ps" '(apollo/pomo-points/reset-subcent-points :which-key "Reset subcent points")
-          "ps" '(apollo/pomo-points/halve-points :which-key "Halve points")
+          "ps" '(apollo/pomo-points/subtract-points :which-key "Subtract points")
           "pa" '(apollo/pomo-points/add-points-manually :which-key "Add points manually")
           "pf" '(apollo/pomo-points/kill :which-key "Kill pomodoro timer")
           "pp" '(apollo/pomo-points/25-pomo :which-key "Activate 25 min pomo")
@@ -2033,6 +2033,17 @@ Jag definerar org-pomodoro-active-p till nil så att apollo funktionen funkar. D
     (apollo/pomo-points/write-points (/ previous-total 2)))
   (apollo/pomo-points/update-points))
 #+end_src
+
+*** Subtract points
+
+#+begin_src emacs-lisp
+(defun apollo/pomo-points/subtract-points ()
+  (interactive)
+  (let ((previous-total (apollo/pomo-points/get-points)))
+    (apollo/pomo-points/write-points (max 0 (- previous-total (string-to-number (ivy-read "Subtract points points: " '())))))
+    (apollo/pomo-points/update-points)))
+#+end_src
+
 ** Org capture templates
 
 #+begin_src emacs-lisp
