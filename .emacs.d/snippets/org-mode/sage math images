@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: sage math images
+# key: <gmi
+# --
+#+begin_src sage :session :results file
+show($1)
+#+end_src
+$0

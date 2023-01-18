@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: r source img
+# key: <rsi
+# --
+#+begin_src R :file rimg-$1.png :results graphics file
+$2
+#+end_src
+$0
