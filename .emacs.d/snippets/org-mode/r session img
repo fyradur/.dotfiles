@@ -1,0 +1,7 @@
+# key: <rsi
+# name: r session img
+# --
+#+begin_src R :session :file rimg-$1.png :results graphics file
+$2
+#+end_src
+$0

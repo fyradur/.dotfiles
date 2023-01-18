@@ -396,7 +396,7 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
        "Ö" '(apollo/exit-server :which-key "Exit buffer server")
        "ö" '(apollo/enter-or-exit-special-editor :which-key "Special editor enter/exit.")
        "å" '(link-hint-open-link :which-key "Open org link regularly")
-       "ä" '(apollo/org-notes/avy-open-link  :which-key "Org notes avy open link")
+       "ä" '(apollo/org-notes/smart-follow-link  :which-key "Smart follow link")
        "Ä" '(link-hint-open-link :which-key "Open org link regularly")
 
        "gk" '(avy-goto-word-0-above :which-key "Avy goto word above")
@@ -584,7 +584,7 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
           "q" '(:ignore t :which-key "quit emacs")
           "qq" '(save-buffers-kill-emacs :which-key "Save buffers and kill emacs")
 
-          "r" '(apollo/org-notes/previous-point :which-key "Return to previous org notes point")
+          "r" '(apollo/org-notes/smart-return :which-key "Smart return")
           "R" '(apollo/org-notes/set-base-point :which-key "Set org notes base point")
 
           "i" '(:ignore t :which-key "insert")
@@ -4759,6 +4759,26 @@ Progress variable
 #+RESULTS:
 : apollo/org-notes/goto-mark-line
 
+
+** Smart follow link
+
+#+begin_src emacs-lisp
+(defun apollo/org-notes/smart-follow-link () (interactive)
+       (if (equal (seq-subseq (s-split-words (buffer-file-name)) -2) '("notes" "org"))
+	   (apollo/org-notes/avy-open-link)
+       (link-hint-open-link)
+       ))
+#+end_src
+
+** Smart return
+
+#+begin_src emacs-lisp
+(defun apollo/org-notes/smart-return () (interactive)
+       (if (equal (seq-subseq (s-split-words (buffer-file-name)) -2)
+		  '("notes" "org"))
+	   (apollo/org-notes/previous-point)
+	 (previous-buffer)))
+#+end_src
 
 * Modified functions
 
