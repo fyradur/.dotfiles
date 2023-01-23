@@ -1085,11 +1085,11 @@ Måste också sudo pacman -S python-xlib python-pyqt5 python-pymediainfo
    :states '(normal visual)
    :keymaps 'org-mode-map
    "C-k"
-   '(org-previous-visible-heading
-     :which-key "Goto previous visible heading.")
+   '(apollo/previous-visible-heading-or-visible-block
+     :which-key "Goto previous visible heading or block.")
    "C-j"
-   '(org-next-visible-heading
-     :which-key "Goto next visible heading.")
+   '(apollo/next-visible-heading-or-visible-block
+     :which-key "Goto next visible heading or block.")
    "RET"
    '(org-ctrl-c-ctrl-c
      :which-key "Org ctrl c ctrl c")
@@ -3699,6 +3699,105 @@ Sen om du vill att en snippet ska autoexpanda med texenv så lägger du till:
 
 #+RESULTS:
 : apollo/create-tex-project
+
+** Apollo previous visible heading or block legacy
+Delete these when next/previous visible heading works find
+#+begin_src emacs-lisp
+(defun apollo/previous-visible-heading-or-block-legacy () (interactive)
+       (let* ((previous-heading (ignore-errors (save-excursion (org-previous-visible-heading 1) (point))))
+	     (previous-block (ignore-errors (save-excursion (org-previous-block 1) (point))))
+	     (previous-heading-or-0 (if (not previous-heading) 0 previous-heading))
+	     (previous-block-or-0 (if (not previous-block) 0 previous-block)))
+	 (if (> previous-block-or-0 previous-heading-or-0)
+	     (org-previous-block 1)
+	   (org-previous-visible-heading 1))))
+#+end_src
+
+** Apollo next visible heading or block
+
+Delete these when next/previous visible heading works find
+#+begin_src emacs-lisp
+(defun apollo/next-visible-heading-or-block-legacy () (interactive)
+       (let* ((next-heading (ignore-errors (save-excursion (org-next-visible-heading 1) (point))))
+	      (next-block (ignore-errors (save-excursion (org-next-block 1) (point))))
+	      (next-heading-or-max (if (not next-heading) (point-max) next-heading))
+	      (next-block-or-max (if (not next-block) (point-max) next-block)))
+	 (if (< next-block-or-max next-heading-or-max)
+	     (org-next-block 1)
+	   (org-next-visible-heading 1))))
+#+end_src
+
+#+RESULTS:
+: apollo/next-visible-heading-or-block
+
+** Is current heading folded legacy
+Delete these when next/previous visible heading works find
+#+begin_src emacs-lisp
+(defun apollo/is-current-heading-folded ()
+  (invisible-p (1+ (save-excursion (end-of-line) (point)))))
+#+end_src
+
+#+RESULTS:
+: apollo/is-current-heading-folded
+
+** Is previous heading folded  legacy
+Delete these when next/previous visible heading works find
+
+#+begin_src emacs-lisp
+(defun apollo/is-previous-visible-heading-folded ()
+  (invisible-p (1+ (save-excursion (org-previous-visible-heading 1) (end-of-line) (point)))))
+#+end_src
+
+#+RESULTS:
+: apollo/is-previous-visible-heading-folded
+
+** previous visible is code block
+Bug when cursor is on the begin src thingy
+#+begin_src emacs-lisp
+(defun apollo/scroll-stuff/previous-visible-is-code-block () 
+  (let* ((previous-code-block (ignore-errors (save-excursion (re-search-backward "#\\+begin_src"))))
+	 (previous-code-block-or-0 (if previous-code-block previous-code-block 0))
+       (previous-heading (ignore-errors (save-excursion (re-search-backward "
+\\*+ "))))
+       (previous-heading-or-0 (if previous-heading previous-heading 0))
+       (code-block-is-visible (not (ignore-errors (invisible-p previous-code-block-or-0)))))
+  (if (and code-block-is-visible (> previous-code-block-or-0 previous-heading-or-0)) 't)))
+#+end_src
+
+** next visible is code block
+Bug when cursor is on the begin src thingy
+
+#+begin_src emacs-lisp
+(defun apollo/scroll-stuff/next-visible-is-code-block () 
+(let* ((next-code-block (ignore-errors (save-excursion (re-search-forward "#\\+begin_src"))))
+       (next-code-block-or-max (if next-code-block next-code-block (point-max)))
+       (next-heading (ignore-errors (save-excursion (re-search-forward "\n\\*+ "))))
+       (next-heading-or-max (if next-heading next-heading (point-max)))
+       (code-block-is-visible (not (ignore-errors (invisible-p next-code-block-or-max)))))
+  (if (and code-block-is-visible (< next-code-block-or-max next-heading-or-max)) 't)))
+#+end_src
+
+** apollo/previous-visible-heading-or-visible-block
+
+#+begin_src emacs-lisp
+(defun apollo/previous-visible-heading-or-visible-block ()
+  (interactive)
+  (if (apollo/scroll-stuff/previous-visible-is-code-block)
+      (org-previous-block 1)
+    (org-previous-visible-heading 1)))
+#+end_src
+
+** apollo/next-visible-heading-or-visible-block
+
+#+begin_src emacs-lisp
+(defun apollo/next-visible-heading-or-visible-block ()
+  (interactive)
+  (if (apollo/scroll-stuff/next-visible-is-code-block)
+      (progn
+	(org-next-block 1)
+	(next-line))
+    (org-next-visible-heading 1)))
+#+end_src
 
 * Apollo lower polybar
 
