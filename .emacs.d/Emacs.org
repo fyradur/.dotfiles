@@ -2576,6 +2576,12 @@ dock så ser jag bara en liten ruta med ingeting som inte "flickarar")
     "," '(lean-std-exe :which-key "Compile")))
 (use-package company-lean)
 (use-package helm-lean)
+(general-define-key
+   :states '(insert normal)
+   :keymaps '(lean-mode-map)
+   "M-." '(lean-find-definition :which-key "Find definition")
+   "M-," '(xref-pop-marker-stack :which-key "Jump back from definition lookup")
+   "C-c C-SPC" '(apollo/lean-try-this :which-key "Lean try this"))
 #+end_src
 
 #+RESULTS:
@@ -2638,8 +2644,11 @@ gör typ det med ess och markdown.
      :which-key "Goto next visible heading.")
    "<C-return>"
    '(markdown-insert-header
-     :which-key "Create header")
-   ", TAB"
+     :which-key "Create header"))
+  (general-define-key
+   :states '(normal)
+   :keymaps '(markdown-mode-map ess-r-mode-map)
+    ", TAB"
    '(apollo/switch-from-rmd-to-org
      :which-key "Switch to org buffer")
    ", <backtab>"
@@ -3797,6 +3806,23 @@ Bug when cursor is on the begin src thingy
 	(org-next-block 1)
 	(next-line))
     (org-next-visible-heading 1)))
+#+end_src
+
+** Apollo lean try this
+
+#+begin_src emacs-lisp
+(defun apollo/lean-try-this () (interactive)
+       (backward-word)
+       (kill-word 1)
+       (switch-to-buffer "*Messages*")
+       (goto-char (point-max))
+       (previous-line)
+       (let* ((output (buffer-substring (point-at-bol) (point-at-eol)))
+	      (advice (s-replace-regexp " \[[0-9]+ times\]" "" output))
+	      (sugestion (s-replace-regexp "Try this: " "" advice)))
+
+	 (previous-buffer)
+	 (insert sugestion)))
 #+end_src
 
 * Apollo lower polybar
