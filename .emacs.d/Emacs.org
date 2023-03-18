@@ -3824,6 +3824,42 @@ Bug when cursor is on the begin src thingy
 	 (previous-buffer)
 	 (insert sugestion)))
 #+end_src
+** Yank with register
+#+begin_src emacs-lisp
+(evil-define-command apollo/yank-with-register (register)
+  "Yank to register register."
+  :keep-visual t
+  :repeat ignore
+  (interactive "<C>")
+  (evil-yank (region-beginning) (region-end) :register register))
+
+(general-define-key
+       :states '(normal visual)
+       :keymaps '(override)
+       "zy" '(apollo/yank-with-register :which-key "Yank with register."))
+ 
+#+end_src
+
+#+RESULTS: 
+with-r
+** paste-with-register
+#+begin_src emacs-lisp
+(evil-define-command apollo/paste-with-register (register)
+  "Paste from register register."
+  :keep-visual t
+  :repeat ignore
+  (interactive "<C>")
+  (evil-paste-from-register register))
+
+(general-define-key
+       :states '(normal visual)
+       :keymaps '(override)
+       "zp" '(apollo/paste-with-register :which-key "Paste with register."))
+#+end_src
+
+#+RESULTS:
+
+
 
 * Apollo lower polybar
 

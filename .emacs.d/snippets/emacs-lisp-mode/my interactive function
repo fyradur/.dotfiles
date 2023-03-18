@@ -5,3 +5,8 @@
 (defun apollo/$1 ($2) (interactive)
 $3
 )
+(general-define-key
+       :states '(normal visual)
+       :keymaps '(override)
+       "$4" '(apollo/$1 :which-key "apollo/$1"))
+ 
