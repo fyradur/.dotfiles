@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: leader key binding
+# --
+(apollo/leader-keys "${1:Keybinding}" '(${2:Function} :which-key "${3:Description}")

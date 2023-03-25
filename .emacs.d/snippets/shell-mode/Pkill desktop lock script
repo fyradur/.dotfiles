@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: Pkill desktop lock script
+# --
+pkill -f /home/john/scripts/desktop-1-loop

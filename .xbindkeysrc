@@ -20,8 +20,9 @@
 
 "xvkbd -xsendevent -text '\[asciitilde]'"
     m:0xc + c:35
-    Control+Alt + plus
+    Control+Alt + dead_diaeresis
 
 "urxvt &"
     m:0x50 + c:47
     Mod2+Mod4 + odiaeresis
+    

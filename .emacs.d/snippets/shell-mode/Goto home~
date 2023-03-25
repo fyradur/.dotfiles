@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: Goto home
+# --
+cd /home/john/

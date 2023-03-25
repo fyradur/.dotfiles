@@ -25,6 +25,8 @@
 
 #+end_src
 
+#+RESULTS:
+
 
 * Package config
   
@@ -33,18 +35,21 @@
   
    #+begin_src emacs-lisp
 
-   ;; Initialize package sources
-   (require 'package)
+      ;; Initialize package sources
+      (require 'package)
 
-   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                           ("org" . "https://orgmode.org/elpa/")
-                           ("elpa" . "https://elpa.gnu.org/packages/")))
-
-   (package-initialize)
-   (unless package-archive-contents
-   (package-refresh-contents))
+      (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                              ("org" . "https://orgmode.org/elpa/")
+                              ("elpa" . "https://elpa.gnu.org/packages/")
+                              ( "jcs-elpa" . "https://jcs-emacs.github.io/jcs-elpa/packages/"))
+            )
+      (package-initialize)
+      (unless package-archive-contents
+      (package-refresh-contents))
 
    #+end_src
+
+   #+RESULTS:
 
   
 ** Quelpa basic
@@ -57,6 +62,8 @@
    (quelpa-self-upgrade)))
    #+end_src
 
+   #+RESULTS:
+
 
 ** Quelpa use-package
 
@@ -68,7 +75,10 @@
 (require 'quelpa-use-package)
    #+end_src
 
+   #+RESULTS:
+   : quelpa-use-package
 
+   
 ** Setup för use-package
 
    #+begin_src emacs-lisp 
@@ -81,6 +91,9 @@
    (setq use-package-always-ensure t)
 
    #+end_src
+
+   #+RESULTS:
+   : t
    
    
 * Syntax and other UI
@@ -94,6 +107,9 @@
 
    #+end_src
 
+   #+RESULTS:
+   | rainbow-delimiters-mode |
+
    
    
 * Emacs stuff misc
@@ -103,6 +119,8 @@
 (setq initial-major-mode 'org-mode)
 (setq initial-scratch-message "")
 #+end_src
+
+#+RESULTS:
 
 
 ** Wrap lines
@@ -117,13 +135,15 @@
 #+end_src
 
 #+RESULTS:
-| menu-bar--visual-line-mode-enable | text-mode-hook-identify |
+| (lambda nil (interactive) (darkroom-tentative-mode t)) | (lambda nil (toggle-word-wrap 1)) | (lambda nil (global-visual-line-mode 1)) | text-mode-hook-identify |
 
 
 ** Don't warn if file is too large before opening
 #+begin_src emacs-lisp
 (setq large-file-warning-threshold nil)
 #+end_src
+
+#+RESULTS:
 
 ** Apollo toggle scratch
 
@@ -168,11 +188,16 @@ Sätt igång emacs server så att man kan accesa den från terminalen med "emacs
 (server-start)
 #+end_src
 
+#+RESULTS:
+
 
 * String utils
 #+begin_src emacs-lisp
 (require 'string-utils "/home/john/.emacs.d/elisp/string-utils")
 #+end_src
+
+#+RESULTS:
+: string-utils
 
 * Dash.el
 #+begin_src emacs-lisp
@@ -209,6 +234,9 @@ Sätt igång emacs server så att man kan accesa den från terminalen med "emacs
 
    #+end_src
 
+   #+RESULTS:
+   : counsel-switch-buffer
+
 
 ** Swiper
    
@@ -219,6 +247,9 @@ Sätt igång emacs server så att man kan accesa den från terminalen med "emacs
      :ensure t)
 
    #+end_src
+
+   #+RESULTS:
+   : swiper
    
 
 ** Ivy rich
@@ -230,6 +261,8 @@ Sätt igång emacs server så att man kan accesa den från terminalen med "emacs
     (ivy-rich-mode 1))
     
    #+end_src
+
+   #+RESULTS:
    
    
 ** Counsel
@@ -247,12 +280,17 @@ Sätt igång emacs server så att man kan accesa den från terminalen med "emacs
 	    ("C-r" . 'counsel-minibuffer-history)))
 	    
    #+end_src
+
+   #+RESULTS:
+   : counsel-minibuffer-history
    
 
 ** Ivy-avy
 #+begin_src emacs-lisp
 (use-package ivy-avy)
 #+end_src
+
+#+RESULTS:
 
 
 
@@ -288,6 +326,9 @@ Sätt igång emacs server så att man kan accesa den från terminalen med "emacs
     (setq which-key-idle-delay 1))
 
    #+end_src
+
+   #+RESULTS:
+   : t
    
    
 ** helpful
@@ -304,6 +345,9 @@ Sätt igång emacs server så att man kan accesa den från terminalen med "emacs
     ([remap describe-key] . helpful-key))
 
    #+end_src
+
+   #+RESULTS:
+   : helpful-key
    
    
 * Evil stuff
@@ -334,6 +378,9 @@ Sätt igång emacs server så att man kan accesa den från terminalen med "emacs
     (evil-set-initial-state 'dashboard-mode 'normal))
    
    #+end_src
+
+   #+RESULTS:
+   : t
    
    
 ** Evil-collection
@@ -346,6 +393,9 @@ Sätt igång emacs server så att man kan accesa den från terminalen med "emacs
     (evil-collection-init))
 
    #+end_src
+
+   #+RESULTS:
+   : t
    
    
 * Keybindings
@@ -657,6 +707,9 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
 
    
   #+end_src
+
+  #+RESULTS:
+  : keyboard-escape-quit
    
   
 
@@ -685,7 +738,8 @@ Måste också sudo pacman -S python-xlib python-pyqt5 python-pymediainfo
 #+end_src
 
 #+RESULTS:
-: t
+| use-package                | Cannot load eaf                                       | :error   | nil |
+| (package reinitialization) | Unnecessary call to ‘package-initialize’ in init file | :warning | nil |
 
 
 ** Load path (utan use-package)
@@ -974,22 +1028,6 @@ Måste också sudo pacman -S python-xlib python-pyqt5 python-pymediainfo
 
 #+RESULTS:
 | (lambda nil (prettify-symbols-mode 1)) | apollo/tex-mode/load-prettify-symbols |
-
-** Latex math preview
-
-#+begin_src emacs-lisp
-(use-package latex-math-preview)
-
-(general-define-key
- :states '(insert normal visual)
- :keymaps '(TeX-mode-map)
- "M-n" '(apollo/math-preview :which-key "Preview math")
- "M-u" '(winner-undo :which-key "Previous window layout"))
-
-(add-hook 'evil-insert-state-exit-hook #'apollo/math-preview)
-#+end_src
-
-#+RESULTS:
 
 
 * Org Mode 
@@ -2211,7 +2249,7 @@ Jag definerar org-pomodoro-active-p till nil så att apollo funktionen funkar. D
 
 
 * Python
-  
+
 ** Python mode
 
    #+begin_src emacs-lisp
@@ -3088,28 +3126,36 @@ Perhaps måste installera ripgrep
 #+RESULTS:
 | xenops-mode | evil-tex-mode | org-pdftools-setup-link | org-ref-org-menu | (lambda nil (add-hook 'after-save-hook #'apollo/org-babel-tangle-config)) | org-tempo-setup | org-bullets-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | literate-calc-minor-mode | apollo/org-mode-setup | (lambda nil (apollo/org-set-pretty-entities 1)) | laas-mode | (lambda nil (display-line-numbers-mode 0)) |
 
-* Chatgpt
-
-** Dependency
-pip install epc
-pip install git+https://github.com/mmabrouk/chatgpt-wrapper
-chatgpt install
-
-This will prompt you to log in with your browser.
-
-NOTE: If you encounter any problems, please submit an issue or see chatgpt-wrapper.
-
-** Installation
-
-#+begin_src emacs-lisp :tangle no
-(require 'quelpa-use-package)
-(use-package chatgpt
-  :quelpa ((chatgpt :fetcher git :url "https://github.com/joshcho/ChatGPT.el.git") :upgrade t)
-  :init
-  (require 'python)
-  (setq chatgpt-repo-path (expand-file-name "chatgpt/" quelpa-build-dir))
-  :bind ("C-c q" . chatgpt-query))
+* Openai
+#+begin_src emacs-lisp
+;(use-package codegpt :ensure t
+;:quelpa (codegpt :fetcher github :repo "emacs-openai/codegpt")
+;)
+(use-package codegpt :ensure t)
+(setq codegpt-tunnel 'chat            ; The default is 'completion
+      codegpt-model "gpt-3.5-turbo")  ; You can pick any model you want!
+(setq openai-key (org-file-contents "/home/john/apikeys/openai"))
+(global-set-key (kbd "C-c k") 'codegpt)
 #+end_src
+
+#+RESULTS:
+: codegpt
+
+* Gptai
+#+begin_src emacs-lisp
+(use-package gptai)
+(require 'gptai)
+;; set configurations
+(setq gptai-model "text-davinci-003") 
+(setq gptai-username "gogl0l@outlook.com")
+(setq gptai-api-key (org-file-contents "/home/john/apikeys/openai"))
+;; set keybindings optionally
+(global-set-key (kbd "C-c y") 'gptai-turbo-query)
+(global-set-key (kbd "C-c Y") 'gptai-send-query)
+#+end_src
+
+#+RESULTS:
+: gptai-send-query
 
 * shrface (eww with org stuff)
 
@@ -3154,6 +3200,11 @@ NOTE: If you encounter any problems, please submit an issue or see chatgpt-wrapp
 #+begin_src emacs-lisp
 (use-package command-log-mode)
 (global-command-log-mode)
+#+end_src
+* Org make toc
+#+begin_src emacs-lisp
+(use-package org-make-toc)
+(require 'org-make-toc)
 #+end_src
 
 * Apollo functions
@@ -3295,6 +3346,9 @@ Sen om du vill att en snippet ska autoexpanda med texenv så lägger du till:
   (setq org-pretty-entities value)
   (org-restart-font-lock))
 #+end_src
+
+#+RESULTS:
+: apollo/org-set-pretty-entities
 
 
 ** Legacy: Org ensure pretty symbols mode
@@ -3855,6 +3909,46 @@ with-r
        :states '(normal visual)
        :keymaps '(override)
        "zp" '(apollo/paste-with-register :which-key "Paste with register."))
+#+end_src
+
+#+RESULTS:
+** Brainstorm
+
+
+#+begin_src emacs-lisp
+(setq apollo/brainstorm-list '())
+#+end_src
+
+#+RESULTS:
+
+#+begin_src emacs-lisp
+(defun apollo/brainstorm-add ()
+  "Ask the user for input and append it to the dailies today buffer with as a new headline of level 2"
+  (interactive)
+  (let ((input (read-string "Enter your brainstorm: ")))
+    (setq apollo/brainstorm-list (append apollo/brainstorm-list (list input)))
+    (with-current-buffer (concat (format-time-string "%Y-%m-%d") ".org")
+      (save-excursion
+	(goto-char (point-max))
+	(insert "\n** " input)))))
+#+end_src
+
+#+RESULTS:
+: apollo/brainstorm-add
+
+#+begin_src emacs-lisp
+(defun apollo/brainstorm-view ()
+  "View `apollo/brainstorm-list' with ivy."
+  (interactive)
+  (ivy-read "Brainstorm List: " apollo/brainstorm-list))
+#+end_src
+
+#+RESULTS:
+: apollo/brainstorm-view
+
+#+begin_src emacs-lisp
+(apollo/leader-keys "ö a" '(apollo/brainstorm-add :which-key "Add brainstorm note"))
+(apollo/leader-keys "ö v" '(apollo/brainstorm-view :which-key "View brainstorm notes"))
 #+end_src
 
 #+RESULTS:
