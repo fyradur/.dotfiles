@@ -1070,8 +1070,6 @@ Måste också sudo pacman -S python-xlib python-pyqt5 python-pymediainfo
 
             "P" '(apollo/org-notes/set-pdf-scale :which-key "Set pdf scale")
 
-            "r" '(org-redisplay-inline-images :which-key "Redisplay inline images")
-
             "f" '(apollo/org-tex-exit-env :which-key "Fix exit")
 
             "F" '(org-agenda-file-to-front :which-key "File to front agenda")
@@ -3930,7 +3928,9 @@ with-r
     (with-current-buffer (concat (format-time-string "%Y-%m-%d") ".org")
       (save-excursion
 	(goto-char (point-max))
-	(insert "\n** " input)))))
+	(insert "\n** " input)
+	(save-buffer)
+	))))
 #+end_src
 
 #+RESULTS:
@@ -3952,8 +3952,31 @@ with-r
 #+end_src
 
 #+RESULTS:
+** Ask bing
+#+begin_src emacs-lisp
+(defun apollo/ask-bing ()
+  "Ask the user for a question and pass it to EdgeGPT."
+  (interactive)
+  (let ((question (read-string "Enter your question: ")))
+    (if (not (get-buffer "*bingcli*"))
+	(start-process "bingcli" (get-buffer-create "*bingcli*") "python3" "-m" "EdgeGPT" "--cookie-file" "/home/john/apikeys/bingcookies.json" "--enter-once"))
+    (let ((buf (get-buffer "*bingcli*")))
+      (if (not  (equal (current-buffer) buf))
+	  (switch-to-buffer-other-window buf)))
+    (process-send-string "*bingcli*" (concat question "\n"))))
 
-
+(general-define-key "C-c b" 'apollo/ask-bing)
+#+end_src
+** Org buffer update
+#+begin_src emacs-lisp
+(defun apollo/org-buffer-update () (interactive)
+       (org-redisplay-inline-images)
+       (org-update-statistics-cookies 't))
+(general-define-key
+ :states '(normal visual)
+ :keymaps '(org-mode-map)
+ ",r" '(apollo/org-buffer-update :which-key "apollo/org-buffer-update"))
+#+end_src
 
 * Apollo lower polybar
 
