@@ -182,6 +182,12 @@
 #+RESULTS:
 : apollo/clear-scratch
 
+** Window split favor for vertical
+#+begin_src emacs-lisp
+(setq split-height-threshold 160)
+(setq split-width-threshold 80)
+#+end_src
+
 * Emacs server
 Sätt igång emacs server så att man kan accesa den från terminalen med "emacsclient"
 #+begin_src emacs-lisp
@@ -3205,6 +3211,39 @@ Perhaps måste installera ripgrep
 (require 'org-make-toc)
 #+end_src
 
+
+* Aichat
+Måste installera genom att klona https://github.com/xhcoding/emacs-aichat
+till /home/john/code. 
+#+begin_src emacs-lisp
+(use-package websocket)
+(use-package async-await)
+(add-to-list 'load-path "~/code/emacs-aichat")
+(require 'aichat)
+(setq aichat-bingai-cookies-file "/home/john/apikeys/cookies.json")
+;(require 'aichat-bingai)
+;(require 'async-await)
+
+
+(setq apollo/bingai-visual-prompts '("Explain this code:" "Why isn't this working:" "Document this code:"))
+(setq apollo/bingai-simple-prompts '("Give me random wisdom." "Summarise the news today." "Teach me some random interesting piece of math, science or technology."))
+
+(defun apollo/bingai-ask () (interactive)
+       (if (use-region-p)
+           (let ((prefix-question (ivy-read "Prefix question: " apollo/bingai-visual-prompts)))
+             (aichat-bingai-chat (concat prefix-question "\n" (buffer-substring-no-properties (region-beginning) (region-end)))))
+         (let ((question (ivy-read "Question: " apollo/bingai-simple-prompts)))
+           (aichat-bingai-chat question))))
+
+(general-define-key
+ :states '(normal visual)
+ :keymaps '(override)
+ "C-c b" '(apollo/bingai-ask :which-key "apollo/bingai-ask"))
+(split-window-right)
+#+end_src
+
+#+RESULTS:
+: #<window 178 on 2023-04-24.org>
 * Apollo functions
 
 ** Org math
@@ -3965,7 +4004,8 @@ with-r
 	  (switch-to-buffer-other-window buf)))
     (process-send-string "*bingcli*" (concat question "\n"))))
 
-(general-define-key "C-c b" 'apollo/ask-bing)
+; (general-define-key "C-c b" 'apollo/ask-bing)
+; Replaced with (apollo/bingai-ask)
 #+end_src
 ** Org buffer update
 #+begin_src emacs-lisp
