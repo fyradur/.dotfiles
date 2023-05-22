@@ -4,6 +4,9 @@ export PATH=${PATH}:/home/john/scripts:/home/john/.local/bin
 pgrep -x sxhkd > /dev/null || sxhkd &
 
 bspc monitor -d I II III IV V VI VII VIII IX X
+#bspc monitor eDP-1 -d 1 2 3 4 5
+#bspc monitor DP-2-2 -d 7 8
+#bspc monitor DP-2-3 -d 9 0
 
 bspc config border_width         2
 bspc config window_gap          12
@@ -29,7 +32,11 @@ xmodmap -e "keycode 133 = Super_L NoSymbol Super_L"
 xmodmap -e "add Lock = Caps_Lock"
 xmodmap -e "add Control = Control_L"
 
+xrandr --output eDP-1 --primary --mode 1920x1080
 xrandr --output DP-2-2 --same-as eDP-1
+xrandr --output DP-2-3 --same-as eDP-1 --mode 1280x720 --scale-from 1920x1080
+#xrandr --output eDP-1 --primary --mode 1920x1080 --pos 3363x2562 --rotate normal --output DP-1 --off --output HDMI-1 --off --output DP-2 --off --output HDMI-2 --off --output DP-2-1 --off --output DP-2-2 --mode 1920x1080 --pos 1443x2562 --rotate normal --output DP-2-3 --mode 1366x768 --pos 3363x1794 --rotate normal
+#xrandr --output eDP-1 --primary --output DP-2-2 --same-as eDP-1 --output DP-2-3 --same-as eDP1
 xbindkeys -f ~/.xbindkeysrc
 xset r rate 300 50
 picom &

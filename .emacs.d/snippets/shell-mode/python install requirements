@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: python install requirements
+# --
+pip freeze > requirements.txt

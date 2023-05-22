@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: Python virtual environment create
+# --
+python -m venv env
