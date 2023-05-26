@@ -4037,7 +4037,7 @@ with-r
   "Create a new file with the default name being the date of today with the time in the directory /home/john/playground/unsorted."
   (interactive)
   (let ((filename (concat "playground/unsorted/" (format-time-string "%Y-%m-%d-%H%M"))))
-    (find-file (read-file-name "File name: " nil nil nil filename))))
+    (find-file (read-file-name "File name: " "/home/john/" nil nil filename))))
 
 (general-define-key
  :states '(normal visual)
@@ -4045,6 +4045,9 @@ with-r
  "SPC f u" '(apollo/new-unsorted-file :which-key "Open new unsorted file."))
 
 #+end_src
+
+#+RESULTS:
+
 * Apollo lower polybar
 
 ** Todo (old)
