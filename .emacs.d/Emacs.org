@@ -4034,9 +4034,9 @@ with-r
 
 #+begin_src emacs-lisp
 (defun apollo/new-unsorted-file ()
-  "Create a new file with the default name being the date of today in the directory /home/john/playground/unsorted."
+  "Create a new file with the default name being the date of today with the time in the directory /home/john/playground/unsorted."
   (interactive)
-  (let ((filename (concat "playground/unsorted/" (format-time-string "%Y-%m-%d"))))
+  (let ((filename (concat "playground/unsorted/" (format-time-string "%Y-%m-%d-%H%M"))))
     (find-file (read-file-name "File name: " nil nil nil filename))))
 
 (general-define-key
