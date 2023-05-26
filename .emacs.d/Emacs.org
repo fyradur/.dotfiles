@@ -4017,7 +4017,34 @@ with-r
  :keymaps '(org-mode-map)
  ",r" '(apollo/org-buffer-update :which-key "apollo/org-buffer-update"))
 #+end_src
+** Open file in browser
 
+#+begin_src emacs-lisp
+(defun apollo/open-file-in-browser ()
+  "Open the file of the current buffer in the standard browser."
+  (interactive)
+  (browse-url-of-file buffer-file-name))
+
+(general-define-key
+ :states '(normal visual)
+ :keymaps '(override)
+ "SPC o b" '(apollo/open-file-in-browser :which-key "Open the file of the buffer in the browser."))
+#+end_src
+** New unsorted file
+
+#+begin_src emacs-lisp
+(defun apollo/new-unsorted-file ()
+  "Create a new file with the default name being the date of today in the directory /home/john/playground/unsorted."
+  (interactive)
+  (let ((filename (concat "playground/unsorted/" (format-time-string "%Y-%m-%d"))))
+    (find-file (read-file-name "File name: " nil nil nil filename))))
+
+(general-define-key
+ :states '(normal visual)
+ :keymaps '(override)
+ "SPC f u" '(apollo/new-unsorted-file :which-key "Open new unsorted file."))
+
+#+end_src
 * Apollo lower polybar
 
 ** Todo (old)
