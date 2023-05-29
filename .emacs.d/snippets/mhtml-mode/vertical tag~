@@ -1,0 +1,6 @@
+# key: vt
+# name: vertical tag
+# --
+<$1>
+  ${2:`yas-selected-text`}
+</$1>$0

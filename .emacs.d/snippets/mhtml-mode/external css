@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: external css
+# --
+<link rel="${1:stylesheet}" href="${2:style.css}"> $0

@@ -1,0 +1,4 @@
+# key: ht
+# name: horizontal tag
+# --
+<$1>${2:`yas-selected-text`}</$1>$0

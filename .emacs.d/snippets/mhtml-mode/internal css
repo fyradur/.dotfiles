@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: internal css
+# --
+<style>
+  $1
+</style>$0
