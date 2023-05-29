@@ -437,7 +437,7 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
        "gj" '(avy-goto-word-0-below :which-key "Avy goto word below")
        "gh" '(evilem-motion-backward-word-begin :which-key "Evil motion word backward")
        "gl" '(evilem-motion-forward-word-begin :which-key "Evil motion word forward"))
-   
+
       (general-define-key
        :states '(normal)
        ;:keymaps  '(motion org-mode-map) 
@@ -644,7 +644,7 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
           "R" '(apollo/org-notes/set-base-point :which-key "Set org notes base point")
 
           "i" '(:ignore t :which-key "insert")
-          "is" '(yas-insert-snippet :which-key "yas-snippet")
+          "is" '((lambda () (interactive) (evil-insert 1) (yas-insert-snippet)) :which-key "yas-snippet")
           "ih" '(org-insert-heading :which-key "insert org heading at point")
 
           "m" '(:ignore t :which-key "music")
