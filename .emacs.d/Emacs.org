@@ -4047,6 +4047,27 @@ with-r
 #+end_src
 
 #+RESULTS:
+** Select unsorted file today
+
+#+begin_src emacs-lisp
+(defun apollo/select-unsorted-file-today ()
+  (interactive)
+  (let ((files (directory-files-recursively "/home/john/playground/unsorted" ""))
+        (today (format-time-string "%Y-%m-%d")))
+    (find-file
+     (ivy-read "Select file: "
+               (seq-filter
+		(lambda (f)
+		  (string-match-p
+		   today
+		   (format-time-string "%Y-%m-%d" (nth 5 (file-attributes f)))))
+		files)))))
+
+(general-define-key
+ :states '(normal visual)
+ :keymaps '(override)
+ "SPC o u" '(apollo/select-unsorted-file-today :which-key "Open an unsorted file from today"))
+#+end_src
 
 * Apollo lower polybar
 
