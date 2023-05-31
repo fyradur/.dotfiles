@@ -173,3 +173,9 @@ super + shift + t
 super + shift + r
     /home/john/scripts/pop-stack
 
+
+# Kill desktop lock by entering a reason
+super + shift + f
+    /home/john/scripts/end-lock
+
+

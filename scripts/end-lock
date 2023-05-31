@@ -1,0 +1,7 @@
+#!/bin/bash
+
+reason=$(echo "" | dmenu -p "Enter reason")
+if [ -n "$reason" ]; then
+    echo "$reason" >> ~/reasons.txt
+    pkill -f /home/john/scripts/desktop-1-loop
+fi
