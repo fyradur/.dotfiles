@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: left right bracket
+# key: lrb
+# --
+{$1}$0
