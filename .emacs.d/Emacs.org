@@ -4068,6 +4068,16 @@ with-r
  :keymaps '(override)
  "SPC o u" '(apollo/select-unsorted-file-today :which-key "Open an unsorted file from today"))
 #+end_src
+** Firefox link follow
+
+#+begin_src emacs-lisp
+(defcustom firefox-protocol "firefox"
+  "Protocol identifier for pomodoro links."
+  :group 'firefox
+  :type 'string)
+
+(org-link-set-parameters firefox-protocol :follow (lambda (url) (browse-url-firefox url)))
+#+end_src
 
 * Apollo lower polybar
 
