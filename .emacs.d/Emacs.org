@@ -4078,6 +4078,16 @@ with-r
 
 (org-link-set-parameters firefox-protocol :follow (lambda (url) (browse-url-firefox url)))
 #+end_src
+** Org babel execute html
+
+#+begin_src emacs-lisp
+(defun org-babel-execute:html (body params)
+  "Write code block to /tmp/babel.html"
+  (let ((file "/tmp/org-babel.html"))
+    (with-temp-file file
+      (insert body)))
+	"[[firefox:file:///tmp/org-babel.html]]")
+#+end_src
 
 * Apollo lower polybar
 
