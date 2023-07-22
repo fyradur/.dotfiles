@@ -34,7 +34,7 @@ xmodmap -e "add Control = Control_L"
 
 xrandr --output eDP-1 --primary --mode 1920x1080
 xrandr --output DP-2-2 --same-as eDP-1
-xrandr --output DP-2-3 --same-as eDP-1 --mode 1280x720 --scale-from 1920x1080
+#xrandr --output DP-2-3 --same-as eDP-1 --mode 1280x720 --scale-from 1920x1080
 #xrandr --output eDP-1 --primary --mode 1920x1080 --pos 3363x2562 --rotate normal --output DP-1 --off --output HDMI-1 --off --output DP-2 --off --output HDMI-2 --off --output DP-2-1 --off --output DP-2-2 --mode 1920x1080 --pos 1443x2562 --rotate normal --output DP-2-3 --mode 1366x768 --pos 3363x1794 --rotate normal
 #xrandr --output eDP-1 --primary --output DP-2-2 --same-as eDP-1 --output DP-2-3 --same-as eDP1
 xbindkeys -f ~/.xbindkeysrc

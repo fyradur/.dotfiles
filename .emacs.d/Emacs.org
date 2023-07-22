@@ -3225,7 +3225,7 @@ till /home/john/code.
 ;(require 'async-await)
 
 
-(setq apollo/bingai-visual-prompts '("Explain this code:" "Why isn't this working:" "Document this code:"))
+(setq apollo/bingai-visual-prompts '("Explain this error:" "Why isn't this working:" "Document this code:"))
 (setq apollo/bingai-simple-prompts '("Give me random wisdom." "Summarise the news today." "Teach me some random interesting piece of math, science or technology."))
 
 (defun apollo/bingai-ask () (interactive)
