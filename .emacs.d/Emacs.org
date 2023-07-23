@@ -2173,6 +2173,11 @@ Jag definerar org-pomodoro-active-p till nil så att apollo funktionen funkar. D
 #+RESULTS:
 : apollo/open-link-in-this-window
 
+** Org file apps
+#+begin_src emacs-lisp
+(setq org-file-apps
+      '(("\\.pdf::\\([0-9]+\\)\\'" . "zathura -P %1 %s")))
+#+end_src
 
 ** Safe elisp org links
 

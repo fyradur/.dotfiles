@@ -1,0 +1,3 @@
+#!/bin/sh
+
+echo "[[file:$1::$2][$(echo $1 | sed "s/\// /g" | awk '{print $NF}' | sed "s/\.pdf//") p.$2]]" | xclip -i -selection c
