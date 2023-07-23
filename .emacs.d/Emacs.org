@@ -1064,6 +1064,9 @@ Måste också sudo pacman -S python-xlib python-pyqt5 python-pymediainfo
             "be" '(org-babel-execute-buffer :which-key "Execute buffer")
             "bt" '(org-babel-tangle :which-key "Tangle")
 
+            "c" '(:ignore t :which-key "Compile")
+            "ch" '(apollo/load-org-haskell :which-key "Compile haskell")
+
             "n" '(:ignore t :which-key "Noter/narrow")
             "nS" '(org-noter :which-key "Noter start session")
             "ns" '(org-narrow-to-subtree :which-key "Narrow to subtree")
@@ -1210,6 +1213,34 @@ Måste också sudo pacman -S python-xlib python-pyqt5 python-pymediainfo
    #+RESULTS:
    
    
+** Apollo load org haskell
+
+#+begin_src emacs-lisp
+(defun apollo/load-org-haskell ()
+  (interactive)
+  (org-babel-tangle)
+  (let* ((org-file-name (file-name-sans-extension (buffer-file-name)))
+         (hs-file-name (concat org-file-name ".hs"))
+         (ghci-buffer-name "*ghci*"))
+    (if (get-buffer-process ghci-buffer-name)
+        (with-current-buffer ghci-buffer-name
+          (goto-char (point-max))
+          (insert (format ":load %s\n" hs-file-name)))
+      (progn
+        (shell ghci-buffer-name)
+        (with-current-buffer ghci-buffer-name
+          (goto-char (point-max))
+          (insert "ghci\n"))
+        (with-current-buffer ghci-buffer-name
+          (goto-char (point-max))
+          (insert ":set prompt \"\"\n"))
+        (with-current-buffer ghci-buffer-name
+          (goto-char (point-max))
+          (insert (format ":load %s\n" hs-file-name)))))))
+
+
+	
+#+end_src
 ** Org shell
 #+begin_src emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages
