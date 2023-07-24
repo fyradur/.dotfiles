@@ -2843,6 +2843,7 @@ Jag behöver typ installa emacs-pdf-tools-git från aur.
 
 * Org roam
 
+** Org roam
 #+begin_src emacs-lisp
 (use-package org-roam
   :ensure t
@@ -2872,6 +2873,10 @@ Jag behöver typ installa emacs-pdf-tools-git från aur.
 #+RESULTS:
 : org-roam-dailies-capture-today
 
+** Org roam ui
+#+begin_src emacs-lisp
+(use-package org-roam-ui)
+#+end_src
 
 * Org noter
 #+begin_src emacs-lisp
