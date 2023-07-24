@@ -451,7 +451,7 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
        "-" '(apollo/org-notes/goto-mark-line :which-key "Goto mark line for org notes")
        "Ö" '(apollo/exit-server :which-key "Exit buffer server")
        "ö" '(apollo/enter-or-exit-special-editor :which-key "Special editor enter/exit.")
-       "å" '(link-hint-open-link :which-key "Open org link regularly")
+       "å" '(apollo/close-zathura-follow-link :which-key "Close zathura open link")
        "ä" '(apollo/org-notes/smart-follow-link  :which-key "Smart follow link")
        "Ä" '(link-hint-open-link :which-key "Open org link regularly")
 
@@ -4128,6 +4128,14 @@ with-r
     (with-temp-file file
       (insert body)))
 	"[[firefox:file:///tmp/org-babel.html]]")
+#+end_src
+** Close zathura open link
+
+#+begin_src emacs-lisp
+(defun apollo/close-zathura-follow-link () (interactive)
+       (link-hint-open-link)
+       (shell-command "bspc query -N -n .window -d focused | xargs -I{} xdotool windowactivate {} key --clearmodifiers q")
+       )
 #+end_src
 
 * Apollo lower polybar
