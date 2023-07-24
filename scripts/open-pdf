@@ -1,0 +1,9 @@
+#!/bin/sh
+
+pdfs=$(find /home/john/.privatedotfiles/Documents/ -type f -name "*.pdf" | xargs -0)
+
+chosen=$(echo "$pdfs" | dmenu -i -l 20)
+
+if [ "$chosen" != "" ]; then
+    zathura "$chosen"
+fi
