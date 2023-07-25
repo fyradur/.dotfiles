@@ -53,3 +53,4 @@ set adjust-open width
 set recolor true
 
 map <C-l> feedkeys ":exec zathura-link $FILE $PAGE $NAME<Return>"
+map <Esc> feedkeys ":exec bspc node -f west<Return>"

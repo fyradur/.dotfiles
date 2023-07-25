@@ -177,5 +177,3 @@ super + shift + r
 # Kill desktop lock by entering a reason
 super + shift + f
     /home/john/scripts/end-lock
-
-

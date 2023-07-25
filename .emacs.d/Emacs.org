@@ -441,7 +441,7 @@ CLOCK: [2022-06-02 tor 20:23]--[2022-06-02 tor 20:23] =>  0:00
       (general-define-key
        :states '(normal)
        ;:keymaps  '(motion org-mode-map) 
-       "<escape>" '(xenops-render :which-key "Render math stuff"))
+       "<escape>" '((lambda () (interactive) (shell-command "bspc node -f east")) :which-key "Goto right window"))
 
       (general-define-key
        :states '(normal visual)
