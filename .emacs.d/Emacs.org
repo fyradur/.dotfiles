@@ -2195,7 +2195,8 @@ Jag definerar org-pomodoro-active-p till nil så att apollo funktionen funkar. D
 #+end_src
 
 ** Literate calc mode
-#+begin_src emacs-lisp
+Verkar ye bugs
+#+begin_src emacs-lisp :tangle no
 (use-package literate-calc-mode
   :ensure t)
 #+end_src
@@ -2750,7 +2751,8 @@ gör typ det med ess och markdown.
 
 * PDF tools
 Jag behöver typ installa emacs-pdf-tools-git från aur.
-#+begin_src emacs-lisp
+Update: Tar bort från tangle för att jag använder primärt zathura och så verkar den vara en av anledningar varför det tar så lång tid att loada upp emacs.
+#+begin_src emacs-lisp :tangle no
 (use-package pdf-tools
    :defer t
    :config
@@ -2871,7 +2873,7 @@ Jag behöver typ installa emacs-pdf-tools-git från aur.
 #+end_src
 
 #+RESULTS:
-: org-roam-dailies-capture-today
+: completion-at-point
 
 ** Org roam ui
 #+begin_src emacs-lisp
