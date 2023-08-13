@@ -2348,7 +2348,7 @@ Verkar ye bugs
 (global-company-mode 't)
 #+end_src
 
-  
+
 * Elpy 
 
   #+begin_src emacs-lisp
@@ -4255,6 +4255,17 @@ with-r
 
 ** Habit point system
 
+Every half hour cycle there is the opportunity of earning one habit point. You receive one habit point by doing atleast 1 min of a pomodoro session. At the end of the day the points are reset.
+
+- The external program dijo tracks the points.
+- On the system there is a script called "desktop-1-loop" which activates every half hour and blocks you from going to another desktop than 1 in bspwm. When you've received a point in the half hour cycle this script is killed (but it will be revived the next half hour since it activates every half hour, it's handled by system d I think).
+- The state regarding if you've gotten a point this half hour cycle is tracked in the agenda.org file in the org-agenda folder. So that means probably that there is also a system d routine to write this property to empty every half hour. I sound unsure because I don't remember how I configured it.
+- I also suspect update-read-points function is called over and over again with some interval by system d
+
+  Or actually I think it's polybar as opposed to system d. (or atleast in some instances. For example habit-checkbox.sh contains update-read-state, and I guess it's called by polybar).
+
+  Also update-read-points is updated in habit-points.sh.
+
 *** Vars
 #+begin_src emacs-lisp
 (setq apollo/polybar-habit/habit-points nil)
@@ -4380,7 +4391,7 @@ with-r
 
 
 *** Send 1 min event
-Vill ändra till completed texten och öka countern med 1.
+
 #+begin_src emacs-lisp
 (defun apollo/polybar-habit/send-1-min () (interactive)
        (if (not apollo/polybar-habit/habit-points-state)
@@ -4388,10 +4399,8 @@ Vill ändra till completed texten och öka countern med 1.
 	     (apollo/polybar-habit/write-property
 	      "habit-points-state"
 	      "Completed! ")
-	     (apollo/polybar-habit/write-property
-	      "habit-points"
-	      (number-to-string (+ 1 apollo/polybar-habit/habit-points)))
-	     (apollo/polybar-habit/update-vars)
+	     (shell-command "dijo -c 'track-up HabitPoints'")
+       (apollo/polybar-habit/update-vars)
        (shell-command "pkill -f /home/john/scripts/desktop-1-loop"))))
 #+end_src
 
@@ -4400,7 +4409,7 @@ Vill ändra till completed texten och öka countern med 1.
 
 
 *** Update read points funktion
-Vi skickar en event om:
+
 - Det är org pomodoro thingy
 - Org pomodoro thingy en är pomodoro (och inte break eller något)
 - Det har gått mer än 1 minut.
