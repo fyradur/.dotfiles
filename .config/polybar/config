@@ -246,6 +246,7 @@ interval = 1
 type = custom/script
 exec = ~/scripts/habit-points.sh
 interval = 5
+click-left = /home/john/scripts/open-dijo
 
 [module/exe-progress]
 type = custom/script
