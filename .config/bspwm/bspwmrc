@@ -27,6 +27,7 @@ bspc rule -a Emacs state=fullscreen
 bspc rule -a Zathura state=tiled
 bspc rule -a Kupfer.py focus=on
 bspc rule -a Screenkey manage=off
+bspc rule -a R_x11 -o state=floating
 xmodmap ~/.Xmodmap_original 
 xmodmap -e "remove Lock = Caps_Lock"
 xmodmap -e "remove Control = Control_L"

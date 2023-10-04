@@ -1,0 +1,4 @@
+# key: nil
+# name: update all
+# --
+yay -Syyu --noconfirm
