@@ -19,8 +19,9 @@ stow .
 #+end_src
 
 
-\begin{align*}
-x^2 + y^2 
-\end{align*}
+$$
+x^2 + y^2 = 10
+$$
 
-\( \alpha ^2  \)
+
+$\alpha ^2 $ 
