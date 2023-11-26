@@ -3,4 +3,4 @@
 # key: dk
 # condition: (and (orgmathp) 'auto)
 # --
-$ $1 $$0
+$$1$$0

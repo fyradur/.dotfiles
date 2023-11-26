@@ -2360,6 +2360,19 @@ Verkar ye bugs
 #+begin_src emacs-lisp
 (setq python-interpreter "python3")
 #+end_src
+
+* Jupyter
+
+#+begin_src emacs-lisp
+(use-package jupyter)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((jupyter . t)))
+#+end_src
+
+
+#+end_src
+
 * Company
 #+begin_src emacs-lisp
 (use-package company)
@@ -3322,11 +3335,10 @@ till /home/john/code.
  :states '(normal visual)
  :keymaps '(override)
  "C-c b" '(apollo/bingai-ask :which-key "apollo/bingai-ask"))
-(split-window-right)
 #+end_src
 
 #+RESULTS:
-: #<window 178 on 2023-04-24.org>
+
 * Apollo functions
 
 ** Org math

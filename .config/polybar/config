@@ -52,7 +52,7 @@ separator-foreground = ${colors.disabled}
 font-0 = "Fira code:size=15:antialias=true;2"
 
 modules-left = xworkspaces
-modules-center = pomodoro pomodoro-points
+modules-center = pomodoro okular
 modules-right = battery pulseaudio wlan time
 
 cursor-click = pointer
@@ -253,6 +253,13 @@ type = custom/script
 exec = ~/scripts/exe-progress
 interval = 2
 format-foreground = ${colors.primary}
+
+
+[module/okular]
+type = custom/script
+exec = echo "Okular"
+click-left = okular
+
 
 [module/habit-checkbox]
 type = custom/script
