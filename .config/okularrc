@@ -1,0 +1,55 @@
+[Desktop Entry]
+FullScreen=false
+
+[General]
+LockSidebar=true
+ShowSidebar=true
+
+[MainWindow]
+1912x1076 screen: Height=952
+1912x1076 screen: Width=1885
+1912x1076 screen: XPosition=14
+1912x1076 screen: YPosition=62
+1920x1080 screen: Height=956
+1920x1080 screen: Width=1892
+1920x1080 screen: XPosition=14
+1920x1080 screen: YPosition=62
+2 screens: Height=956
+2 screens: Width=1892
+2 screens: XPosition=14
+2 screens: YPosition=62
+Background=PaletteBase
+DP-2-2 eDP-1=eDP-1
+Foreground=PaletteText
+RestorePositionForNextInstance=false
+State=AAAA/wAAAAD9AAAAAQAAAAAAAAD5AAADgfwCAAAAAfsAAAAcAG8AawB1AGwAYQByAF8AcwBpAGQAZQBiAGEAcgEAAAA7AAADgQAAAO8A///+AAAGZQAAA4EAAAAEAAAABAAAAAgAAAAI/AAAAAMAAAABAAAAAQAAACwAcQB1AGkAYwBrAEEAbgBuAG8AdABhAHQAaQBvAG4AVABvAG8AbABCAGEAcgIAAAAA/////wAAAAAAAAAAAAAAAgAAAAEAAAAWAG0AYQBpAG4AVABvAG8AbABCAGEAcgEAAAAA/////wAAAAAAAAAAAAAAAgAAAAEAAAAiAGEAbgBuAG8AdABhAHQAaQBvAG4AVABvAG8AbABCAGEAcgAAAAAA/////wAAAAAAAAAA
+ToolBarsMovable=Disabled
+eDP-1=eDP-1
+
+[Qt]
+style=adwaita:dark
+
+[Recent Files]
+File1[$e]=$HOME/Documents/skola/HT23/Numerical Analysis 2/finite element.pdf
+File10[$e]=$HOME/.privatedotfiles/Documents/skola/HT23/Numerical Analysis 2/NA II F1 part 1 (2).pdf
+File2[$e]=$HOME/Documents/skola/övrigt/Livskompass 4 omr_den.pdf
+File3[$e]=$HOME/Documents/skola/HT23/Theory of Statistical Inference/Held Bové.pdf
+File4[$e]=$HOME/.privatedotfiles/Documents/skola/HT23/Numerical Analysis 2/Bcs.pdf
+File5[$e]=$HOME/.privatedotfiles/Documents/skola/HT23/Numerical Analysis 2/finite element.pdf
+File6[$e]=$HOME/.privatedotfiles/Documents/skola/HT23/Numerical Analysis 2/l1.pdf
+File7[$e]=$HOME/.privatedotfiles/Documents/skola/HT23/Numerical Analysis 2/l2.pdf
+File8[$e]=$HOME/.privatedotfiles/Documents/skola/HT23/Numerical Analysis 2/l5.pdf
+File9[$e]=$HOME/.privatedotfiles/Documents/skola/HT23/Numerical Analysis 2/l7.pdf
+Name1[$e]=finite element.pdf
+Name10[$e]=NA II F1 part 1 (2).pdf
+Name2[$e]=Livskompass 4 omr_den.pdf
+Name3[$e]=Held Bové.pdf
+Name4[$e]=Bcs.pdf
+Name5[$e]=finite element.pdf
+Name6[$e]=l1.pdf
+Name7[$e]=l2.pdf
+Name8[$e]=l5.pdf
+Name9[$e]=l7.pdf
+
+[UiSettings]
+ColorScheme=Breeze Dark

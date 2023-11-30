@@ -4192,6 +4192,24 @@ with-r
        )
 #+end_src
 
+
+** kill and open shell
+
+#+begin_src emacs-lisp
+(defun apollo/kill-and-reopen-shell ()
+  "Kill all buffers named *shell* and open a new shell."
+  (interactive)
+  (cl-letf (((symbol-function 'yes-or-no-p) (lambda (&rest _) t)))
+    (dolist (buffer (buffer-list))
+      (when (string= (buffer-name buffer) "*shell*")
+        (kill-buffer buffer)))
+    (shell)))
+
+
+(apollo/leader-keys "o S" '(apollo/kill-and-reopen-shell :which-key "kill and reopen shell"))
+#+end_src
+
+#+RESULTS:
 * Apollo lower polybar
 
 ** Todo (old)
