@@ -2221,11 +2221,113 @@ Verkar ye bugs
 #+RESULTS:
 | set-floating-rule-for-R-plot-windows | (lambda nil (interactive) (condition-case nil (progn (xenops-render)) (error nil))) |
 
+** Open dataframe i browser
+
+*** org extract html code
+#+begin_src emacs-lisp
+(defun apollo/org-extract-html-code ()
+  "Extract HTML code from the current buffer."
+  (interactive)
+  (save-excursion
+    (let ((start-pos (re-search-backward "#\\+begin_export html" nil t))
+          (end-pos (re-search-forward "#\\+end_export" nil t)))
+      (when (and start-pos end-pos)
+        (goto-char (match-end 0))
+        (buffer-substring-no-properties (+ start-pos 20) (- end-pos 13))))))
+
+#+end_src
+
+#+RESULTS:
+: my-org-extract-html-code
+
+
+*** org export html and open
+#+begin_src emacs-lisp
+(defun apollo/org-export-html-and-open ()
+  "Copy code from #+begin_export html block, save it to a temporary file, and open it in the default browser."
+  (interactive)
+  (let ((html-code (apollo/org-extract-html-code)))
+    (when html-code
+      (let* ((temp-file (make-temp-file "org-export-" nil ".html"))
+             (buffer (find-file-noselect temp-file)))
+        (with-current-buffer buffer
+          (insert "<head>
+  <meta charset=\"UTF-8\">
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #e0e0e0;
+    }
+    .nan-text {
+      color: red;
+</head>\n")
+          (insert html-code)
+	  (apollo/replace-nan-text)
+          (save-buffer))
+        (browse-url-of-file temp-file)))))
+#+end_src
+
+#+RESULTS:
+: my-org-export-html-and-open
+
+
+#+RESULTS:
+
+*** replace nan text
+#+begin_src emacs-lisp
+(defun apollo/replace-nan-text ()
+  "Replace <td>NaN</td> with <td><span class=\"nan-text\">NaN</span></td>."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward "<td>NaN</td>" nil t)
+      (replace-match "<td><span class=\"nan-text\">NaN</span></td>" nil nil))))
+#+end_src
+
+#+RESULTS:
+: replace-nan-text
+
+
+#+begin_src emacs-lisp
+(apollo/local-leader-keys org-mode-map
+            "of" '(apollo/org-export-html-and-open :which-key "Org open"))
+#+end_src
+
+#+RESULTS:
+
 * Org-ref
 #+begin_src emacs-lisp
 (use-package org-ref
     :quelpa (org-ref :fetcher github :repo "jkitchin/org-ref")
     :after org)
+
+(setq bibtex-completion-bibliography '("/home/john/Documents/skola/tex/ref.bib"))
 #+end_src
 
 
@@ -2850,7 +2952,7 @@ Update: Tar bort från tangle för att jag använder primärt zathura och så ve
 
 
 * Org pdf tools
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package org-pdftools
   :hook (org-mode . org-pdftools-setup-link))
 #+end_src

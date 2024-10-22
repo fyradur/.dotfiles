@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: dataframe winter medals
+# --
+df = pd.read_csv("/home/john/code/data/Winter_medals2022-11-03.csv")

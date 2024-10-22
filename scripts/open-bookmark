@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Path to the bookmark file
+bookmark_file="$HOME/.config/zathura_bookmarks"
+
+# Read the bookmark file and extract bookmarks
+bookmarks=$(awk -F ":" '{print $1}' "$bookmark_file" | awk -F "." '{for(i=1;i<=NF;i++){if(i!=NF){printf "%s ", $i}else{print $i}}}')
+
+# Display bookmarks using dmenu
+selected=$(echo "$bookmarks" | dmenu -p "Choose a bookmark:")
+
+# If a bookmark is selected
+if [ -n "$selected" ]; then
+    # Get the corresponding line from the bookmark file
+    bookmark_line=$(grep "^$selected" "$bookmark_file")
+    if [ -n "$bookmark_line" ]; then
+        # Extract page number and document name
+        page_number=$(echo "$bookmark_line" | awk -F ":" '{print $2}')
+        document_name=$(echo "$bookmark_line" | awk -F ":" '{print $3}')
+        
+        # Check if the page number is not empty
+        if [ -n "$page_number" ]; then
+            # Open Zathura with the specified document and page
+            zathura --page="${page_number:-1}" "$document_name"
+        else
+            # If page number is empty, open the document without specifying a page
+            zathura "$document_name"
+        fi
+    else
+        echo "Bookmark not found."
+    fi
+fi

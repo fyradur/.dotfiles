@@ -1,0 +1,18 @@
+#!/bin/bash                                                                     
+                                                                                
+# Replace YOUR_API_KEY with your actual API key                                 
+api_key="YOUR_API_KEY"                                                          
+                                                                                
+# Replace YOUR_SEARCH_QUERY with your actual search query                       
+query="YOUR_SEARCH_QUERY"                                                       
+                                                                                
+# Send a request to the YouTube Data API                                        
+response=$(curl -s                                                              
+"https://www.googleapis.com/youtube/v3/search?key=$api_key&type=video&part=snipp
+et&q=$query")                                                                   
+                                                                                
+# Extract the video IDs from the response                                       
+video_ids=$(echo "$response" | jq -r '.items[].id.videoId')                     
+                                                                                
+# Print the video IDs                                                           
+echo "$video_ids"                                                               

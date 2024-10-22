@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Path to the Zathura configuration file
+config_file="$HOME/.config/zathura_bookmarks"
+
+# Get the title of the focused window using xdotool
+window_title=$(xdotool getactivewindow getwindowname)
+
+# Extract the directory structure from the title
+directory_structure=$(dirname "$window_title")
+
+# Prompt the user for the bookmark name using dmenu
+bookmark_name=$(echo "" | dmenu -p "Enter bookmark name:")
+
+# Combine directory structure and bookmark name to form full bookmark path
+full_bookmark_name="$directory_structure/$bookmark_name"
+
+# Get the current page number and document name from Zathura
+current_page=$(zathura --synctex-forward 0 2>/dev/null | cut -d':' -f2)
+document_name=$(basename "$(echo "$window_title" | cut -d':' -f1)")
+
+# Check if the bookmark name already exists in the Zathura config file
+existing_bookmark=$(grep "^$full_bookmark_name:" "$config_file")
+
+# If the bookmark doesn't exist, add it directly
+if [ -z "$existing_bookmark" ]; then
+    echo "$full_bookmark_name:$current_page:$document_name" >> "$config_file"
+    echo "Bookmark \"$bookmark_name\" created for page $current_page."
+else
+    echo "Bookmark \"$bookmark_name\" already exists."
+fi

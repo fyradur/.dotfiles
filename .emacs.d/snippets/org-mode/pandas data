@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: pandas data
+# --
+df = pd.read_csv("/home/john/Data/")

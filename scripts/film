@@ -1,0 +1,6 @@
+#!/bin/sh
+
+#name=$(printf '%s' "$*" | sed 's/ /\%20/g')
+#curl -s -o url.html https://www.tpbproxypirate.com/search/$name/1/
+#magnet=$(cat url.html|grep -E 'magnet\:\?'|sed 's/href\=/ /g'|awk '{print $2}'|sed 's/"/ /g'| head -n 1|sed 's/ //g')
+peerflix -l -k $(xclip -selection c -o)

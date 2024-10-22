@@ -1,0 +1,14 @@
+#!/bin/bash                                                                     
+                                                                                
+# Get stock ticker symbol from command line argument                            
+ticker=$1                                                                       
+                                                                                
+# Make API call to Yahoo Finance to get stock data                              
+stock_data=$(curl -s "https://finance.yahoo.com/quote/$ticker?p=$ticker")       
+                                                                                
+# Extract stock price from API response using grep and sed                      
+stock_price=$(echo "$stock_data" | grep -o '"regularMarketPrice":{"raw":.*' |   
+sed 's/"regularMarketPrice":{"raw"://' | sed 's/[^0-9.]*//g')                   
+                                                                                
+# Print stock price to console                                                  
+echo "Stock price for $ticker: $stock_price"                                  
