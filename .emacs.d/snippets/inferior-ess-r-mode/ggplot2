@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: ggplot2
+# --
+library(ggplot2)

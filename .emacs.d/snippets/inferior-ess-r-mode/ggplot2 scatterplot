@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: ggplot2 scatterplot
+# --
+ggplot(${1:df}, aes(x = $2, y = $3)) + geom_point()

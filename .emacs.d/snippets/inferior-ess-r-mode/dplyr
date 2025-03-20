@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: dplyr
+# --
+library(dplyr)

@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: parse number
+# --
+mutate($1 = parse_number($1))

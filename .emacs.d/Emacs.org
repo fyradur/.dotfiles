@@ -65,7 +65,7 @@
 #+begin_src emacs-lisp
  (general-create-definer apollo/leader-keys
      :states  '(normal visual)
-     :keymaps  '(override) 
+     :keymaps  '(override ess-mode-map) 
      :prefix "SPC"
      :global-prefix "C-SPC"
      )
@@ -1004,6 +1004,16 @@ If there is a visual selection, append it to the question, and always append '[a
   #+RESULTS:
   : apollo/org-mode-setup
 
+
+* ESS
+#+begin_src emacs-lisp
+(use-package ess
+  :straight t)
+
+(apollo/leader-keys
+"or" '(run-ess-r :which-key "Run R repl"))
+
+#+end_src
 
 * Apollo functions
 

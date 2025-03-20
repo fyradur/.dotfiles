@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: read csv
+# --
+${1:df} <-  read.csv("$2", fileEncoding = "latin1")

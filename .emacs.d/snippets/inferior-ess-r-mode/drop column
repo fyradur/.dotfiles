@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: drop column
+# --
+select(-$1)

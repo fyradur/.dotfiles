@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: remove numbers
+# --
+mutate($2 = gsub("[0-9]", "", $1))

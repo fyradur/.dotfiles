@@ -1,0 +1,8 @@
+# key: nil
+# name: custom environment
+# --
+`(string-utils-string-repeat "*" (+ 1 (apollo/org-current-export-level)))` $1: $2
+#+LATEX: \begin{$1}[${3:$2}]  \label{$1:$2}
+$4
+#+LATEX: \end{$1}
+$0

@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: ggplot2 barplot count occurences in column
+# --
+ggplot(${1:df}, aes(x = $2)) + geom_bar()
