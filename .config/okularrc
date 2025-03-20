@@ -22,7 +22,6 @@ Background=PaletteBase
 DP-2-2 eDP-1=eDP-1
 Foreground=PaletteText
 RestorePositionForNextInstance=false
-ToolBarsMovable=Disabled
 eDP-1=eDP-1
 
 [Print Preview]
@@ -33,26 +32,26 @@ eDP-1=eDP-1
 style=adwaita:dark
 
 [Recent Files]
-File1[$e]=$HOME/Documents/skola/VT23/ODE/report.pdf
-File10[$e]=$HOME/Documents/GitHub/notes/Statistical Methods/Lecture 9/file.pdf
-File2[$e]=$HOME/Documents/skola/HT22/Metric and topological spaces/book.pdf
-File3[$e]=$HOME/Documents/skola/VT21/Linear Algebra/book.pdf
-File4[$e]=$HOME/Documents/GitHub/notes/Notes/file.pdf
-File5[$e]=$HOME/Downloads/IMG_6895.jpeg
-File6[$e]=$HOME/Documents/GitHub/notes/topology2.pdf
-File7[$e]=$HOME/Documents/GitHub/notes/topology4.pdf
-File8[$e]=$HOME/Documents/GitHub/notes/complexanalysis2.pdf
-File9[$e]=$HOME/Documents/GitHub/notes/Linear Algebra.pdf
-Name1[$e]=report.pdf
-Name10[$e]=file.pdf
-Name2[$e]=book.pdf
-Name3[$e]=book.pdf
-Name4[$e]=file.pdf
-Name5[$e]=IMG_6895.jpeg
-Name6[$e]=topology2.pdf
-Name7[$e]=topology4.pdf
-Name8[$e]=complexanalysis2.pdf
-Name9[$e]=Linear Algebra.pdf
+File1[$e]=$HOME/Desktop/Bsc thesis/Folland.pdf
+File10[$e]=$HOME/random/random_boxes.pdf
+File2[$e]=$HOME/Downloads/Project Information - Content Moderator.pdf
+File3[$e]=$HOME/Documents/GitHub/kurs99Lab1/Lab-Report.pdf
+File4[$e]=$HOME/Documents/GitHub/99Lab2/report.pdf
+File5[$e]=$HOME/.cache/.fr-PRHVZ2/2024/01/Verifikationer/A1_79723054_Transaktion_2025-01-07_05-08-05.pdf
+File6[$e]=$HOME/.cache/.fr-EWHXZ2/2024/02/Verifikationer/A2_89906527_2024-02-11_Sofia_Bjarnevik_signed_by_1.pdf
+File7[$e]=$HOME/.cache/.fr-PSFWZ2/2024/02/Verifikationer/A4_80691484_2024-02-19_Helena_Becker-Sander.pdf
+File8[$e]=$HOME/.cache/.fr-E8VHZ2/2024/04/Verifikationer/A7_19905104_2024-04-28_Sofia Bjarnevik_Signerat-compressed.pdf
+File9[$e]=$HOME/.cache/.fr-LJKG02/2024/02/Verifikationer/A4_22991194_2024-02-19_Helena_Becker-Sander.pdf
+Name1[$e]=Folland.pdf
+Name10[$e]=random_boxes.pdf
+Name2[$e]=Project Information - Content Moderator.pdf
+Name3[$e]=Lab-Report.pdf
+Name4[$e]=report.pdf
+Name5[$e]=A1_79723054_Transaktion_2025-01-07_05-08-05.pdf
+Name6[$e]=A2_89906527_2024-02-11_Sofia_Bjarnevik_signed_by_1.pdf
+Name7[$e]=A4_80691484_2024-02-19_Helena_Becker-Sander.pdf
+Name8[$e]=A7_19905104_2024-04-28_Sofia Bjarnevik_Signerat-compressed.pdf
+Name9[$e]=A4_22991194_2024-02-19_Helena_Becker-Sander.pdf
 
 [UiSettings]
 ColorScheme=Breeze Dark
