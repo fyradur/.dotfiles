@@ -1015,6 +1015,7 @@ If there is a visual selection, append it to the question, and always append '[a
 
 #+end_src
 
+
 * Apollo functions
 
 ** Apollo org toggle headlines
@@ -1031,3 +1032,43 @@ If there is a visual selection, append it to the question, and always append '[a
             "e" '(apollo/org-toggle-headline :which-key "Toggle export headline."))
 #+end_src
 
+
+
+
+** Apollo create tex project
+
+#+begin_src emacs-lisp
+(defun apollo/create-tex-project ()
+  (interactive)
+
+  (let ((existing-projects (split-string (shell-command-to-string "ls /home/john/Documents/skola/randomtex") "\n")))
+    (let ((project (ivy-read "Name of project: " existing-projects)))
+      (if (member project existing-projects)
+	  (progn
+	    (find-file
+	     (format "/home/john/Documents/skola/randomtex/%s/file.pdf" project))
+	    (delete-other-windows)
+	    (evil-window-vsplit)
+	    (evil-window-right 1)
+	    (evil-window-decrease-width 10)
+	    (find-file
+	     (format "/home/john/Documents/skola/randomtex/%s/file.org" project)))
+	(progn
+	  (shell-command
+	   (format "mkdir '/home/john/Documents/skola/randomtex/%s'" project))
+	  (shell-command
+	   (format "touch '/home/john/Documents/skola/randomtex/%s/file.org'" project))
+	  (find-file
+	   (format "/home/john/Documents/skola/randomtex/%s/file.org" project))
+	  (delete-other-windows)
+	  (evil-window-vsplit)
+	  (evil-window-right 1)
+	  (evil-window-decrease-width 10))))))
+
+
+(apollo/leader-keys
+     "fp" '(apollo/create-tex-project :which-key "Find project")
+  )
+#+end_src
+
+#+RESULTS:

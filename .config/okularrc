@@ -32,26 +32,26 @@ eDP-1=eDP-1
 style=adwaita:dark
 
 [Recent Files]
-File1[$e]=$HOME/Desktop/Bsc thesis/Folland.pdf
-File10[$e]=$HOME/random/random_boxes.pdf
-File2[$e]=$HOME/Downloads/Project Information - Content Moderator.pdf
-File3[$e]=$HOME/Documents/GitHub/kurs99Lab1/Lab-Report.pdf
-File4[$e]=$HOME/Documents/GitHub/99Lab2/report.pdf
-File5[$e]=$HOME/.cache/.fr-PRHVZ2/2024/01/Verifikationer/A1_79723054_Transaktion_2025-01-07_05-08-05.pdf
-File6[$e]=$HOME/.cache/.fr-EWHXZ2/2024/02/Verifikationer/A2_89906527_2024-02-11_Sofia_Bjarnevik_signed_by_1.pdf
-File7[$e]=$HOME/.cache/.fr-PSFWZ2/2024/02/Verifikationer/A4_80691484_2024-02-19_Helena_Becker-Sander.pdf
-File8[$e]=$HOME/.cache/.fr-E8VHZ2/2024/04/Verifikationer/A7_19905104_2024-04-28_Sofia Bjarnevik_Signerat-compressed.pdf
-File9[$e]=$HOME/.cache/.fr-LJKG02/2024/02/Verifikationer/A4_22991194_2024-02-19_Helena_Becker-Sander.pdf
-Name1[$e]=Folland.pdf
-Name10[$e]=random_boxes.pdf
-Name2[$e]=Project Information - Content Moderator.pdf
-Name3[$e]=Lab-Report.pdf
-Name4[$e]=report.pdf
-Name5[$e]=A1_79723054_Transaktion_2025-01-07_05-08-05.pdf
-Name6[$e]=A2_89906527_2024-02-11_Sofia_Bjarnevik_signed_by_1.pdf
-Name7[$e]=A4_80691484_2024-02-19_Helena_Becker-Sander.pdf
-Name8[$e]=A7_19905104_2024-04-28_Sofia Bjarnevik_Signerat-compressed.pdf
-Name9[$e]=A4_22991194_2024-02-19_Helena_Becker-Sander.pdf
+File1[$e]=$HOME/Documents/GitHub/99Lab2/report.pdf
+File10[$e]=$HOME/Downloads/CV science-1-compressed.pdf
+File2[$e]=$HOME/.cache/.fr-PRHVZ2/2024/01/Verifikationer/A1_79723054_Transaktion_2025-01-07_05-08-05.pdf
+File3[$e]=$HOME/.cache/.fr-EWHXZ2/2024/02/Verifikationer/A2_89906527_2024-02-11_Sofia_Bjarnevik_signed_by_1.pdf
+File4[$e]=$HOME/.cache/.fr-PSFWZ2/2024/02/Verifikationer/A4_80691484_2024-02-19_Helena_Becker-Sander.pdf
+File5[$e]=$HOME/.cache/.fr-E8VHZ2/2024/04/Verifikationer/A7_19905104_2024-04-28_Sofia Bjarnevik_Signerat-compressed.pdf
+File6[$e]=$HOME/.cache/.fr-LJKG02/2024/02/Verifikationer/A4_22991194_2024-02-19_Helena_Becker-Sander.pdf
+File7[$e]=$HOME/random/random_boxes.pdf
+File8[$e]=$HOME/.cache/.fr-2J0I32/Examination 732A99_732A68_2024-01-08.pdf
+File9[$e]=$HOME/Downloads/CV science.pdf
+Name1[$e]=report.pdf
+Name10[$e]=CV science-1-compressed.pdf
+Name2[$e]=A1_79723054_Transaktion_2025-01-07_05-08-05.pdf
+Name3[$e]=A2_89906527_2024-02-11_Sofia_Bjarnevik_signed_by_1.pdf
+Name4[$e]=A4_80691484_2024-02-19_Helena_Becker-Sander.pdf
+Name5[$e]=A7_19905104_2024-04-28_Sofia Bjarnevik_Signerat-compressed.pdf
+Name6[$e]=A4_22991194_2024-02-19_Helena_Becker-Sander.pdf
+Name7[$e]=random_boxes.pdf
+Name8[$e]=Examination 732A99_732A68_2024-01-08.pdf
+Name9[$e]=CV science.pdf
 
 [UiSettings]
 ColorScheme=Breeze Dark
